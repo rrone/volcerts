@@ -1,0 +1,3 @@
+app_index:
+    path: /
+    controller: App\Controller\ChromeHeadlessAction::index
