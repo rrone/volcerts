@@ -1,0 +1,27 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Volunteer Certs{% endblock %}
+{% block stylesheets %}
+    table {
+    border-collapse: collapse;
+    }
+
+    table, th, td {
+    border: 1px solid black;
+    }
+
+    .footer {
+    text-align: center;
+    }
+
+    .footer p {
+    font-size: smaller;
+    font-style: italic;
+    }
+{% endblock %}
+{% block body %}
+{{  table | raw }}
+{% endblock %}
+{% block javascripts %}
+
+{% endblock %}

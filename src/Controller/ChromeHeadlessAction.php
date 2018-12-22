@@ -4,25 +4,43 @@ namespace App\Controller;
 
 use HeadlessChromium\Browser;
 use HeadlessChromium\BrowserFactory;
-use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\DomCrawler\Crawler;
+use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 
-class ChromeHeadlessAction
+class ChromeHeadlessAction extends AbstractController
 {
+    /**
+     * @var string
+     */
     private $projectDir;
+    /**
+     * @var string
+     */
+    private $appVersion;
 
+    /**
+     * @var string
+     */
     private $urlCert;
+    /**
+     * @var string
+     */
     private $urlHome;
 
+    /**
+     * @var array
+     */
     private $arrIds;
 
     /**
      * ChromeHeadlessAction constructor.
      * @param $projectDir
+     * @param $appVersion
      */
-    public function __construct($projectDir)
+    public function __construct($projectDir, $appVersion)
     {
         $this->projectDir = $projectDir;
+        $this->appVersion = $appVersion;
 
         $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData?AYSOID=";
         $this->urlHome = "https://national.ayso.org/Volunteers/ViewCertification?UserName=";
@@ -36,10 +54,12 @@ class ChromeHeadlessAction
                 $this->arrIds[] = $row;
             };
         }
+
+        $this->arrIds = array_slice($this->arrIds, 0, 200);
     }
 
     /**
-     * @return JsonResponse
+     * @return \Symfony\Component\HttpFoundation\Response
      * @throws \HeadlessChromium\Exception\CommunicationException
      * @throws \HeadlessChromium\Exception\CommunicationException\CannotReadResponse
      * @throws \HeadlessChromium\Exception\CommunicationException\InvalidResponse
@@ -52,8 +72,16 @@ class ChromeHeadlessAction
     public function index()
     {
         $volCerts = $this->retreiveVolCertData($this->arrIds);
+        $vs = (array)json_decode($volCerts);
 
-        return JsonResponse::fromJsonString($volCerts);
+        foreach($vs as $k => $v){
+            $content[] = (array) $v;
+        }
+
+        $html = $this->renderTable($content);
+        $response = $this->render('view.html.twig', ['table' => $html]);
+
+        return $response;
 
     }
 
@@ -120,8 +148,12 @@ class ChromeHeadlessAction
      */
     private function parseNodeValue($id, $nodeValue)
     {
-        $nv = json_decode($nodeValue)->VolunteerCertificationDetails;
+        $nv = json_decode($nodeValue);
+        if($nv->ReturnStatus > 0) {
+            return null;
+        }
 
+        $nv = $nv->VolunteerCertificationDetails;
         $certs = [];
         try {
             $certs['VolunteerAYSOID'] = $nv->VolunteerAYSOID;
@@ -138,5 +170,79 @@ class ChromeHeadlessAction
         }
 
         return $certs;
+    }
+
+    /**
+     * @param array $content
+     * @return array|string
+     */
+    private function renderTable(array $content)
+    {
+        if(is_null($content)) {
+            return $content;
+        }
+
+        $hdrs = array_keys($content[0]);
+
+        $html = <<<EOD
+<table>
+EOD;
+        foreach($hdrs as $hdr){
+            $html .= <<<EOD
+<th>$hdr</th>
+EOD;
+        }
+
+        foreach($content as $i => $certs) {
+            $html .= <<<EOD
+<tr>
+EOD;
+            foreach(array_values($certs) as $k => $v) {
+                $html .= <<<EOD
+<td>$v</td>
+EOD;
+            }
+            $html .= <<<EOD
+</tr>
+EOD;
+        }
+
+        $html .= <<<EOD
+</table>      
+<div class="footer">
+<br />
+<hr>
+<p>Version $this->appVersion</p>
+</div>  
+EOD;
+
+        return $html;
+    }
+
+    /**
+     * @param array $arrCert
+     * @return false|string
+     */
+    private function phpDate(array $arrCert)
+    {
+        $ts = preg_replace( '/[^0-9]/', '', $arrCert['CertificationDate']);
+        $date = date("Y-m-d", $ts / 1000);
+
+        return $date;
+
+    }
+
+    /**
+     * @param $jsCert
+     * @return |null
+     */
+    private function getCertificationsReferee($jsCert)
+    {
+        if(is_null($jsCert)) {
+            return null;
+        }
+
+        return $jsCert['VolunteerCertificationsReferee'];
+
     }
 }
