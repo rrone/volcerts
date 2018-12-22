@@ -71,13 +71,15 @@ class ChromeHeadlessAction extends AbstractController
      */
     public function index()
     {
-        $volCerts = $this->retreiveVolCertData($this->arrIds);
+        $volCerts = $this->retrieveVolCertData($this->arrIds);
         $vs = (array)json_decode($volCerts);
 
-        foreach($vs as $k => $v){
-            $content[] = (array) $v;
+        $content = null;
+        foreach ($vs as $k => $v) {
+            foreach ($v as $j => $a) {
+                $content[] = (array)$a;
+            }
         }
-
         $html = $this->renderTable($content);
         $response = $this->render('view.html.twig', ['table' => $html]);
 
@@ -97,7 +99,7 @@ class ChromeHeadlessAction extends AbstractController
      * @throws \HeadlessChromium\Exception\NoResponseAvailable
      * @throws \HeadlessChromium\Exception\OperationTimedOut
      */
-    private function retreiveVolCertData(array $arrIds)
+    private function retrieveVolCertData(array $arrIds)
     {
         $browserFactory = new BrowserFactory('google-chrome');
 
@@ -148,25 +150,58 @@ class ChromeHeadlessAction extends AbstractController
      */
     private function parseNodeValue($id, $nodeValue)
     {
-        $nv = json_decode($nodeValue);
-        if($nv->ReturnStatus > 0) {
+        if (is_null($nodeValue)) {
             return null;
         }
 
-        $nv = $nv->VolunteerCertificationDetails;
-        $certs = [];
-        try {
-            $certs['VolunteerAYSOID'] = $nv->VolunteerAYSOID;
-            $certs['VolunteerFullName'] = $nv->VolunteerFullName;
-            $certs['VolunteerType'] = $nv->VolunteerType;
-            $certs['VolunteerSAR'] = $nv->VolunteerSAR;
-            $certs['VolunteerMembershipYear'] = $nv->VolunteerMembershipYear;
-        } catch (\Exception $e) {
-            $certs['VolunteerAYSOID'] = $id;
-            $certs['VolunteerFullName'] = 'Volunteer not found';
-            $certs['VolunteerType'] = '';
-            $certs['VolunteerSAR'] = '';
-            $certs['VolunteerMembershipYear'] = '';
+        $certs = null;
+        $nv = json_decode($nodeValue);
+        if ($nv->ReturnStatus == 0) {
+            $certDetails = $nv->VolunteerCertificationDetails;
+            $certRef = $this->getCertificationsReferee($certDetails);
+            if (!is_null($certRef)) {
+                foreach ($certRef as $cert) {
+                    $certs[] = $cert;
+                }
+            }
+
+            $certSH = $this->getCertificationsSafeHaven($certDetails);
+            if (!is_null($certSH)) {
+                foreach ($certSH as $cert) {
+                    $certs[] = $cert;
+                }
+            }
+
+            if (!is_null($certs)) {
+                foreach ($certs as $k => $cert) {
+                    $certs[$k]['VolunteerAYSOID'] = $certDetails->VolunteerAYSOID;
+                    $certs[$k]['VolunteerFullName'] = $certDetails->VolunteerFullName;
+                    $certs[$k]['VolunteerType'] = $certDetails->VolunteerType;
+                    $certs[$k]['VolunteerSAR'] = $certDetails->VolunteerSAR;
+                    $certs[$k]['VolunteerMembershipYear'] = $certDetails->VolunteerMembershipYear;
+                    $certs[$k]['CertificationDesc'] = $cert['CertificationDesc'];
+                    $certs[$k]['CertificationDate'] = $cert['CertificationDate'];
+                    $certs[$k]['UpdatedBy'] = $cert['UpdatedBy'];
+                }
+            } else {
+                $certs[0]['VolunteerAYSOID'] = $certDetails->VolunteerAYSOID;
+                $certs[0]['VolunteerFullName'] = $certDetails->VolunteerFullName;
+                $certs[0]['VolunteerType'] = $certDetails->VolunteerType;
+                $certs[0]['VolunteerSAR'] = $certDetails->VolunteerSAR;
+                $certs[0]['VolunteerMembershipYear'] = $certDetails->VolunteerMembershipYear;
+                $certs[0]['CertificationDesc'] = '';
+                $certs[0]['CertificationDate'] = '';
+                $certs[0]['UpdatedBy'] = '';
+            }
+        } else {
+            $certs[0]['VolunteerAYSOID'] = $id;
+            $certs[0]['VolunteerFullName'] = '***'.$nv->ReturnMessage.'***';
+            $certs[0]['VolunteerType'] = '';
+            $certs[0]['VolunteerSAR'] = '';
+            $certs[0]['VolunteerMembershipYear'] = '';
+            $certs[0]['CertificationDesc'] = '';
+            $certs[0]['CertificationDate'] = '';
+            $certs[0]['UpdatedBy'] = '';
         }
 
         return $certs;
@@ -178,36 +213,50 @@ class ChromeHeadlessAction extends AbstractController
      */
     private function renderTable(array $content)
     {
-        if(is_null($content)) {
+        if (is_null($content)) {
             return $content;
         }
 
-        $hdrs = array_keys($content[0]);
+        $hdrs = [
+            'VolunteerAYSOID',
+            'VolunteerFullName',
+            'VolunteerType',
+            'VolunteerSAR',
+            'VolunteerMembershipYear',
+            'CertificationDesc',
+            'CertificationDate',
+            'UpdatedBy',
+        ];
 
         $html = <<<EOD
 <table>
 EOD;
-        foreach($hdrs as $hdr){
+        foreach ($hdrs as $hdr) {
             $html .= <<<EOD
 <th>$hdr</th>
 EOD;
         }
 
-        foreach($content as $i => $certs) {
+        foreach ($content as $i => $cert) {
             $html .= <<<EOD
 <tr>
 EOD;
-            foreach(array_values($certs) as $k => $v) {
-                $html .= <<<EOD
-<td>$v</td>
-EOD;
-            }
             $html .= <<<EOD
+<td>{$cert['VolunteerAYSOID']}</td>
+<td>{$cert['VolunteerFullName']}</td>
+<td>{$cert['VolunteerType']}</td>
+<td>{$cert['VolunteerSAR']}</td>
+<td>{$cert['VolunteerMembershipYear']}</td>
+<td>{$cert['CertificationDesc']}</td>
+<td>{$cert['CertificationDate']}</td>
+<td>{$cert['UpdatedBy']}</td>
+EOD;
+        $html .= <<<EOD
 </tr>
 EOD;
-        }
+    }
 
-        $html .= <<<EOD
+$html .= <<<EOD
 </table>      
 <div class="footer">
 <br />
@@ -216,33 +265,79 @@ EOD;
 </div>  
 EOD;
 
-        return $html;
+return $html;
+}
+
+/**
+ * @param string $certDate
+ * @return false|string
+ */
+private
+function phpDate(string $certDate)
+{
+    $ts = preg_replace('/[^0-9]/', '', $certDate);
+    $date = date("Y-m-d", $ts / 1000);
+
+    return $date;
+
+}
+
+/**
+ * @param \stdClass $jsCert
+ * @return array|null
+ */
+private
+function getCertificationsReferee(\stdClass $jsCert)
+{
+    if (empty($jsCert)) {
+        return null;
     }
 
-    /**
-     * @param array $arrCert
-     * @return false|string
-     */
-    private function phpDate(array $arrCert)
-    {
-        $ts = preg_replace( '/[^0-9]/', '', $arrCert['CertificationDate']);
-        $date = date("Y-m-d", $ts / 1000);
-
-        return $date;
-
+    $certsRef = [];
+    foreach ($jsCert->VolunteerCertificationsReferee as $k => $cls) {
+        $certsRef[$k]['CertificationDesc'] = $cls->CertificationDesc;
+        $certsRef[$k]['CertificationDate'] = $this->phpDate($cls->CertificationDate);
+        $certsRef[$k]['UpdatedBy'] = $cls->UpdatedBy;
     }
 
-    /**
-     * @param $jsCert
-     * @return |null
-     */
-    private function getCertificationsReferee($jsCert)
-    {
-        if(is_null($jsCert)) {
-            return null;
-        }
+    return $certsRef;
 
-        return $jsCert['VolunteerCertificationsReferee'];
+}
 
+/**
+ * @param $jsCert
+ * @return string|null
+ */
+private
+function getCertificationsCoach($jsCert)
+{
+    if (is_null($jsCert)) {
+        return null;
     }
+
+    return $jsCert['VolunteerCertificationsCoach'];
+
+}
+
+/**
+ * @param $jsCert
+ * @return array|null
+ */
+private
+function getCertificationsSafeHaven($jsCert)
+{
+    if (is_null($jsCert)) {
+        return null;
+    }
+
+    $certsSH = [];
+    foreach ($jsCert->VolunteerCertificationsSafeHaven as $k => $cls) {
+        $certsSH[$k]['CertificationDesc'] = $cls->CertificationDesc;
+        $certsSH[$k]['CertificationDate'] = $this->phpDate($cls->CertificationDate);
+        $certsSH[$k]['UpdatedBy'] = $cls->UpdatedBy;
+    }
+
+    return $certsSH;
+
+}
 }
