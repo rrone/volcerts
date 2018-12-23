@@ -21,6 +21,10 @@ class ChromeHeadlessAction extends AbstractController
     /**
      * @var string
      */
+    private $urlDetails;
+    /**
+     * @var string
+     */
     private $urlCert;
     /**
      * @var string
@@ -42,6 +46,7 @@ class ChromeHeadlessAction extends AbstractController
         $this->projectDir = $projectDir;
         $this->appVersion = $appVersion;
 
+        $this->urlDetails = "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=";
         $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData?AYSOID=";
         $this->urlHome = "https://national.ayso.org/Volunteers/ViewCertification?UserName=";
 
@@ -80,12 +85,28 @@ class ChromeHeadlessAction extends AbstractController
                 $content[] = (array)$a;
             }
         }
+
+        $this->writeCSV($content);
+
         $html = $this->renderTable($content);
         $response = $this->render('view.html.twig', ['table' => $html]);
 
         return $response;
 
     }
+
+    private $hdrs = [
+        'AYSOID',
+        'FullName',
+        'Type',
+        'MY',
+        'SafeHaven',
+        'CDC',
+        'CertificationDesc',
+        'CertificationDate',
+        'SAR',
+    ];
+
 
     /**
      * @param array $arrIds
@@ -154,57 +175,102 @@ class ChromeHeadlessAction extends AbstractController
             return null;
         }
 
-        $certs = null;
+        $certs = [];
+        $certList = [];
         $nv = json_decode($nodeValue);
         if ($nv->ReturnStatus == 0) {
             $certDetails = $nv->VolunteerCertificationDetails;
             $certRef = $this->getCertificationsReferee($certDetails);
             if (!is_null($certRef)) {
                 foreach ($certRef as $cert) {
-                    $certs[] = $cert;
+                    $certList[] = $cert;
                 }
             }
 
             $certSH = $this->getCertificationsSafeHaven($certDetails);
             if (!is_null($certSH)) {
                 foreach ($certSH as $cert) {
-                    $certs[] = $cert;
+                    $certList[] = $cert;
                 }
             }
 
-            if (!is_null($certs)) {
-                foreach ($certs as $k => $cert) {
-                    $certs[$k]['VolunteerAYSOID'] = $certDetails->VolunteerAYSOID;
-                    $certs[$k]['VolunteerFullName'] = $certDetails->VolunteerFullName;
-                    $certs[$k]['VolunteerType'] = $certDetails->VolunteerType;
-                    $certs[$k]['VolunteerSAR'] = $certDetails->VolunteerSAR;
-                    $certs[$k]['VolunteerMembershipYear'] = $certDetails->VolunteerMembershipYear;
-                    $certs[$k]['CertificationDesc'] = $cert['CertificationDesc'];
-                    $certs[$k]['CertificationDate'] = $cert['CertificationDate'];
-                    $certs[$k]['UpdatedBy'] = $cert['UpdatedBy'];
+            if (!is_null($certList)) {
+                $newCert = [];
+                foreach ($certList as $k => $cert) {
+                    $newCert[$k]['AYSOID'] = $certDetails->VolunteerAYSOID;
+                    $fullName = explode(",", $certDetails->VolunteerFullName);
+                    $newCert[$k]['FullName'] = ucwords(strtolower($fullName[1].' '.$fullName[0]));
+                    $newCert[$k]['Type'] = $certDetails->VolunteerType;
+                    $newCert[$k]['SAR'] = $certDetails->VolunteerSAR;
+                    $newCert[$k]['MY'] = $certDetails->VolunteerMembershipYear;
+                    if (isset($cert['SafeHaven'])) {
+                        $newCert[$k]['SafeHaven'] = $cert['SafeHaven'];
+                    } else {
+                        $newCert[$k]['SafeHaven'] = '';
+                    }
+                    if (isset($cert['CDC'])) {
+                        $newCert[$k]['CDC'] = $cert['CDC'];
+                    } else {
+                        $newCert[$k]['CDC'] = '';
+                    }
+                    if (isset($cert['CertificationDesc'])) {
+                        $newCert[$k]['CertificationDesc'] = $cert['CertificationDesc'];
+                    } else {
+                        $newCert[$k]['CertificationDesc'] = '';
+                    }
+                    if (isset($cert['CertDate'])) {
+                        $newCert[$k]['CertDate'] = $cert['CertDate'];
+                    } else {
+                        $newCert[$k]['CertDate'] = '';
+                    }
+                }
+
+                foreach ($newCert as $k => $cert) {
+                    if (!in_array($cert, $certs)) {
+                        array_push($certs, $cert);
+                    }
                 }
             } else {
-                $certs[0]['VolunteerAYSOID'] = $certDetails->VolunteerAYSOID;
-                $certs[0]['VolunteerFullName'] = $certDetails->VolunteerFullName;
-                $certs[0]['VolunteerType'] = $certDetails->VolunteerType;
-                $certs[0]['VolunteerSAR'] = $certDetails->VolunteerSAR;
-                $certs[0]['VolunteerMembershipYear'] = $certDetails->VolunteerMembershipYear;
+                $certs[0]['AYSOID'] = $certDetails->VolunteerAYSOID;
+                $fullName = explode(",", $certDetails->VolunteerFullName);
+                $certs[0]['FullName'] = ucwords(strtolower($fullName[1].' '.$fullName[0]));
+                $certs[0]['Type'] = $certDetails->VolunteerType;
+                $certs[0]['SAR'] = $certDetails->VolunteerSAR;
+                $certs[0]['MY'] = $certDetails->VolunteerMembershipYear;
+                $certs[0]['SafeHaven'] = '';
+                $certs[0]['CDC'] = '';
                 $certs[0]['CertificationDesc'] = '';
-                $certs[0]['CertificationDate'] = '';
-                $certs[0]['UpdatedBy'] = '';
+                $certs[0]['CertDate'] = '';
             }
         } else {
-            $certs[0]['VolunteerAYSOID'] = $id;
-            $certs[0]['VolunteerFullName'] = '***'.$nv->ReturnMessage.'***';
-            $certs[0]['VolunteerType'] = '';
-            $certs[0]['VolunteerSAR'] = '';
-            $certs[0]['VolunteerMembershipYear'] = '';
+            $certs[0]['AYSOID'] = $id;
+            $certs[0]['FullName'] = '***'.$nv->ReturnMessage.'***';
+            $certs[0]['Type'] = '';
+            $certs[0]['SAR'] = '';
+            $certs[0]['MY'] = '';
+            $certs[0]['SafeHaven'] = '';
+            $certs[0]['CDC'] = '';
             $certs[0]['CertificationDesc'] = '';
-            $certs[0]['CertificationDate'] = '';
-            $certs[0]['UpdatedBy'] = '';
+            $certs[0]['CertDate'] = '';
         }
 
         return $certs;
+    }
+
+
+    private function writeCSV($content)
+    {
+        $filename = dirname(dirname(__DIR__)).'/var/downloads/results.csv';
+        $file = fopen($filename, "w");
+
+        fputcsv($file, $this->hdrs);
+
+        foreach ($content as $line) {
+            fputcsv($file, $line);
+        }
+
+        fclose($file);
+
     }
 
     /**
@@ -217,21 +283,10 @@ class ChromeHeadlessAction extends AbstractController
             return $content;
         }
 
-        $hdrs = [
-            'VolunteerAYSOID',
-            'VolunteerFullName',
-            'VolunteerType',
-            'VolunteerSAR',
-            'VolunteerMembershipYear',
-            'CertificationDesc',
-            'CertificationDate',
-            'UpdatedBy',
-        ];
-
         $html = <<<EOD
 <table>
 EOD;
-        foreach ($hdrs as $hdr) {
+        foreach ($this->hdrs as $hdr) {
             $html .= <<<EOD
 <th>$hdr</th>
 EOD;
@@ -242,21 +297,22 @@ EOD;
 <tr>
 EOD;
             $html .= <<<EOD
-<td>{$cert['VolunteerAYSOID']}</td>
-<td>{$cert['VolunteerFullName']}</td>
-<td>{$cert['VolunteerType']}</td>
-<td>{$cert['VolunteerSAR']}</td>
-<td>{$cert['VolunteerMembershipYear']}</td>
+<td>{$cert['AYSOID']}</td>
+<td>{$cert['FullName']}</td>
+<td>{$cert['Type']}</td>
+<td>{$cert['MY']}</td>
+<td>{$cert['SafeHaven']}</td>
+<td>{$cert['CDC']}</td>
 <td>{$cert['CertificationDesc']}</td>
-<td>{$cert['CertificationDate']}</td>
-<td>{$cert['UpdatedBy']}</td>
+<td>{$cert['CertDate']}</td>
+<td>{$cert['SAR']}</td>
 EOD;
-        $html .= <<<EOD
+            $html .= <<<EOD
 </tr>
 EOD;
-    }
+        }
 
-$html .= <<<EOD
+        $html .= <<<EOD
 </table>      
 <div class="footer">
 <br />
@@ -265,79 +321,87 @@ $html .= <<<EOD
 </div>  
 EOD;
 
-return $html;
-}
-
-/**
- * @param string $certDate
- * @return false|string
- */
-private
-function phpDate(string $certDate)
-{
-    $ts = preg_replace('/[^0-9]/', '', $certDate);
-    $date = date("Y-m-d", $ts / 1000);
-
-    return $date;
-
-}
-
-/**
- * @param \stdClass $jsCert
- * @return array|null
- */
-private
-function getCertificationsReferee(\stdClass $jsCert)
-{
-    if (empty($jsCert)) {
-        return null;
+        return $html;
     }
 
-    $certsRef = [];
-    foreach ($jsCert->VolunteerCertificationsReferee as $k => $cls) {
-        $certsRef[$k]['CertificationDesc'] = $cls->CertificationDesc;
-        $certsRef[$k]['CertificationDate'] = $this->phpDate($cls->CertificationDate);
-        $certsRef[$k]['UpdatedBy'] = $cls->UpdatedBy;
+    /**
+     * @param string $certDate
+     * @return false|string
+     */
+    private
+    function phpDate(
+        string $certDate
+    ) {
+        $ts = preg_replace('/[^0-9]/', '', $certDate);
+        $date = date("Y-m-d", $ts / 1000);
+
+        return $date;
+
     }
 
-    return $certsRef;
+    /**
+     * @param \stdClass $jsCert
+     * @return array|null
+     */
+    private
+    function getCertificationsReferee(
+        \stdClass $jsCert
+    ) {
+        if (empty($jsCert)) {
+            return null;
+        }
 
-}
+        $certsRef = [];
+        foreach ($jsCert->VolunteerCertificationsReferee as $k => $cls) {
+            $certsRef[$k]['CertificationDesc'] = $cls->CertificationDesc;
+            $certsRef[$k]['CertDate'] = $this->phpDate($cls->CertificationDate);
+            $certsRef[$k]['UpdatedBy'] = $cls->UpdatedBy;
+        }
 
-/**
- * @param $jsCert
- * @return string|null
- */
-private
-function getCertificationsCoach($jsCert)
-{
-    if (is_null($jsCert)) {
-        return null;
+        return $certsRef;
+
     }
 
-    return $jsCert['VolunteerCertificationsCoach'];
+///**
+// * @param $jsCert
+// * @return string|null
+// */
+//private
+//function getCertificationsCoach($jsCert)
+//{
+//    if (is_null($jsCert)) {
+//        return null;
+//    }
+//
+//    return $jsCert['VolunteerCertificationsCoach'];
+//
+//}
 
-}
+    /**
+     * @param $jsCert
+     * @return array|null
+     */
+    private
+    function getCertificationsSafeHaven(
+        $jsCert
+    ) {
+        if (is_null($jsCert)) {
+            return null;
+        }
 
-/**
- * @param $jsCert
- * @return array|null
- */
-private
-function getCertificationsSafeHaven($jsCert)
-{
-    if (is_null($jsCert)) {
-        return null;
+        $certsSH = [];
+        foreach ($jsCert->VolunteerCertificationsSafeHaven as $k => $cls) {
+            if (strpos($cls->CertificationDesc, 'CDC')) {
+                $certsSH[$k]['CDC'] = $this->phpDate($cls->CertificationDate);
+                $certsSH[$k]['CertificationDesc'] = $cls->CertificationDesc;
+            }
+            if (strpos($cls->CertificationDesc, 'Safe Haven')) {
+                $certsSH[$k]['SafeHaven'] = $this->phpDate($cls->CertificationDate);
+                $certsSH[$k]['CertificationDesc'] = $cls->CertificationDesc;
+            }
+        }
+
+        return $certsSH;
+
     }
-
-    $certsSH = [];
-    foreach ($jsCert->VolunteerCertificationsSafeHaven as $k => $cls) {
-        $certsSH[$k]['CertificationDesc'] = $cls->CertificationDesc;
-        $certsSH[$k]['CertificationDate'] = $this->phpDate($cls->CertificationDate);
-        $certsSH[$k]['UpdatedBy'] = $cls->UpdatedBy;
-    }
-
-    return $certsSH;
-
-}
 }
