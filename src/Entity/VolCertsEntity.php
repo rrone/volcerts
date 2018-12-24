@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Entity;
 
 use HeadlessChromium\Browser;
@@ -60,12 +61,12 @@ class VolCertsEntity
         'AYSOID',
         'FullName',
         'Type',
+        'SAR',
         'MY',
         'SafeHaven',
         'CDC',
         'CertificationDesc',
         'CertificationDate',
-        'SAR',
     ];
 
 
@@ -143,6 +144,13 @@ class VolCertsEntity
             $certRef = $this->getCertificationsReferee($certDetails);
             if (!is_null($certRef)) {
                 foreach ($certRef as $cert) {
+                    $certList[] = $cert;
+                }
+            }
+
+            $certInstructor = $this->getCertificationsInstructor($certDetails);
+            if (!is_null($certInstructor)) {
+                foreach ($certInstructor as $cert) {
                     $certList[] = $cert;
                 }
             }
@@ -291,25 +299,20 @@ EOD;
      * @param string $certDate
      * @return false|string
      */
-    private
-    function phpDate(
-        string $certDate
-    ) {
+    private function phpDate(string $certDate)
+    {
         $ts = preg_replace('/[^0-9]/', '', $certDate);
         $date = date("Y-m-d", $ts / 1000);
 
         return $date;
-
     }
 
     /**
      * @param \stdClass $jsCert
      * @return array|null
      */
-    private
-    function getCertificationsReferee(
-        \stdClass $jsCert
-    ) {
+    private function getCertificationsReferee(\stdClass $jsCert)
+    {
         if (empty($jsCert)) {
             return null;
         }
@@ -322,7 +325,28 @@ EOD;
         }
 
         return $certsRef;
+    }
 
+    /**
+     * @param \stdClass $jsCert
+     * @return array|null
+     */
+    private function getCertificationsInstructor(\stdClass $jsCert)
+    {
+        if (empty($jsCert)) {
+            return null;
+        }
+
+        $certsRef = [];
+        foreach ($jsCert->VolunteerCertificationsInstructor as $k => $cls) {
+            if (!is_bool(strpos($cls->CertificationDesc, 'Referee Instructor'))) {
+                    $certsRef[$k]['CertificationDesc'] = $cls->CertificationDesc;
+                    $certsRef[$k]['CertDate'] = $this->phpDate($cls->CertificationDate);
+                    $certsRef[$k]['UpdatedBy'] = $cls->UpdatedBy;
+            }
+        }
+
+        return $certsRef;
     }
 
 ///**
@@ -344,10 +368,8 @@ EOD;
      * @param $jsCert
      * @return array|null
      */
-    private
-    function getCertificationsSafeHaven(
-        $jsCert
-    ) {
+    private function getCertificationsSafeHaven($jsCert)
+    {
         if (is_null($jsCert)) {
             return null;
         }
@@ -365,6 +387,5 @@ EOD;
         }
 
         return $certsSH;
-
     }
 }
