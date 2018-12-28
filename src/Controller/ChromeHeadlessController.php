@@ -9,7 +9,7 @@ use App\Entity\VolCertsEntity;
  * Class ChromeHeadlessAction
  * @package App\Controller
  */
-class ChromeHeadlessAction extends AbstractController
+class ChromeHeadlessController extends AbstractController
 {
     /**
      * @var VolCertsEntity
@@ -38,14 +38,7 @@ class ChromeHeadlessAction extends AbstractController
      */
     public function index()
     {
-        $vs = $this->volCertsEntity->retrieveVolCertData();
-
-        $content = [];
-        foreach ($vs as $k => $v) {
-            foreach ($v as $j => $a) {
-                $content[] = (array)$a;
-            }
-        }
+        $content = $this->volCertsEntity->retrieveVolCertData();
 
         $this->volCertsEntity->writeCSV($content);
 
