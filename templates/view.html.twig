@@ -20,8 +20,40 @@
     }
 {% endblock %}
 {% block body %}
-{{  table | raw }}
+    {{ table | raw }}
 {% endblock %}
 {% block javascripts %}
+    {#function updateProgress() {#}
+    {#if (stopProgressCheck) return;#}
+    {#var webMethod = progressServiceURL + "/GetProgress";#}
+    {#var parameters = "{'guid':'" + guid + "'}"; //passing the guid value#}
 
+    {#$.ajax({#}
+    {#type: "POST",#}
+    {#url: webMethod,#}
+    {#data: parameters,#}
+    {#contentType: "application/json; charset=utf-8",#}
+    {#dataType: "json",#}
+    {#success: function (msg) {#}
+    {#if (msg.d != "NONE") { //add any necessary checks#}
+
+    {#var current_progress = 0;#}
+    {#var interval = setInterval(function() {#}
+    {#current_progress += 10;#}
+    {#$("#dynamic")#}
+    {#.css("width", current_progress + "%")#}
+    {#.attr("aria-valuenow", current_progress)#}
+    {#.text(current_progress + "% Complete");#}
+    {#if (current_progress >= 100)#}
+    {#clearInterval(interval);#}
+    {#}, 1000);#}
+
+    {#statusTimerID = setTimeout(updateProgress, 100); //set time interval as required#}
+    {#}#}
+    {#},#}
+    {#error: function (x, t, m) {#}
+    {#alert(m);#}
+    {#}#}
+    {#});#}
+    {#}#}
 {% endblock %}

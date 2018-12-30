@@ -42,7 +42,7 @@ class ChromeHeadlessController extends AbstractController
 
         $this->volCertsEntity->writeCSV($content);
 
-        $html = $this->volCertsEntity->renderTable($content);
+        $html = $this->volCertsEntity->renderView($content);
         $response = $this->render('view.html.twig', ['table' => $html]);
 
         return $response;

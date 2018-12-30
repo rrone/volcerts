@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use HeadlessChromium\Browser;
 use HeadlessChromium\BrowserFactory;
+use HeadlessChromium\Page;
 use Symfony\Component\DomCrawler\Crawler;
 
 class VolCertsEntity
@@ -13,10 +14,20 @@ class VolCertsEntity
      */
     private $appVersion;
 
-//    /**
-//     * @var string
-//     */
-//    private $urlDetails;
+    /**
+     * @var BrowserFactory
+     */
+    private $browserFactory;
+
+    /**
+     * @var Browser
+     */
+    private $browser;
+
+    /**
+     * @var Page
+     */
+    private $page;
 
     /**
      * @var string
@@ -24,9 +35,14 @@ class VolCertsEntity
     private $urlCert;
 
     /**
-     * @var array
+     * @var string
      */
-    private $arrIds;
+    private $filename;
+
+    /**
+     * @const integer
+     */
+    CONST NoIDS = 100;
 
     /**
      * VolCertsEntity constructor.
@@ -37,22 +53,19 @@ class VolCertsEntity
     {
         $this->appVersion = $appVersion;
 
+        $this->browserFactory = new BrowserFactory('google-chrome');
+
+        set_time_limit(0);
+
 //        $this->urlDetails = "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=";
         $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData?AYSOID=";
 
-        $this->arrIds = [];
-        $file = $projectDir.'/var/csv/Book1.csv';
-        $fileData = fopen($file, 'r');
-        while ($row = fgets($fileData)) {
-            $row = (int)$row;
-            if ($row > 0) {
-                $this->arrIds[] = $row;
-            };
-        }
-
-//        $this->arrIds = array_slice($this->arrIds, 0, 250);
+        $this->filename = $projectDir.'/var/csv/Book1.csv';
     }
 
+    /**
+     * @var array
+     */
     private $hdrs = [
         'AYSOID',
         'FullName',
@@ -67,9 +80,12 @@ class VolCertsEntity
         'InstCertDate',
         'AssessorCertificationDesc',
         'AssessorCertDate',
-        'DataSource'
+        'DataSource',
     ];
 
+    /**
+     * @var array
+     */
     private $refMeta = [
         'U8 Official',
         'Assistant Referee',
@@ -85,6 +101,9 @@ class VolCertsEntity
         'National Referee',
     ];
 
+    /**
+     * @var array
+     */
     private $instMeta = [
         'Referee Instructor Course',
         'Regional Referee Instructor',
@@ -95,7 +114,10 @@ class VolCertsEntity
         'National Referee Instructor',
     ];
 
-    private $assMeta = [
+    /**
+     * @var array
+     */
+    private $asseMeta = [
         'Referee Assessor Course',
         'Referee Assessor',
         'National Referee Assessor Course',
@@ -103,7 +125,29 @@ class VolCertsEntity
     ];
 
     /**
+     * @param $filename
      * @return array
+     */
+    private function loadFile($filename)
+    {
+        $arrIds = [];
+
+        $fileData = fopen($filename, 'r');
+        while ($row = fgets($fileData)) {
+            $row = (int)$row;
+            if ($row > 0) {
+                $arrIds[] = $row;
+            };
+        }
+
+        $arrIds = array_slice($arrIds,0,self::NoIDS);
+
+        return $arrIds;
+    }
+
+    /**
+     * @return array
+     * @throws \Exception
      * @throws \HeadlessChromium\Exception\CommunicationException
      * @throws \HeadlessChromium\Exception\CommunicationException\CannotReadResponse
      * @throws \HeadlessChromium\Exception\CommunicationException\InvalidResponse
@@ -115,38 +159,53 @@ class VolCertsEntity
      */
     public function retrieveVolCertData()
     {
-        $browserFactory = new BrowserFactory('google-chrome');
-
-        // starts headless chrome
-        /* @var Browser */
-        $browser = $browserFactory->createBrowser([
-            'startupTimeout' => 60
-        ]);
-
-        // creates a new page and navigate to an url
-        $page = $browser->createPage();
-
-        $k = 0;
+        $arrIds = $this->loadFile($this->filename);
         $volCerts = [];
-        foreach ($this->arrIds as $id) {
-            $page->navigate($this->urlCert.$id)->waitForNavigation();
+        $this->page = $this->newPage();
+        foreach ($arrIds as $id) {
+            $this->page->navigate($this->urlCert.$id)->waitForNavigation();
             $volCerts[$id] = $this->parseCertData(
                 $id,
-                $page->evaluate('document.documentElement.outerHTML')
+                $this->page->evaluate('document.documentElement.outerHTML')
                     ->getReturnValue()
             );
-            $k += 1;
-
-            //URL stalls after 200 calls without a break
-            if($k % 200){
-                sleep(10);
-            }
         }
 
-        // bye
-        $browser->close();
+        $this->browserClose();
 
         return $volCerts;
+    }
+
+    /**
+     * @param array $options
+     * @return Page
+     * @throws \Exception
+     * @throws \HeadlessChromium\Exception\CommunicationException
+     * @throws \HeadlessChromium\Exception\NoResponseAvailable
+     * @throws \HeadlessChromium\Exception\OperationTimedOut
+     */
+    private function newPage($options = ['startupTimeout' => 60])
+    {
+        $this->browserClose();
+
+        /* @var Browser */
+        $this->browser = $this->browserFactory->createBrowser($options);
+
+        // creates a new page and navigate to an url
+
+        return $this->browser->createPage();
+    }
+
+    /**
+     * @throws \Exception
+     */
+    private function browserClose()
+    {
+        if (!is_null($this->browser)) {
+            $this->browser->close();
+        }
+
+        return;
     }
 
     /**
@@ -162,6 +221,7 @@ class VolCertsEntity
         if (!is_null($nodeValue)) {
             $nv = $this->parseNodeValue($id, $nodeValue);
             $nv['DataSource'] = 'e3';
+
             return $nv;
         } else {
             return '{}';
@@ -257,7 +317,7 @@ class VolCertsEntity
             } else {
                 $cert['AYSOID'] = $certDetails->VolunteerAYSOID;
                 $fullName = explode(",", $certDetails->VolunteerFullName);
-                $cert['FullName'] = ucwords(strtolower($fullName[1].' '.$fullName));
+                $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName)));
                 $cert['Type'] = $certDetails->VolunteerType;
                 $cert['SAR'] = $certDetails->VolunteerSAR;
                 $cert['MY'] = $certDetails->VolunteerMembershipYear;
@@ -312,7 +372,7 @@ class VolCertsEntity
      * @param array $content
      * @return array|string
      */
-    public function renderTable(array $content)
+    public function renderView(array $content)
     {
         if (is_null($content)) {
             return $content;
@@ -352,8 +412,11 @@ EOD;
 EOD;
         }
 
+        $createDate = date('Y:m:d H:i') . 'UCT';
         $html .= <<<EOD
-</table>      
+</table> 
+
+<p class="createdOn">Created at $createDate</p>     
 <div class="footer">
 <br />
 <hr>
@@ -392,9 +455,9 @@ EOD;
         $certs['AssessorCertDate'] = '';
         foreach ($jsCert->VolunteerCertificationsReferee as $k => $cls) {
             if (!is_bool(strpos($cls->CertificationDesc, 'Referee Assessor'))) {
-                if (array_search($cls->CertificationDesc, $this->assMeta) > array_search(
+                if (array_search($cls->CertificationDesc, $this->asseMeta) > array_search(
                         $certs['AssessorCertificationDesc'],
-                        $this->assMeta
+                        $this->asseMeta
                     )) {
                     $certs['AssessorCertificationDesc'] = $cls->CertificationDesc;
                     $certs['AssessorCertDate'] = $this->phpDate($cls->CertificationDate);
