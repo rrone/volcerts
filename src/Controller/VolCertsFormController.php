@@ -2,19 +2,12 @@
 
 namespace App\Controller;
 
-
-use App\Entity\VolCertsForm;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 
 
 class VolCertsFormController extends AbstractController
 {
-    /**
-     * @var $volCertsForm
-     */
-    private $volCertsForm;
-
     /**
      * @var string
      */
@@ -26,14 +19,11 @@ class VolCertsFormController extends AbstractController
     private $projectDir;
     /**
      * VolCertsFormController constructor.
-     * @param VolCertsForm $volCertsForm
      * @param string $appVersion
      * @param string $projectDir
      */
-    public function __construct(VolCertsForm $volCertsForm, string $appVersion, string $projectDir)
+    public function __construct(string $appVersion, string $projectDir)
     {
-        $this->volCertsForm = $volCertsForm;
-
         $this->appVersion = $appVersion;
 
         $this->projectDir = $projectDir;

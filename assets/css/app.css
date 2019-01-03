@@ -7,6 +7,6 @@ body {
 }
 
 .footer p {
-    font-size: smaller;
+    font-size: smaller !important;
     font-style: italic;
 }

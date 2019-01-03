@@ -15,10 +15,6 @@
             margin: 1rem auto;
             font-size: 1rem;
         }
-
-        .custom-file-control.selected:lang(en)::after {
-            content: "" !important;
-        }
     </style>
 {% endblock %}
 {% block content %}
@@ -29,7 +25,7 @@
         2 and greater.
     </legend>
     <hr>
-    <form>
+    <form action="https://volcerts.vhx.cloud/ch">
         <div class="custom-file">
             <input type="file" class="custom-file-input" id="customFile">
             <label class="custom-file-label" for="customFile">Choose file</label>
