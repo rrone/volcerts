@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Entity\VolCertsEntity;
+use Symfony\Component\Routing\Annotation\Route;
 
 /**
  * Class ChromeHeadlessAction
@@ -17,15 +18,23 @@ class ChromeHeadlessController extends AbstractController
     private $volCertsEntity;
 
     /**
-     * ChromeHeadlessAction constructor.
-     * @param $volCertsEntity
+     * @var string
      */
-    public function __construct(VolCertsEntity $volCertsEntity)
+    private $appVersion;
+
+    /**
+     * ChromeHeadlessController constructor.
+     * @param VolCertsEntity $volCertsEntity
+     * @param string $appVersion
+     */
+    public function __construct(VolCertsEntity $volCertsEntity, string $appVersion)
     {
         $this->volCertsEntity = $volCertsEntity;
+        $this->appVersion = $appVersion;
     }
 
     /**
+     * @Route("/ch", name="app_hch")
      * @return \Symfony\Component\HttpFoundation\Response
      * @throws \HeadlessChromium\Exception\CommunicationException
      * @throws \HeadlessChromium\Exception\CommunicationException\CannotReadResponse
@@ -39,11 +48,11 @@ class ChromeHeadlessController extends AbstractController
     public function index()
     {
         $content = $this->volCertsEntity->retrieveVolCertData();
-
-        $this->volCertsEntity->writeCSV($content);
-
         $html = $this->volCertsEntity->renderView($content);
-        $response = $this->render('view.html.twig', ['table' => $html]);
+        $response = $this->render('view.html.twig', [
+            'table' => $html,
+            'appVersion' => $this->appVersion
+        ]);
 
         return $response;
 

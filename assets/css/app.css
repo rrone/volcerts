@@ -1,0 +1,12 @@
+body {
+    background-color: lightgray;
+}
+
+.footer {
+    text-align: center;
+}
+
+.footer p {
+    font-size: smaller;
+    font-style: italic;
+}

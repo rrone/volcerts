@@ -1,0 +1,52 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Volunteer Certs{% endblock %}
+{% block link %}
+{% endblock %}
+{% block stylesheets %}
+    <style>
+        form {
+            width: 80%;
+            margin: 0 auto;
+        }
+
+        legend {
+            width: 80%;
+            margin: 1rem auto;
+            font-size: 1rem;
+        }
+
+        .custom-file-control.selected:lang(en)::after {
+            content: "" !important;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <legend>
+        Select a CSV file to upload.
+        <br>
+        First column must be labeled in row 1 and contain 8 or 9 digit AYSO IDs in rows
+        2 and greater.
+    </legend>
+    <hr>
+    <form>
+        <div class="custom-file">
+            <input type="file" class="custom-file-input" id="customFile">
+            <label class="custom-file-label" for="customFile">Choose file</label>
+        </div>
+
+        <div class="mt-3">
+            <button type="submit" class="btn btn-primary">Submit</button>
+        </div>
+    </form>
+{% endblock %}
+{% block javascripts %}
+    <script src="https://cdn.jsdelivr.net/npm/bs-custom-file-input/dist/bs-custom-file-input.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            bsCustomFileInput.init()
+        })
+
+    </script>
+
+{% endblock %}

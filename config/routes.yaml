@@ -1,3 +1,0 @@
-app_index:
-    path: /
-    controller: App\Controller\ChromeHeadlessController::index

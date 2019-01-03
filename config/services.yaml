@@ -5,7 +5,9 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
-    app.version: '2018.12.30.30'
+    app.version: '2018.01.03.00'
+
+    csv_directory: '%kernel.project_dir%/var/uploads'
 
 services:
     # default configuration for services in *this* file
@@ -25,10 +27,20 @@ services:
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
+        bind:
+            $appVersion: '%app.version%'
+            $projectDir: '%kernel.project_dir%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
     App\Entity\VolCertsEntity:
-        bind:
+        arguments:
             $projectDir: '%kernel.project_dir%'
-            $appVersion: '%app.version%'
+
+    App\Service\FileUploader:
+        arguments:
+            $targetDirectory: '%csv_directory%'
+
+    App\Entity\VolCertsForm:
+
+

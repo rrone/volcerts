@@ -10,11 +10,6 @@ use Symfony\Component\DomCrawler\Crawler;
 class VolCertsEntity
 {
     /**
-     * @var string
-     */
-    private $appVersion;
-
-    /**
      * @var BrowserFactory
      */
     private $browserFactory;
@@ -42,17 +37,14 @@ class VolCertsEntity
     /**
      * @const integer
      */
-    CONST NoIDS = 100;
+    CONST NoIDS = 20;
 
     /**
      * VolCertsEntity constructor.
-     * @param $projectDir
-     * @param $appVersion
+     * @param string $projectDir
      */
-    public function __construct($projectDir, $appVersion)
+    public function __construct($projectDir)
     {
-        $this->appVersion = $appVersion;
-
         $this->browserFactory = new BrowserFactory('google-chrome');
 
         set_time_limit(0);
@@ -72,8 +64,8 @@ class VolCertsEntity
         'Type',
         'SAR',
         'MY',
-        'SafeHaven',
-        'CDC',
+        'SafeHavenDate',
+        'CDCDate',
         'RefCertificationDesc',
         'RefCertDate',
         'InstCertificationDesc',
@@ -353,20 +345,6 @@ class VolCertsEntity
     /**
      * @param array $content
      */
-    public function writeCSV(array $content)
-    {
-        $filename = dirname(dirname(__DIR__)).'/var/downloads/results.csv';
-        $file = fopen($filename, "w");
-
-        fputcsv($file, $this->hdrs);
-
-        foreach ($content as $line) {
-            fputcsv($file, $line);
-        }
-
-        fclose($file);
-
-    }
 
     /**
      * @param array $content
@@ -379,13 +357,21 @@ class VolCertsEntity
         }
 
         $html = <<<EOD
-<table>
+<table id="vol_certs" class="display">
+<thead>
+<tr>
 EOD;
         foreach ($this->hdrs as $hdr) {
             $html .= <<<EOD
 <th>$hdr</th>
 EOD;
         }
+
+        $html .= <<<EOD
+</tr>
+</thead>
+<tbody>
+EOD;
 
         foreach ($content as $i => $cert) {
             $html .= <<<EOD
@@ -412,16 +398,12 @@ EOD;
 EOD;
         }
 
-        $createDate = date('Y:m:d H:i') . 'UCT';
+        $createDate = date('d M Y') . ' at ' . date('H:i') . ' UCT';
         $html .= <<<EOD
+</tbody>
 </table> 
 
 <p class="createdOn">Created at $createDate</p>     
-<div class="footer">
-<br />
-<hr>
-<p>Version $this->appVersion</p>
-</div>  
 EOD;
 
         return $html;
