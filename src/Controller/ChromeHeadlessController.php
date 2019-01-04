@@ -73,6 +73,12 @@ class ChromeHeadlessController extends AbstractController
         }
 
         $file = $request->files->get('csv_file');
+        if(is_null($file)){
+            $response = $this->redirect('/');
+
+            return $response;
+        }
+
         $this->fileUploader->upload($file);
 
 

@@ -6,6 +6,8 @@ use HeadlessChromium\Browser;
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Page;
 use Symfony\Component\DomCrawler\Crawler;
+use DateTime;
+use DateTimeZone;
 
 class VolCertsTable
 {
@@ -37,7 +39,12 @@ class VolCertsTable
     /**
      * @const integer
      */
-    CONST NoIDS = 2000;
+    CONST MaxIDS = 2000;
+
+    /**
+     * @const string
+     */
+    CONST TZ = 'PST';
 
     /**
      * VolCertsEntity constructor.
@@ -62,8 +69,8 @@ class VolCertsTable
         'AYSOID',
         'FullName',
         'Type',
-        'SAR',
         'MY',
+        'SAR',
         'SafeHavenDate',
         'CDCDate',
         'RefCertificationDesc',
@@ -132,7 +139,7 @@ class VolCertsTable
             };
         }
 
-        $arrIds = array_slice($arrIds,0,self::NoIDS);
+        $arrIds = array_slice($arrIds,0,self::MaxIDS);
 
         return $arrIds;
     }
@@ -264,8 +271,8 @@ class VolCertsTable
                 $fullName = explode(",", $certDetails->VolunteerFullName);
                 $cert['FullName'] = ucwords(strtolower($fullName[1].' '.$fullName[0]));
                 $cert['Type'] = $certDetails->VolunteerType;
-                $cert['SAR'] = $certDetails->VolunteerSAR;
                 $cert['MY'] = $certDetails->VolunteerMembershipYear;
+                $cert['SAR'] = $certDetails->VolunteerSAR;
                 if (isset($c['SafeHaven'])) {
                     $cert['SafeHaven'] = $c['SafeHaven'];
                 } else {
@@ -311,8 +318,8 @@ class VolCertsTable
                 $fullName = explode(",", $certDetails->VolunteerFullName);
                 $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName)));
                 $cert['Type'] = $certDetails->VolunteerType;
-                $cert['SAR'] = $certDetails->VolunteerSAR;
                 $cert['MY'] = $certDetails->VolunteerMembershipYear;
+                $cert['SAR'] = $certDetails->VolunteerSAR;
                 $cert['SafeHaven'] = '';
                 $cert['CDC'] = '';
                 $cert['RefCertificationDesc'] = '';
@@ -326,8 +333,8 @@ class VolCertsTable
             $cert['AYSOID'] = $id;
             $cert['FullName'] = '***'.$nv->ReturnMessage.'***';
             $cert['Type'] = '';
-            $cert['SAR'] = '';
             $cert['MY'] = '';
+            $cert['SAR'] = '';
             $cert['SafeHaven'] = '';
             $cert['CDC'] = '';
             $cert['RefCertificationDesc'] = '';
@@ -344,11 +351,8 @@ class VolCertsTable
 
     /**
      * @param array $content
-     */
-
-    /**
-     * @param array $content
      * @return array|string
+     * @throws \Exception
      */
     public function renderView(array $content)
     {
@@ -398,12 +402,12 @@ EOD;
 EOD;
         }
 
-        $createDate = date('d M Y') . ' at ' . date('H:i') . ' UCT';
+        $createDate = $this->getTimestamp() . ' ' . self::TZ;
         $html .= <<<EOD
 </tbody>
 </table> 
 
-<p class="createdOn">Created at $createDate</p>     
+<p class="createdOn">Created at $createDate </p>     
 EOD;
 
         return $html;
@@ -527,4 +531,19 @@ EOD;
 
         return $certs;
     }
+
+    /**
+     * @return string
+     * @throws \Exception
+     */
+    protected function getTimestamp()
+    {
+        $utc = date("Y-m-d H:i:s");;
+
+        $ts = new DateTime($utc, new DateTimeZone('UTC'));
+        $ts->setTimezone(new DateTimeZone(self::TZ));
+
+        return $ts->format('Y-m-d H:i');
+    }
+
 }
