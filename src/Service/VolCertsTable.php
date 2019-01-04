@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Entity;
+namespace App\Service;
 
 use HeadlessChromium\Browser;
 use HeadlessChromium\BrowserFactory;
 use HeadlessChromium\Page;
 use Symfony\Component\DomCrawler\Crawler;
 
-class VolCertsEntity
+class VolCertsTable
 {
     /**
      * @var BrowserFactory
@@ -37,7 +37,7 @@ class VolCertsEntity
     /**
      * @const integer
      */
-    CONST NoIDS = 20;
+    CONST NoIDS = 2000;
 
     /**
      * VolCertsEntity constructor.
@@ -52,7 +52,7 @@ class VolCertsEntity
 //        $this->urlDetails = "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=";
         $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData?AYSOID=";
 
-        $this->filename = $projectDir.'/var/csv/Book1.csv';
+        $this->filename = $projectDir.'/var/uploads/csv.csv';
     }
 
     /**

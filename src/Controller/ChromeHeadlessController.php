@@ -2,40 +2,56 @@
 
 namespace App\Controller;
 
+use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Entity\VolCertsEntity;
+use App\Service\VolCertsTable;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\RequestStack;
 
-/**
- * Class ChromeHeadlessAction
- * @package App\Controller
- */
 class ChromeHeadlessController extends AbstractController
 {
     /**
-     * @var VolCertsEntity
+     * @var VolCertsTable $volCertsEntity
      */
     private $volCertsEntity;
 
     /**
-     * @var string
+     * @var string $appVersion
      */
     private $appVersion;
 
+    /** @var FileUploader $fileUploader */
+    private $fileUploader;
+
     /**
-     * ChromeHeadlessController constructor.
-     * @param VolCertsEntity $volCertsEntity
-     * @param string $appVersion
+     * @var RequestStack $reqestStack
      */
-    public function __construct(VolCertsEntity $volCertsEntity, string $appVersion)
+    private $requestStack;
+
+    /**
+     * ChromeHeadlessController constructor
+     * @param VolCertsTable $volCertsEntity
+     * @param string $appVersion
+     * @param FileUploader $fileUploader
+     * @param RequestStack $requestStack
+     */
+    public function __construct(
+        VolCertsTable $volCertsEntity,
+        string $appVersion,
+        FileUploader $fileUploader,
+        RequestStack $requestStack
+        )
     {
         $this->volCertsEntity = $volCertsEntity;
         $this->appVersion = $appVersion;
+        $this->fileUploader = $fileUploader;
+        $this->requestStack = $requestStack;
     }
 
     /**
-     * @Route("/ch", name="app_hch")
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @Route("/ch", name="app_ch")
+     * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
      * @throws \HeadlessChromium\Exception\CommunicationException
      * @throws \HeadlessChromium\Exception\CommunicationException\CannotReadResponse
      * @throws \HeadlessChromium\Exception\CommunicationException\InvalidResponse
@@ -47,6 +63,19 @@ class ChromeHeadlessController extends AbstractController
      */
     public function index()
     {
+        $request = $this->requestStack->getCurrentRequest();
+
+
+        if(!$request->isMethod('POST')) {
+            $response = $this->redirect('/');
+
+            return $response;
+        }
+
+        $file = $request->files->get('csv_file');
+        $this->fileUploader->upload($file);
+
+
         $content = $this->volCertsEntity->retrieveVolCertData();
         $html = $this->volCertsEntity->renderView($content);
         $response = $this->render('view.html.twig', [

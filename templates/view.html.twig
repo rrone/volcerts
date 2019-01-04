@@ -10,7 +10,9 @@
             width: 90%;
             margin: 5px auto;
             font-size: 0.75rem;
+            overflow: auto;
         }
+
         table {
             border-collapse: collapse;
             padding: 1rem 0;
@@ -64,7 +66,15 @@
 {% endblock %}
 {% block content %}
     <div class="content">
-    {{ table | raw }}
+        {{ table | raw }}
+    </div>
+
+    <div class="content">
+        <form method="get" action="{{ url('app_file_form') }}">
+            <div class="mt-3">
+                <button type="submit" class="btn btn-primary">Upload file</button>
+            </div>
+        </form>
     </div>
 {% endblock %}
 {% block javascripts %}
