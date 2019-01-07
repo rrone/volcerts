@@ -5,11 +5,10 @@ namespace App\Controller;
 use App\Service\FileUploader;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\VolCertsTable;
-use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
 
-class ChromeHeadlessController extends AbstractController
+class VolCertTableController extends AbstractController
 {
     /**
      * @var VolCertsTable $volCertsEntity
@@ -51,15 +50,8 @@ class ChromeHeadlessController extends AbstractController
 
     /**
      * @Route("/ch", name="app_ch")
+     * @throws \Exception
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
-     * @throws \HeadlessChromium\Exception\CommunicationException
-     * @throws \HeadlessChromium\Exception\CommunicationException\CannotReadResponse
-     * @throws \HeadlessChromium\Exception\CommunicationException\InvalidResponse
-     * @throws \HeadlessChromium\Exception\CommunicationException\ResponseHasError
-     * @throws \HeadlessChromium\Exception\EvaluationFailed
-     * @throws \HeadlessChromium\Exception\NavigationExpired
-     * @throws \HeadlessChromium\Exception\NoResponseAvailable
-     * @throws \HeadlessChromium\Exception\OperationTimedOut
      */
     public function index()
     {

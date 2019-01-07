@@ -2,30 +2,15 @@
 
 namespace App\Service;
 
-use HeadlessChromium\Browser;
-use HeadlessChromium\BrowserFactory;
-use HeadlessChromium\Page;
+//use HeadlessChromium\Browser;
+//use HeadlessChromium\BrowserFactory;
+//use HeadlessChromium\Page;
 use Symfony\Component\DomCrawler\Crawler;
 use DateTime;
 use DateTimeZone;
 
 class VolCertsTable
 {
-    /**
-     * @var BrowserFactory
-     */
-    private $browserFactory;
-
-    /**
-     * @var Browser
-     */
-    private $browser;
-
-    /**
-     * @var Page
-     */
-    private $page;
-
     /**
      * @var string
      */
@@ -52,12 +37,12 @@ class VolCertsTable
      */
     public function __construct($projectDir)
     {
-        $this->browserFactory = new BrowserFactory('google-chrome');
+//        $this->browserFactory = new BrowserFactory('google-chrome');
 
         set_time_limit(0);
 
 //        $this->urlDetails = "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=";
-        $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData?AYSOID=";
+        $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData";
 
         $this->filename = $projectDir.'/var/uploads/csv.csv';
     }
@@ -116,7 +101,7 @@ class VolCertsTable
     /**
      * @var array
      */
-    private $asseMeta = [
+    private $assessMeta = [
         'Referee Assessor Course',
         'Referee Assessor',
         'National Referee Assessor Course',
@@ -139,7 +124,7 @@ class VolCertsTable
             };
         }
 
-        $arrIds = array_slice($arrIds,0,self::MaxIDS);
+        $arrIds = array_slice($arrIds, 0, self::MaxIDS);
 
         return $arrIds;
     }
@@ -147,65 +132,23 @@ class VolCertsTable
     /**
      * @return array
      * @throws \Exception
-     * @throws \HeadlessChromium\Exception\CommunicationException
-     * @throws \HeadlessChromium\Exception\CommunicationException\CannotReadResponse
-     * @throws \HeadlessChromium\Exception\CommunicationException\InvalidResponse
-     * @throws \HeadlessChromium\Exception\CommunicationException\ResponseHasError
-     * @throws \HeadlessChromium\Exception\EvaluationFailed
-     * @throws \HeadlessChromium\Exception\NavigationExpired
-     * @throws \HeadlessChromium\Exception\NoResponseAvailable
-     * @throws \HeadlessChromium\Exception\OperationTimedOut
      */
     public function retrieveVolCertData()
     {
         $arrIds = $this->loadFile($this->filename);
         $volCerts = [];
-        $this->page = $this->newPage();
+
         foreach ($arrIds as $id) {
-            $this->page->navigate($this->urlCert.$id)->waitForNavigation();
             $volCerts[$id] = $this->parseCertData(
                 $id,
-                $this->page->evaluate('document.documentElement.outerHTML')
-                    ->getReturnValue()
+                $this->curl_get($this->urlCert, ['AYSOID' => $id])
             );
-        }
 
-        $this->browserClose();
+        }
 
         return $volCerts;
     }
 
-    /**
-     * @param array $options
-     * @return Page
-     * @throws \Exception
-     * @throws \HeadlessChromium\Exception\CommunicationException
-     * @throws \HeadlessChromium\Exception\NoResponseAvailable
-     * @throws \HeadlessChromium\Exception\OperationTimedOut
-     */
-    private function newPage($options = ['startupTimeout' => 60])
-    {
-        $this->browserClose();
-
-        /* @var Browser */
-        $this->browser = $this->browserFactory->createBrowser($options);
-
-        // creates a new page and navigate to an url
-
-        return $this->browser->createPage();
-    }
-
-    /**
-     * @throws \Exception
-     */
-    private function browserClose()
-    {
-        if (!is_null($this->browser)) {
-            $this->browser->close();
-        }
-
-        return;
-    }
 
     /**
      * @param $id
@@ -215,7 +158,7 @@ class VolCertsTable
     private function parseCertData($id, $certData)
     {
         $crawler = new Crawler($certData);
-        $nodeValue = $crawler->filter('pre')->text();
+        $nodeValue = $crawler->filter('body')->text();
 
         if (!is_null($nodeValue)) {
             $nv = $this->parseNodeValue($id, $nodeValue);
@@ -402,7 +345,7 @@ EOD;
 EOD;
         }
 
-        $createDate = $this->getTimestamp() . ' ' . self::TZ;
+        $createDate = $this->getTimestamp().' '.self::TZ;
         $html .= <<<EOD
 </tbody>
 </table> 
@@ -441,9 +384,9 @@ EOD;
         $certs['AssessorCertDate'] = '';
         foreach ($jsCert->VolunteerCertificationsReferee as $k => $cls) {
             if (!is_bool(strpos($cls->CertificationDesc, 'Referee Assessor'))) {
-                if (array_search($cls->CertificationDesc, $this->asseMeta) > array_search(
+                if (array_search($cls->CertificationDesc, $this->assessMeta) > array_search(
                         $certs['AssessorCertificationDesc'],
-                        $this->asseMeta
+                        $this->assessMeta
                     )) {
                     $certs['AssessorCertificationDesc'] = $cls->CertificationDesc;
                     $certs['AssessorCertDate'] = $this->phpDate($cls->CertificationDate);
@@ -544,6 +487,33 @@ EOD;
         $ts->setTimezone(new DateTimeZone(self::TZ));
 
         return $ts->format('Y-m-d H:i');
+    }
+
+
+    /**
+     * Send a GET requst using cURL
+     * @param string $url to request
+     * @param array $get values to send
+     * @param array $options for cURL
+     * @return string
+     */
+    function curl_get($url, array $get = null, array $options = array())
+    {
+        $defaults = array(
+            CURLOPT_URL => $url.(strpos($url, '?') === false ? '?' : '').http_build_query($get),
+            CURLOPT_HEADER => 0,
+            CURLOPT_RETURNTRANSFER => true,
+            CURLOPT_TIMEOUT => 4,
+        );
+
+        $ch = curl_init();
+        curl_setopt_array($ch, ($options + $defaults));
+        if (!$result = curl_exec($ch)) {
+            trigger_error(curl_error($ch));
+        }
+        curl_close($ch);
+
+        return $result;
     }
 
 }
