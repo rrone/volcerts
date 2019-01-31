@@ -1,10 +1,7 @@
-<?php
+<?php /** @noinspection SpellCheckingInspection */
 
 namespace App\Service;
 
-//use HeadlessChromium\Browser;
-//use HeadlessChromium\BrowserFactory;
-//use HeadlessChromium\Page;
 use Symfony\Component\DomCrawler\Crawler;
 use DateTime;
 use DateTimeZone;
@@ -73,17 +70,23 @@ class VolCertsTable
     private $refMeta = [
         'U8 Official',
         'Assistant Referee',
-        'Z-Online Regional Referee Course',
-        'Regional Referee Online Companion Course',
         'Regional Referee',
-        'Intermediate Referee Course',
         'Intermediate Referee',
-        'Advanced Referee Course',
         'Advanced Referee',
         'National 2 Referee',
-        'National Referee Course',
-        'National Referee',
+        'National Referee'
     ];
+
+//    /**
+//     * @var array
+//     */
+//    private $refCourseMeta = [
+//        'Z-Online Regional Referee Course',
+//        'Regional Referee Online Companion Course',
+//        'Intermediate Referee Course',
+//        'Advanced Referee Course',
+//        'National Referee Course'
+//    ];
 
     /**
      * @var array
@@ -95,7 +98,7 @@ class VolCertsTable
         'Referee Instructor',
         'Advanced Referee Instructor Course',
         'Advanced Referee Instructor',
-        'National Referee Instructor',
+        'National Referee Instructor'
     ];
 
     /**
@@ -491,7 +494,7 @@ EOD;
 
 
     /**
-     * Send a GET requst using cURL
+     * Send a GET request using cURL
      * @param string $url to request
      * @param array $get values to send
      * @param array $options for cURL
