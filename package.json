@@ -8,7 +8,6 @@
     "test": "tests"
   },
   "dependencies": {
-    "@symfony/webpack-encore": "^0.22.2",
     "bootstrap": "^4.2.1",
     "datatables.net": "^1.10.19",
     "datatables.net-dt": "^1.10.19",
@@ -17,13 +16,14 @@
   },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "encore dev",
-    "watch": "encore dev --watch",
-    "build": "encore production"
+    "buildDev": "encore dev",
+    "watchDev": "encore dev --watch",
+    "buildProd": "encore production"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "webpack-notifier": "^1.7.0"
+    "webpack-notifier": "^1.7.0",
+    "@symfony/webpack-encore": "^0.22.2"
   }
 }

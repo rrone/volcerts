@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\VolCertsTable;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
+use App\Controller\VolCertsFormController;
 
 class VolCertTableController extends AbstractController
 {
@@ -50,29 +51,27 @@ class VolCertTableController extends AbstractController
 
     /**
      * @Route("/ch", name="app_ch")
-     * @throws \Exception
      * @return \Symfony\Component\HttpFoundation\RedirectResponse|\Symfony\Component\HttpFoundation\Response
+     * @throws \Exception
      */
     public function index()
     {
         $request = $this->requestStack->getCurrentRequest();
 
-
         if(!$request->isMethod('POST')) {
-            $response = $this->redirect('/');
 
-            return $response;
+            return $this->redirect('/');
+
         }
 
         $file = $request->files->get('csv_file');
         if(is_null($file)){
-            $response = $this->redirect('/');
 
-            return $response;
+            return $this->redirect('/');
+
         }
 
         $this->fileUploader->upload($file);
-
 
         $content = $this->volCertsEntity->retrieveVolCertData();
         $html = $this->volCertsEntity->renderView($content);
