@@ -1,6 +1,6 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Volunteer_Certs{% endblock %}
+{% block title %}Volunteer Certs{% endblock %}
 {% block link %}
     <link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css">
     <link rel="stylesheet" type="text/css"
@@ -31,7 +31,7 @@
 
         .dt-button {
             float: left;
-            margin: 0 10px;
+            margin: 0 10px 0 2px;
             color: #333 !important;
             border: 1px solid #979797;
             background-color: white;
@@ -45,7 +45,6 @@
             display: inline-block;
             min-width: 1.5em;
             padding: 0.5em 1em;
-            margin-left: 2px;
             text-align: center;
             text-decoration: none !important;
             cursor: hand;
@@ -95,12 +94,55 @@
             src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
 
     <script>
+        function getFormattedDate(input) {
+            let pattern = /(.*?)-(.*?)-(.*?)$/;
+            let result = input.replace(pattern,function(match,p1,p2,p3){
+                let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+                return (p2<10?"0"+p2:p2) + " " + months[(p1-1)] + " " + p3;
+            });
+
+            return result;
+
+        }
+
         $(document).ready(function () {
+
             $('#vol_certs').DataTable({
                 dom: 'Blfrtip',
                 "lengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 buttons: [
-                    'csv', 'excel', 'pdf'
+                    'csv', 'excel',
+                    {
+                        extend: 'pdfHtml5',
+                        orientation: 'landscape',
+                        pageSize: 'legal',
+                        filename: 'VolunteerCerts',
+                        customize: function (doc) {
+                            //Remove the title created by datatTables
+                            doc.content.splice(0, 1);
+                            doc.pageMargins = [5,20,5,40];
+                            //Create a date string that we use in the footer. Format is dd-mm-yyyy
+                            let now = new Date();
+                            let jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
+                            let dmyDate = getFormattedDate(jsDate);
+                            doc['footer'] = (function (page, pages) {
+                                return {
+                                    columns: [
+                                        {
+                                            alignment: 'left',
+                                            text: ['Created on: ', {text: dmyDate}]
+                                        },
+                                        {
+                                            alignment: 'right',
+                                            text: ['page ', {text: page.toString()}, ' of ', {text: pages.toString()}]
+                                        }
+                                    ],
+                                    margin: 20
+                                }
+                            });
+
+                        }
+                    }
                 ],
             });
         });

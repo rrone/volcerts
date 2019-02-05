@@ -23,7 +23,7 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "webpack-notifier": "^1.7.0",
-    "@symfony/webpack-encore": "^0.22.2"
+    "@symfony/webpack-encore": "^0.22.2",
+    "webpack-notifier": "^1.7.0"
   }
 }

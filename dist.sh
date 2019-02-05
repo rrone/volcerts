@@ -30,6 +30,10 @@ cp -f -r ./.env.dist ${dist}/.env
 cp -f ./*.json ${dist}
 cp -f ./*.lock ${dist}
 
+mkdir ${dist}/bin
+cp bin/console ${dist}/bin
+
+
 cp -f -r config ${dist}
 rm -f -r ${dist}/config/packages/dev
 rm -f -r ${dist}/config/packages/test
@@ -56,7 +60,6 @@ cd ${dist}
 
     cp -f ${src}/webpack.config.js ${dist}
     cp -f -r ${src}/assets .
-    cp -f -r ${src}/bin .
 
     echo ">>> Composer install production items..."
     composer install --no-dev
@@ -69,8 +72,10 @@ cd ${dist}
     echo
 
     rm -f -r ./assets
-    rm -f -r ./bin
+    rm -f -r ./bin/doctrine*
     rm -f ./webpack.config.js
+
+    bin/console cache:clear
 
 cd ${src}
 

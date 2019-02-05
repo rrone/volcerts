@@ -49,19 +49,19 @@ class VolCertsTable
      */
     private $hdrs = [
         'AYSOID',
-        'FullName',
+        'Full Name',
         'Type',
         'MY',
         'SAR',
-        'SafeHavenDate',
-        'CDCDate',
-        'RefCertificationDesc',
-        'RefCertDate',
-        'InstCertificationDesc',
-        'InstCertDate',
-        'AssessorCertificationDesc',
-        'AssessorCertDate',
-        'DataSource',
+        'Safe Haven Date',
+        'CDC Date',
+        'Ref Cert Desc',
+        'Ref Cert Date',
+        'Inst Cert Desc',
+        'InstC ert Date',
+        'Assessor Cert Desc',
+        'Assessor Cert Date',
+        'Data Source',
     ];
 
     /**
