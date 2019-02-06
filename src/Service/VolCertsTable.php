@@ -58,7 +58,7 @@ class VolCertsTable
         'Ref Cert Desc',
         'Ref Cert Date',
         'Inst Cert Desc',
-        'InstC ert Date',
+        'Inst Cert Date',
         'Assessor Cert Desc',
         'Assessor Cert Date',
         'Data Source',

@@ -62,7 +62,7 @@ cd ${dist}
     cp -f -r ${src}/assets .
 
     echo ">>> Composer install production items..."
-    composer install --no-dev
+    composer install --no-dev --optimize-autoloader
     echo
 
     echo ">>> Install resources for production..."
