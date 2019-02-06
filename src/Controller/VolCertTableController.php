@@ -12,9 +12,9 @@ use App\Controller\VolCertsFormController;
 class VolCertTableController extends AbstractController
 {
     /**
-     * @var VolCertsTable $volCertsEntity
+     * @var VolCertsTable $volCertsTable
      */
-    private $volCertsEntity;
+    private $volCertsTable;
 
     /**
      * @var string $appVersion
@@ -30,20 +30,21 @@ class VolCertTableController extends AbstractController
     private $requestStack;
 
     /**
-     * ChromeHeadlessController constructor
-     * @param VolCertsTable $volCertsEntity
+     * VolCertTableController constructor
+     * @param string $projectDir
+     * @param VolCertsTable $volCertsTable
      * @param string $appVersion
      * @param FileUploader $fileUploader
      * @param RequestStack $requestStack
      */
     public function __construct(
-        VolCertsTable $volCertsEntity,
+        VolCertsTable $volCertsTable,
         string $appVersion,
         FileUploader $fileUploader,
         RequestStack $requestStack
         )
     {
-        $this->volCertsEntity = $volCertsEntity;
+        $this->volCertsTable = $volCertsTable;
         $this->appVersion = $appVersion;
         $this->fileUploader = $fileUploader;
         $this->requestStack = $requestStack;
@@ -71,14 +72,16 @@ class VolCertTableController extends AbstractController
 
         }
 
-        $this->fileUploader->upload($file);
+        $fileName = $this->fileUploader->upload($file);
 
-        $content = $this->volCertsEntity->retrieveVolCertData();
-        $html = $this->volCertsEntity->renderView($content);
+        $content = $this->volCertsTable->retrieveVolCertData($fileName);
+        $html = $this->volCertsTable->renderView($content);
         $response = $this->render('view.html.twig', [
             'table' => $html,
             'appVersion' => $this->appVersion
         ]);
+
+        unlink($fileName);
 
         return $response;
 

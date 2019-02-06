@@ -5,7 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
-    app.version: '2019.02.01.40'
+    app.version: '2019.02.06.00'
 
     upload_directory: '%kernel.project_dir%/var/uploads'
 
@@ -33,10 +33,6 @@ services:
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    App\Service\VolCertsTable:
-        arguments:
-            $projectDir: '%kernel.project_dir%'
-
     App\Service\FileUploader:
         arguments:
             $targetDirectory: '%upload_directory%'

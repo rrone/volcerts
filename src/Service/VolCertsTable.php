@@ -29,10 +29,9 @@ class VolCertsTable
     CONST TZ = 'PST';
 
     /**
-     * VolCertsEntity constructor.
-     * @param string $projectDir
+     * VolCertsEntity constructor
      */
-    public function __construct($projectDir)
+    public function __construct()
     {
 //        $this->browserFactory = new BrowserFactory('google-chrome');
 
@@ -41,7 +40,6 @@ class VolCertsTable
 //        $this->urlDetails = "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=";
         $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData";
 
-        $this->filename = $projectDir.'/var/uploads/csv.csv';
     }
 
     /**
@@ -140,14 +138,13 @@ class VolCertsTable
     ];
 
     /**
-     * @param $filename
      * @return array
      */
-    private function loadFile($filename)
+    private function loadFile()
     {
         $arrIds = [];
 
-        $fileData = fopen($filename, 'r');
+        $fileData = fopen($this->filename, 'r');
         while ($row = fgets($fileData)) {
             $row = (int)$row;
             if ($row > 0) {
@@ -161,12 +158,14 @@ class VolCertsTable
     }
 
     /**
+     * @param string $fileName
      * @return array
-     * @throws \Exception
      */
-    public function retrieveVolCertData()
+    public function retrieveVolCertData($fileName)
     {
-        $arrIds = $this->loadFile($this->filename);
+        $this->filename = $fileName;
+
+        $arrIds = $this->loadFile();
         $volCerts = [];
 
         foreach ($arrIds as $id) {
