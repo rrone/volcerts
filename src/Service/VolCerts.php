@@ -281,9 +281,9 @@ class VolCerts
                 if (isset($c['SafeHavenDate'])) {
                     $cert['SafeHavenDate'] = $c['SafeHavenDate'];
                 } else {
-                    $cert['SafeHaven'] = '';
+                    $cert['SafeHavenDate'] = '';
                 }
-                if (isset($c['CDC'])) {
+                if (isset($c['CDCDate'])) {
                     $cert['CDCDate'] = $c['CDCDate'];
                 } else {
                     $cert['CDCDate'] = '';
@@ -483,12 +483,12 @@ class VolCerts
         $certs['CDCDate'] = '';
         $certs['SafeHavenDate'] = '';
         foreach ($jsCert->VolunteerCertificationsSafeHaven as $k => $cls) {
-            if (strpos($cls->CertificationDesc, 'CDC')) {
+            if (strpos($cls->CertificationDesc, 'CDC') !== false) {
                 if ($this->phpDate($cls->CertificationDate) > $certs['CDCDate']) {
                     $certs['CDCDate'] = $this->phpDate($cls->CertificationDate);
                 }
             }
-            if (strpos($cls->CertificationDesc, 'Safe Haven')) {
+            if (strpos($cls->CertificationDesc, 'Safe Haven') !== false) {
                 if ($this->phpDate($cls->CertificationDate) > $certs['SafeHavenDate']) {
                     $certs['SafeHavenDate'] = $this->phpDate($cls->CertificationDate);
                 }
