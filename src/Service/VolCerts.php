@@ -274,10 +274,19 @@ class VolCerts
                 $cert = [];
                 $cert['AYSOID'] = $certDetails->VolunteerAYSOID;
                 $fullName = explode(",", $certDetails->VolunteerFullName);
-                $cert['FullName'] = ucwords(strtolower($fullName[1].' '.$fullName[0]));
+                $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName[0])));
                 $cert['Type'] = $certDetails->VolunteerType;
                 $cert['MY'] = $certDetails->VolunteerMembershipYear;
-                $cert['SAR'] = $certDetails->VolunteerSAR;
+
+                $sar = explode('/', $certDetails->VolunteerSAR);
+                $s = isset($sar[0]) ? ltrim($sar[0], '0') : null;
+                $a = isset($sar[1]) ? ltrim($sar[1], '0') : null;
+                $r = isset($sar[2]) ? ltrim($sar[2], '0') : null;
+                if(!is_null($s)) $sar = $s;
+                if(!is_null($a)) $sar .= '/' . $a;
+                if(!is_null($r)) $sar .= '/' . $r;
+                $cert['SAR'] = $sar;
+
                 if (isset($c['SafeHavenDate'])) {
                     $cert['SafeHavenDate'] = $c['SafeHavenDate'];
                 } else {
