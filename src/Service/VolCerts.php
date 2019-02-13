@@ -345,7 +345,7 @@ class VolCerts
             }
         } else {
             $cert['AYSOID'] = $id;
-            $cert['FullName'] = '***'.$nv->ReturnMessage.'***';
+            $cert['FullName'] = '*** '.trim($nv->ReturnMessage).' ***';
             $cert['Type'] = '';
             $cert['MY'] = '';
             $cert['SAR'] = '';
