@@ -56,10 +56,13 @@ class VolCertsFormController extends AbstractController
     public function index()
     {
 
-        $response = $this->render('form.html.twig', [
-            'appVersion' => $this->appVersion,
-            'projectDir' => $this->projectDir
-        ]);
+        $response = $this->render(
+            'form.html.twig',
+            [
+                'appVersion' => $this->appVersion,
+                'projectDir' => $this->projectDir,
+            ]
+        );
 
         return $response;
     }
@@ -73,10 +76,18 @@ class VolCertsFormController extends AbstractController
     {
         $request = $this->requestStack->getCurrentRequest();
 
-        $content = explode(',', $request->get('id'));
+//        $content = explode(',', $request->get('id'));
+
+        $content = $request->get('id');
+
+        try {
+            $ids = json_decode($content)->id;
+        } catch (\Exception $e) {
+            $ids = explode(",", $content);
+        }
 
         $response = new JsonResponse(
-            $this->volCerts->retrieveVolsCertData($content),
+            $this->volCerts->retrieveVolsCertData($ids),
             JsonResponse::HTTP_OK
         );
 
