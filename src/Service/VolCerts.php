@@ -17,11 +17,8 @@ class VolCerts
      */
     public function __construct()
     {
-        set_time_limit(0);
-
 //        $this->urlDetails = "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=";
         $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData";
-
     }
 
     /**
@@ -158,11 +155,80 @@ class VolCerts
 
 
     /**
+     * @param array $idList
+     * @return array|string
+     */
+    public function retrieveVolsCertData(array $idList)
+    {
+        $groupSize = 50;
+        $certsGroup = [];
+        for ($k = 0; $k < count($idList); $k += $groupSize) {
+            $certsGroup[] = array_slice($idList, $k, 50);
+        }
+
+        $certs = [];
+        foreach( $certsGroup as $group){
+            $certs = array_merge($certs, $this->curl_multi_get($this->urlCert, $group));
+        }
+
+        $certData = [];
+        foreach ($idList as $i => $id) {
+            $certData[] = $this->parseCertData($id, $certs[$i]);
+        }
+
+        return $certData;
+    }
+
+
+    /**
+     * @param $url
+     * @param array|null $get
+     * @return array
+     */
+//    Reference: https://www.toni-develops.com/2017/09/05/curl-multi-fetch/
+
+    private function curl_multi_get($url, array $get = null)
+    {
+        if (is_null($get)) {
+            return array();
+        }
+
+        $ch = array();
+        $mh = curl_multi_init();
+
+        foreach ($get as $i => $id) {
+
+            $ch[$i] = curl_init();
+            curl_setopt($ch[$i], CURLOPT_URL, $url.'?'.http_build_query(['AYSOID' => $id]));
+            curl_setopt($ch[$i], CURLOPT_HEADER, 0);
+            curl_setopt($ch[$i], CURLOPT_RETURNTRANSFER, true);
+            curl_multi_add_handle($mh, $ch[$i]);
+        }
+
+        $active = null;
+        do {
+            curl_multi_exec($mh, $active);
+            usleep(100); // May needed to limit CPU load
+        } while ($active);
+
+        $content = array();
+        foreach ($ch AS $i => $c) {
+            $content[$i] = curl_multi_getcontent($c);
+            curl_multi_remove_handle($mh, $c);
+        }
+
+        curl_multi_close($mh);
+
+        return $content;
+    }
+
+    /**
      * @param $id
      * @return string
      */
     public function retrieveVolCertData($id)
     {
+
         return $this->parseCertData($id, $this->curl_get($this->urlCert, ['AYSOID' => $id]));
     }
 
@@ -179,7 +245,6 @@ class VolCerts
             CURLOPT_URL => $url.(strpos($url, '?') === false ? '?' : '').http_build_query($get),
             CURLOPT_HEADER => 0,
             CURLOPT_RETURNTRANSFER => true,
-            CURLOPT_TIMEOUT => 4,
         );
 
         $ch = curl_init();
@@ -212,6 +277,10 @@ class VolCerts
      */
     private function parseCertData($id, $certData)
     {
+        if (empty($certData)) {
+            return '{}';
+        }
+
         $crawler = new Crawler($certData);
         $nodeValue = $crawler->filter('body')->text();
 
@@ -282,9 +351,15 @@ class VolCerts
                 $s = isset($sar[0]) ? ltrim($sar[0], '0') : null;
                 $a = isset($sar[1]) ? ltrim($sar[1], '0') : null;
                 $r = isset($sar[2]) ? ltrim($sar[2], '0') : null;
-                if(!is_null($s)) $sar = $s;
-                if(!is_null($a)) $sar .= '/' . $a;
-                if(!is_null($r)) $sar .= '/' . $r;
+                if (!is_null($s)) {
+                    $sar = $s;
+                }
+                if (!is_null($a)) {
+                    $sar .= '/'.$a;
+                }
+                if (!is_null($r)) {
+                    $sar .= '/'.$r;
+                }
                 $cert['SAR'] = $sar;
 
                 if (isset($c['SafeHavenDate'])) {

@@ -31,7 +31,6 @@ class VolCertTableController extends AbstractController
 
     /**
      * VolCertTableController constructor
-     * @param string $projectDir
      * @param VolCertsTable $volCertsTable
      * @param string $appVersion
      * @param FileUploader $fileUploader

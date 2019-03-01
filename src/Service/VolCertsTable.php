@@ -11,7 +11,7 @@ class VolCertsTable
      * @var VolCerts $volCerts
      */
     private $volCerts;
-     /**
+    /**
      * @var string
      */
     private $filename;
@@ -66,11 +66,13 @@ class VolCertsTable
         $this->filename = $fileName;
 
         $arrIds = $this->loadFile();
-        $volCerts = [];
 
-        foreach ($arrIds as $id) {
-            $volCerts[$id] = $this->volCerts->retrieveVolCertData($id);
-        }
+        $volCerts = $this->volCerts->retrieveVolsCertData($arrIds);
+
+//        $volCerts = [];
+//        foreach ($arrIds as $id) {
+//            $volCerts[$id] = $this->volCerts->retrieveVolCertData($id);
+//        }
 
         return $volCerts;
     }
@@ -110,9 +112,9 @@ EOD;
             $html .= <<<EOD
 <tr>
 EOD;
-            foreach ($keys as $key){
+            foreach ($keys as $key) {
 
-            $html .= <<<EOD
+                $html .= <<<EOD
 <td>{$cert[$key]}</td>
 EOD;
             }
@@ -133,7 +135,7 @@ EOD;
         return $html;
     }
 
-     /**
+    /**
      * @return string
      * @throws \Exception
      */
@@ -147,4 +149,4 @@ EOD;
         return $ts->format('Y-m-d H:i');
     }
 
- }
+}
