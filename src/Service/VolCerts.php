@@ -172,8 +172,8 @@ class VolCerts
         }
 
         $certData = [];
-        foreach ($certs as $cert) {
-            $certData[] = $this->parseCertData($cert);
+        foreach ($certs as $id => $cert) {
+            $certData[] = $this->parseCertData($idList[$id], $cert);
         }
 
         return $certData;
@@ -229,7 +229,7 @@ class VolCerts
     public function retrieveVolCertData($id)
     {
 
-        return $this->parseCertData($this->curl_get($this->urlCert, ['AYSOID' => $id]));
+        return $this->parseCertData($id, $this->curl_get($this->urlCert, ['AYSOID' => $id]));
     }
 
     /**
@@ -274,7 +274,7 @@ class VolCerts
      * @param $certData
      * @return array|string
      */
-    private function parseCertData($certData)
+    private function parseCertData($id, $certData)
     {
         if (empty($certData)) {
             return '{}';
@@ -284,7 +284,7 @@ class VolCerts
         $nodeValue = $crawler->filter('body')->text();
 
         if (!is_null($nodeValue)) {
-            $nv = $this->parseNodeValue($nodeValue);
+            $nv = $this->parseNodeValue($id, $nodeValue);
             $nv['DataSource'] = 'e3';
 
             return $nv;
@@ -297,7 +297,7 @@ class VolCerts
      * @param $nodeValue
      * @return array
      */
-    private function parseNodeValue($nodeValue)
+    private function parseNodeValue($id, $nodeValue)
     {
         if (is_null($nodeValue)) {
             return null;
@@ -417,7 +417,7 @@ class VolCerts
                 $cert['AssessorCertDate'] = '';
             }
         } else {
-            $cert['AYSOID'] = 0;
+            $cert['AYSOID'] = $id;
             $cert['FullName'] = '*** '.trim($nv->ReturnMessage).' ***';
             $cert['Type'] = '';
             $cert['MY'] = '';
