@@ -160,10 +160,10 @@ class VolCerts
      */
     public function retrieveVolsCertData(array $idList)
     {
-        $groupSize = 50;
+        $groupSize = 30;
         $certsGroup = [];
         for ($k = 0; $k < count($idList); $k += $groupSize) {
-            $certsGroup[] = array_slice($idList, $k, 50);
+            $certsGroup[] = array_slice($idList, $k, $groupSize);
         }
 
         $certs = [];
@@ -172,8 +172,8 @@ class VolCerts
         }
 
         $certData = [];
-        foreach ($idList as $i => $id) {
-            $certData[] = $this->parseCertData($id, $certs[$i]);
+        foreach ($certs as $cert) {
+            $certData[] = $this->parseCertData($cert);
         }
 
         return $certData;
@@ -229,7 +229,7 @@ class VolCerts
     public function retrieveVolCertData($id)
     {
 
-        return $this->parseCertData($id, $this->curl_get($this->urlCert, ['AYSOID' => $id]));
+        return $this->parseCertData($this->curl_get($this->urlCert, ['AYSOID' => $id]));
     }
 
     /**
@@ -271,11 +271,10 @@ class VolCerts
     }
 
     /**
-     * @param $id
      * @param $certData
      * @return array|string
      */
-    private function parseCertData($id, $certData)
+    private function parseCertData($certData)
     {
         if (empty($certData)) {
             return '{}';
@@ -285,7 +284,7 @@ class VolCerts
         $nodeValue = $crawler->filter('body')->text();
 
         if (!is_null($nodeValue)) {
-            $nv = $this->parseNodeValue($id, $nodeValue);
+            $nv = $this->parseNodeValue($nodeValue);
             $nv['DataSource'] = 'e3';
 
             return $nv;
@@ -295,11 +294,10 @@ class VolCerts
     }
 
     /**
-     * @param $id
      * @param $nodeValue
      * @return array
      */
-    private function parseNodeValue($id, $nodeValue)
+    private function parseNodeValue($nodeValue)
     {
         if (is_null($nodeValue)) {
             return null;
@@ -344,7 +342,7 @@ class VolCerts
                 $cert['AYSOID'] = $certDetails->VolunteerAYSOID;
                 $fullName = explode(",", $certDetails->VolunteerFullName);
                 $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName[0])));
-                $cert['Type'] = $certDetails->VolunteerType;
+                $cert['Type'] = $certDetails->Type;
                 $cert['MY'] = $certDetails->VolunteerMembershipYear;
 
                 $sar = explode('/', $certDetails->VolunteerSAR);
@@ -419,7 +417,7 @@ class VolCerts
                 $cert['AssessorCertDate'] = '';
             }
         } else {
-            $cert['AYSOID'] = $id;
+            $cert['AYSOID'] = 0;
             $cert['FullName'] = '*** '.trim($nv->ReturnMessage).' ***';
             $cert['Type'] = '';
             $cert['MY'] = '';

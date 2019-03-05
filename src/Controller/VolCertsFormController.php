@@ -7,6 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
+use Symfony\Component\HttpFoundation\Request;
 
 class VolCertsFormController extends AbstractController
 {
@@ -55,7 +56,6 @@ class VolCertsFormController extends AbstractController
      */
     public function index()
     {
-
         $response = $this->render(
             'form.html.twig',
             [
@@ -68,7 +68,7 @@ class VolCertsFormController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="app_json")
+     * @Route("/{id}", name="app_list")
      * @param integer $id
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
@@ -76,15 +76,26 @@ class VolCertsFormController extends AbstractController
     {
         $request = $this->requestStack->getCurrentRequest();
 
-//        $content = explode(',', $request->get('id'));
+        $ids = explode(',', $request->get('id'));
 
+        $response = new JsonResponse(
+            $this->volCerts->retrieveVolsCertData($ids),
+            JsonResponse::HTTP_OK
+        );
+
+        return $response;
+    }
+
+    /**
+     * @Route("/api/json", name="app_json")
+     * @param Request $request
+     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     */
+    public function api(Request $request)
+    {
         $content = $request->get('id');
 
-        try {
-            $ids = json_decode($content)->id;
-        } catch (\Exception $e) {
-            $ids = explode(",", $content);
-        }
+        $ids = explode(',',$content);
 
         $response = new JsonResponse(
             $this->volCerts->retrieveVolsCertData($ids),
