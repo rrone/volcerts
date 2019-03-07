@@ -11,13 +11,15 @@
     {% block stylesheets %}{% endblock %}
 </head>
 <body>
+<div class="header"></div>
+<img class="center" src="{{ asset('build/s1logo.png') }}" height="96" width="96" alt="">
 {% block header %}{% endblock %}
 {% block content %}{% endblock %}
 {% block footer %}{% endblock %}
 <div class="footer">
-    <br/>
     <hr>
     <p>Version {{ appVersion }}</p>
+    <p>Problems or suggestions?  <a href="https://github.com/rrone/volcerts/issues" target="_blank">Log it</a></p>
 </div>
 <script
         src="https://code.jquery.com/jquery-3.3.1.min.js"

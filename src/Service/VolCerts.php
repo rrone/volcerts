@@ -167,7 +167,7 @@ class VolCerts
         }
 
         $certs = [];
-        foreach( $certsGroup as $group){
+        foreach ($certsGroup as $group) {
             $certs = array_merge($certs, $this->curl_multi_get($this->urlCert, $group));
         }
 
@@ -572,7 +572,8 @@ class VolCerts
                     $certs['CDCDate'] = $this->phpDate($cls->CertificationDate);
                 }
             }
-            if (strpos($cls->CertificationDesc, 'Safe Haven') !== false) {
+            if (strpos($cls->CertificationDesc, 'Safe Haven') !== false OR
+                strpos($cls->CertificationDesc, 'Refugio Seguro') !== false) {
                 if ($this->phpDate($cls->CertificationDate) > $certs['SafeHavenDate']) {
                     $certs['SafeHavenDate'] = $this->phpDate($cls->CertificationDate);
                 }

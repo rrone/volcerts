@@ -17,31 +17,36 @@
         }
     </style>
 {% endblock %}
+{% block header %}
+<legend>
+    <h4 style="font-weight:bold; font-style:italic; text-decoration: underline">NOTES:</h4>
+    <ul>
+        <li>Dataset size is limited due to default server settings.  </li>
+        <li>Input is a comma-separated variable file (CSV).  Recommend size for desktop: 900 IDs, for
+            mobile: 700 IDs.</li>
+        <li>First column in a CSV file must be an 8 or 9 digit integer (eAYSO or BS standard IDs).</li>
+        <li>Any text in Column 1...the entry will be ignored.</li>
+        <li>Columns 2 and greater are ignored.</li>
+        <li>Select a CSV file to upload.</li>
+        <li>Click "Submit"</li>
+        <li>If you get a "504 Gateway Timeout" Error, reduce your dataset size and try again.</li>
+    </ul>
+</legend>
+{% endblock %}
 {% block content %}
-    <legend>
-        <h4>NOTES:</h4>
-        <ul>
-            <li>Select a CSV file to upload.</li>
-            <li>First column must be labeled in row 1 and contain 8 or 9 digit AYSO IDs in rows
-                2 and greater.</li>
-            <li>Columns 2 and greater are ignored.</li>
-        </ul>
-
-    </legend>
-    <hr>
-    <form method="post" action="{{ url('app_ch') }}" enctype="multipart/form-data" >
-        <div class="file-upload">
-            <div class="file-select">
-                <div class="file-select-button" id="fileName">Choose File</div>
-                <div class="file-select-name" id="noFile">No file chosen...</div>
-                <input type="file" name="csv_file" id="csv_file" accept="text/csv">
+        <form method="post" action="{{ url('app_ch') }}" enctype="multipart/form-data">
+            <div class="file-upload">
+                <div class="file-select">
+                    <div class="file-select-button" id="fileName">Choose CSV File</div>
+                    <div class="file-select-name" id="noFile">No file chosen...</div>
+                    <input type="file" name="csv_file" id="csv_file" accept="text/csv">
+                </div>
             </div>
-        </div>
 
-        <div class="mt-3">
-            <button type="submit" class="dt-button">Submit</button>
-        </div>
-    </form>
+            <div class="mt-3">
+                <button type="submit" class="dt-button">Submit</button>
+            </div>
+        </form>
 {% endblock %}
 {% block javascripts %}
 {% endblock %}

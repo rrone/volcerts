@@ -2,6 +2,16 @@ body {
     background-color: #F1F1F1;
 }
 
+.header {
+    margin-top: 1rem;
+}
+
+.center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
 .footer {
     text-align: center;
 }
@@ -9,6 +19,8 @@ body {
 .footer p {
     font-size: smaller !important;
     font-style: italic;
+    margin-top: 0;
+    margin-bottom: 0;
 }
 
 .dataTables_wrapper {
