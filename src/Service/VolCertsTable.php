@@ -5,6 +5,8 @@ namespace App\Service;
 use DateTime;
 use DateTimeZone;
 
+define("CERT_URL", "https://national.ayso.org/Volunteers/ViewCertification?UserName=");
+
 class VolCertsTable
 {
     /**
@@ -68,6 +70,14 @@ class VolCertsTable
         $arrIds = $this->loadFile();
 
         $volCerts = $this->volCerts->retrieveVolsCertData($arrIds);
+
+        foreach ($volCerts as &$volCert) {
+
+            $aysoID = $volCert['AYSOID'];
+            $url = CERT_URL.$aysoID;
+            $hrefAysoID = "<a href=\"$url\" target=\"_blank\">$aysoID</a>";
+            $volCert['AYSOID'] = $hrefAysoID;
+        }
 
 //        $volCerts = [];
 //        foreach ($arrIds as $id) {
@@ -146,7 +156,7 @@ EOD;
         $ts = new DateTime($utc, new DateTimeZone('UTC'));
         $ts->setTimezone(new DateTimeZone(self::TZ));
 
-        return $ts->format('Y-m-d H:i');
+        return $ts->format('Y - m - d H:i');
     }
 
 }

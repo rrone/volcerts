@@ -160,6 +160,10 @@ class VolCerts
      */
     public function retrieveVolsCertData(array $idList)
     {
+        //strip out duplicates
+        $idList = array_values(array_unique($idList, SORT_NUMERIC));
+
+        //size the groups to avoid gateway timeouts -- SiteGround limitation
         $groupSize = 30;
         $certsGroup = [];
         for ($k = 0; $k < count($idList); $k += $groupSize) {
