@@ -12,9 +12,9 @@ use Symfony\Component\HttpFoundation\Request;
 class VolCertsFormController extends AbstractController
 {
     /**
-     * @var RequestStack $requestStack
+     * @var Request $request
      */
-    private $requestStack;
+    private $request;
 
     /**
      * @var string $appVersion
@@ -41,7 +41,7 @@ class VolCertsFormController extends AbstractController
 
     public function __construct(RequestStack $requestStack, string $appVersion, string $projectDir, VolCerts $volCerts)
     {
-        $this->requestStack = $requestStack;
+        $this->request = $requestStack->getCurrentRequest();
 
         $this->appVersion = $appVersion;
 
@@ -74,9 +74,7 @@ class VolCertsFormController extends AbstractController
      */
     public function get($id)
     {
-        $request = $this->requestStack->getCurrentRequest();
-
-        $ids = explode(',', $request->get('id'));
+        $ids = explode(',', $this->request->get('id'));
 
         $response = new JsonResponse(
             $this->volCerts->retrieveVolsCertData($ids),

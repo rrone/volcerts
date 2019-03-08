@@ -7,7 +7,7 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\VolCertsTable;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
-use App\Controller\VolCertsFormController;
+use Symfony\Component\HttpFoundation\Request;
 
 class VolCertTableController extends AbstractController
 {
@@ -25,9 +25,9 @@ class VolCertTableController extends AbstractController
     private $fileUploader;
 
     /**
-     * @var RequestStack $reqestStack
+     * @var Request $reqest
      */
-    private $requestStack;
+    private $request;
 
     /**
      * VolCertTableController constructor
@@ -46,7 +46,7 @@ class VolCertTableController extends AbstractController
         $this->volCertsTable = $volCertsTable;
         $this->appVersion = $appVersion;
         $this->fileUploader = $fileUploader;
-        $this->requestStack = $requestStack;
+        $this->request = $requestStack->getCurrentRequest();;
     }
 
     /**
@@ -56,15 +56,13 @@ class VolCertTableController extends AbstractController
      */
     public function index()
     {
-        $request = $this->requestStack->getCurrentRequest();
-
-        if(!$request->isMethod('POST')) {
+        if(!$this->request->isMethod('POST')) {
 
             return $this->redirect('/');
 
         }
 
-        $file = $request->files->get('csv_file');
+        $file = $this->request->files->get('csv_file');
         if(is_null($file)){
 
             return $this->redirect('/');
@@ -73,9 +71,12 @@ class VolCertTableController extends AbstractController
 
         $fileName = $this->fileUploader->upload($file);
 
+        $title = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file->getClientOriginalName());
+
         $content = $this->volCertsTable->retrieveVolCertData($fileName);
         $html = $this->volCertsTable->renderView($content);
         $response = $this->render('view.html.twig', [
+            'title' => $title,
             'table' => $html,
             'appVersion' => $this->appVersion
         ]);
