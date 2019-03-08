@@ -94,11 +94,15 @@
             src="https://cdn.datatables.net/buttons/1.5.2/js/buttons.print.min.js"></script>
 
     <script>
+        function zeroPad(input) {
+            return (input<10?"0"+input:input)
+        }
+
         function getFormattedDate(input) {
             let pattern = /(.*?)-(.*?)-(.*?)$/;
             let result = input.replace(pattern,function(match,p1,p2,p3){
                 let months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-                return (p2<10?"0"+p2:p2) + " " + months[(p1-1)] + " " + p3;
+                return zeroPad(p2) + " " + months[(p1-1)] + " " + p3;
             });
 
             return result;
@@ -124,13 +128,16 @@
                             //Create a date string that we use in the footer. Format is dd-mm-yyyy
                             let now = new Date();
                             let jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
-                            let dmyDate = getFormattedDate(jsDate);
+                            h = now.getHours();
+                            m = now.getMinutes();
+                            let jsTime = zeroPad(h) + ':' + zeroPad(m);
+                            let dmyDateTime = getFormattedDate(jsDate) + ' ' + jsTime;
                             doc['footer'] = (function (page, pages) {
                                 return {
                                     columns: [
                                         {
                                             alignment: 'left',
-                                            text: ['Created on: ', {text: dmyDate}]
+                                            text: ['Created on: ', {text: dmyDateTime}]
                                         },
                                         {
                                             alignment: 'right',
