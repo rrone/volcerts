@@ -13,12 +13,19 @@ class VolCerts
     private $urlCert;
 
     /**
+     * @var string
+     */
+    private $and;
+
+    /**
      * VolCertsEntity constructor
      */
     public function __construct()
     {
 //        $this->urlDetails = "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=";
         $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData";
+
+        $this->and = '';
     }
 
     /**
@@ -34,10 +41,12 @@ class VolCerts
         'CDC Date',
         'Ref Cert Desc',
         'Ref Cert Date',
-        'Inst Cert Desc',
-        'Inst Cert Date',
         'Assessor Cert Desc',
         'Assessor Cert Date',
+        'Inst Cert Desc',
+        'Inst Cert Date',
+        'Inst Eval Cert Desc',
+        'Inst Eval Cert Date',
         'Data Source',
     ];
 
@@ -54,13 +63,14 @@ class VolCerts
         'CDCDate',
         'RefCertDesc',
         'RefCertDate',
-        'InstCertDesc',
-        'InstCertDate',
         'AssessorCertDesc',
         'AssessorCertDate',
+        'InstCertDesc',
+        'InstCertDate',
+        'InstEvalCertDesc',
+        'InstEvalCertDate',
         'DataSource',
     ];
-
 
     /**
      * @var array
@@ -81,54 +91,31 @@ class VolCerts
         'National 2 Referee',
         'National Referee Course',
         'National Referee',
-    ];
-
-    /**
-     * @var array
-     */
-    private $refCertMeta = [
-        'U-8 Official',
-        'U8 Official',
-        '8U Official',
-        'Assistant Referee',
-        'Regional Referee & Safe Haven Referee',
-        'Regional Referee',
-        'Intermediate Referee',
-        'Advanced Referee',
-        'National 2 Referee',
-        'National Referee',
-    ];
-
-    /**
-     * @var array
-     */
-    private $refCourseMeta = [
-        'Z-Online Regional Referee Course',
-        'Regional Referee Online Companion Course',
-        'Intermediate Referee Course',
-        'Advanced Referee Course',
-        'National Referee Course',
+        'National 1 Referee',
     ];
 
     /**
      * @var array
      */
     private $instMeta = [
+        'Referee Instructor Course',
         'Regional Referee Instructor',
         'Intermediate Referee Instructor',
         'Referee Instructor',
+        'Advanced Referee Instructor Course',
         'Advanced Referee Instructor',
         'National Referee Instructor',
     ];
 
-//    /**
-//     * @var array
-//     */
-//    private $instCourseMeta = [
-//        'Referee Instructor Course',
-//        'Advanced Referee Instructor Course',
-//    ];
+    /**
+     * @var array
+     */
+    private $instEvalMeta = [
+        'Referee Instructor Evaluator Course',
+        'Referee Instructor Evaluator',
+    ];
 
+//
     /**
      * @var array
      */
@@ -270,6 +257,10 @@ class VolCerts
      */
     private function phpDate(string $certDate)
     {
+        if($certDate == '/Date(-62135568000000)/') {
+            return '1964-09-15';
+        }
+
         $ts = preg_replace('/[^0-9]/', '', $certDate);
         $date = date("Y-m-d", $ts / 1000);
 
@@ -337,6 +328,13 @@ class VolCerts
                 }
             }
 
+            $certInstructor = $this->getCertificationsInstructorEvaluator($certDetails);
+            if (!is_null($certInstructor)) {
+                foreach ($certInstructor as $k => $cert) {
+                    $certList[$k] = $cert;
+                }
+            }
+
             $certSH = $this->getCertificationsSafeHaven($certDetails);
             if (!is_null($certSH)) {
                 foreach ($certSH as $k => $cert) {
@@ -368,46 +366,21 @@ class VolCerts
                 }
                 $cert['SAR'] = $sar;
 
-                if (isset($c['SafeHavenDate'])) {
-                    $cert['SafeHavenDate'] = $c['SafeHavenDate'];
-                } else {
-                    $cert['SafeHavenDate'] = '';
-                }
-                if (isset($c['CDCDate'])) {
-                    $cert['CDCDate'] = $c['CDCDate'];
-                } else {
-                    $cert['CDCDate'] = '';
-                }
-                if (isset($c['RefCertDesc'])) {
-                    $cert['RefCertDesc'] = $c['RefCertDesc'];
-                } else {
-                    $cert['RefCertDesc'] = '';
-                }
-                if (isset($c['RefCertDate'])) {
-                    $cert['RefCertDate'] = $c['RefCertDate'];
-                } else {
-                    $cert['RefCertDate'] = '';
-                }
-                if (isset($c['InstCertDesc'])) {
-                    $cert['InstCertDesc'] = $c['InstCertDesc'];
-                } else {
-                    $cert['InstCertDesc'] = '';
-                }
-                if (isset($c['InstCertDate'])) {
-                    $cert['InstCertDate'] = $c['InstCertDate'];
-                } else {
-                    $cert['InstCertDate'] = '';
-                }
-                if (isset($c['AssessorCertDesc'])) {
-                    $cert['AssessorCertDesc'] = $c['AssessorCertDesc'];
-                } else {
-                    $cert['AssessorCertDesc'] = '';
-                }
-                if (isset($c['AssessorCertDate'])) {
-                    $cert['AssessorCertDate'] = $c['AssessorCertDate'];
-                } else {
-                    $cert['AssessorCertDate'] = '';
-                }
+                $cert['SafeHavenDate'] = isset($c['SafeHavenDate']) ? $c['SafeHavenDate'] : $cert['SafeHavenDate'];
+                $cert['CDCDate'] = isset($c['CDCDate']) ? $c['CDCDate'] : $cert['CDCDate'];
+
+                $cert['RefCertDesc'] = isset($c['RefCertDesc']) ? $c['RefCertDesc'] : $cert['RefCertDesc'];
+                $cert['RefCertDate'] = isset($c['RefCertDate']) ? $c['RefCertDate'] : $cert['RefCertDate'];
+
+                $cert['AssessorCertDesc'] = isset($c['AssessorCertDesc']) ? $c['AssessorCertDesc'] : $cert['AssessorCertDesc'];
+                $cert['AssessorCertDate'] = isset($c['AssessorCertDate']) ? $c['AssessorCertDate'] : $cert['AssessorCertDate'];
+
+                $cert['InstCertDesc'] = isset($c['InstCertDesc']) ? $c['InstCertDesc'] : $cert['InstCertDesc'];
+                $cert['InstCertDate'] = isset($c['InstCertDate']) ? $c['InstCertDate'] : $cert['InstCertDate'];
+
+                $cert['InstEvalCertDesc'] = isset($c['InstEvalCertDesc']) ? $c['InstEvalCertDesc'] : $cert['InstEvalCertDesc'];
+                $cert['InstEvalCertDate'] = isset($c['InstEvalCertDate']) ? $c['InstEvalCertDate'] : $cert['InstEvalCertDate'];
+
             } else {
                 $cert['AYSOID'] = $certDetails->VolunteerAYSOID;
                 $fullName = explode(",", $certDetails->VolunteerFullName);
@@ -419,10 +392,12 @@ class VolCerts
                 $cert['CDCDate'] = '';
                 $cert['RefCertDesc'] = '';
                 $cert['RefCertDate'] = '';
-                $cert['InstCertDesc'] = '';
-                $cert['InstCertDate'] = '';
                 $cert['AssessorCertDesc'] = '';
                 $cert['AssessorCertDate'] = '';
+                $cert['InstCertDesc'] = '';
+                $cert['InstCertDate'] = '';
+                $cert['InstEvalCertDesc'] = '';
+                $cert['InstEvalCertDate'] = '';
             }
         } else {
             $cert['AYSOID'] = $id;
@@ -434,10 +409,12 @@ class VolCerts
             $cert['CDCDate'] = '';
             $cert['RefCertDesc'] = '';
             $cert['RefCertDate'] = '';
-            $cert['InstCertDesc'] = '';
-            $cert['InstCertDate'] = '';
             $cert['AssessorCertDesc'] = '';
             $cert['AssessorCertDate'] = '';
+            $cert['InstCertDesc'] = '';
+            $cert['InstCertDate'] = '';
+            $cert['InstEvalCertDesc'] = '';
+            $cert['InstEvalCertDate'] = '';
         }
 
         return $cert;
@@ -453,44 +430,21 @@ class VolCerts
             return null;
         }
 
-        $certs['RefCertDesc'] = '';
-        $certs['RefCertDate'] = '';
-        $certDesc = '';
-        $certDate = '';
-        $courseDesc = '';
-        $courseDate = '';
-        $and = '';
-        foreach ($jsCert->VolunteerCertificationsReferee as $k => $cls) {
-            if (is_bool(strpos($cls->CertificationDesc, 'Assessor'))) {
-                if (array_search($cls->CertificationDesc, $this->refCertMeta) > array_search(
-                        $certDesc,
-                        $this->refCertMeta
-                    )) {
-                    $certDesc = $cls->CertificationDesc;
-                    $certDate = $this->phpDate($cls->CertificationDate);
-                }
-                if (array_search($cls->CertificationDesc, $this->refCourseMeta) > array_search(
-                        $courseDesc,
-                        $this->refCourseMeta
-                    )) {
-                    $courseDesc = $cls->CertificationDesc;
-                    $courseDate = $this->phpDate($cls->CertificationDate);
-                }
-            }
-        }
+        $certs = $this->parseCerts($jsCert, 'Referee');
+        $this->and = '';
 
-        if (array_search($courseDesc, $this->refMeta) > array_search($certDesc, $this->refMeta)) {
-            if (!empty($certDesc)) {
-                $and = ' / ';
+        if (array_search($certs->courseDesc, $this->refMeta) > array_search($certs->certDesc, $this->refMeta)) {
+            if (!empty($certs->certDesc)) {
+                $this->and = ' / ';
             }
-            $certs['RefCertDesc'] = $certDesc.$and.$courseDesc;
-            $certs['RefCertDate'] = $certDate.$and.$courseDate;
+            $cert['RefCertDesc'] = $certs->certDesc.$this->and.$certs->courseDesc;
+            $cert['RefCertDate'] = $certs->certDate.$this->and.$certs->courseDate;
         } else {
-            $certs['RefCertDesc'] = $certDesc;
-            $certs['RefCertDate'] = $certDate;
+            $cert['RefCertDesc'] = $certs->certDesc;
+            $cert['RefCertDate'] = $certs->certDate;
         }
 
-        return $certs;
+        return $cert;
     }
 
     /**
@@ -503,21 +457,21 @@ class VolCerts
             return null;
         }
 
-        $certs['AssessorCertDesc'] = '';
-        $certs['AssessorCertDate'] = '';
-        foreach ($jsCert->VolunteerCertificationsReferee as $k => $cls) {
-            if (!is_bool(strpos($cls->CertificationDesc, 'Assessor'))) {
-                if (array_search($cls->CertificationDesc, $this->assessMeta) > array_search(
-                        $certs['AssessorCertDesc'],
-                        $this->assessMeta
-                    )) {
-                    $certs['AssessorCertDesc'] = $cls->CertificationDesc;
-                    $certs['AssessorCertDate'] = $this->phpDate($cls->CertificationDate);
-                }
+        $certs = $this->parseCerts($jsCert, 'Assessor');
+        $this->and = '';
+
+        if (array_search($certs->courseDesc, $this->assessMeta) > array_search($certs->certDesc, $this->assessMeta)) {
+            if (!empty($certs->certDesc)) {
+                $this->and = ' / ';
             }
+            $cert['AssessorCertDesc'] = $certs->certDesc.$this->and.$certs->courseDesc;
+            $cert['AssessorCertDate'] = $certs->certDate.$this->and.$certs->courseDate;
+        } else {
+            $cert['AssessorCertDesc'] = $certs->certDesc;
+            $cert['AssessorCertDate'] = $certs->certDate;
         }
 
-        return $certs;
+        return $cert;
     }
 
     /**
@@ -530,19 +484,112 @@ class VolCerts
             return null;
         }
 
-        $certs['InstCertDesc'] = '';
-        $certs['InstCertDate'] = '';
-        foreach ($jsCert->VolunteerCertificationsInstructor as $k => $cls) {
-            if (array_search($cls->CertificationDesc, $this->instMeta) > array_search(
-                    $certs['InstCertDesc'],
-                    $this->instMeta
-                )) {
-                $certs['InstCertDesc'] = $cls->CertificationDesc;
-                $certs['InstCertDate'] = $this->phpDate($cls->CertificationDate);
+        $certs = $this->parseCerts($jsCert, 'Instructor');
+
+        if (array_search($certs->courseDesc, $this->instMeta) > array_search($certs->certDesc, $this->instMeta)) {
+            if (!empty($certs->certDesc)) {
+                $this->and = ' / ';
+            }
+            $cert['InstCertDesc'] = $certs->certDesc.$this->and.$certs->courseDesc;
+            $cert['InstCertDate'] = $certs->certDate.$this->and.$certs->courseDate;
+        } else {
+            $cert['InstCertDesc'] = $certs->certDesc;
+            $cert['InstCertDate'] = $certs->certDate;
+        }
+
+        return $cert;
+
+    }
+
+    /**
+     * @param \stdClass $jsCert
+     * @return array|null
+     */
+    private function getCertificationsInstructorEvaluator(\stdClass $jsCert)
+    {
+        if (empty($jsCert)) {
+            return null;
+        }
+
+        $certs = $this->parseCerts($jsCert, 'Evaluator');
+
+        if (array_search($certs->courseDesc, $this->instEvalMeta) > array_search(
+                $certs->certDesc,
+                $this->instEvalMeta
+            )) {
+            if (!empty($certs->certDesc)) {
+                $this->and = ' / ';
+            }
+            $cert['InstEvalCertDesc'] = $certs->certDesc.$this->and.$certs->courseDesc;
+            $cert['InstEvalCertDate'] = $certs->certDate.$this->and.$certs->courseDate;
+        } else {
+            $cert['InstEvalCertDesc'] = $certs->certDesc;
+            $cert['InstEvalCertDate'] = $certs->certDate;
+        }
+
+        return $cert;
+
+    }
+
+    private function parseCerts(\stdClass $jsCert, string $type)
+    {
+        $certs = (object)[
+            'certDesc' => '',
+            'certDate' => '',
+            'courseDesc' => '',
+            'courseDate' => '',
+        ];
+
+        switch ($type) {
+            case 'Referee':
+                $jsKey = $jsCert->VolunteerCertificationsReferee;
+                $meta = $this->refMeta;
+                break;
+            case 'Assessor':
+                $jsKey = $jsCert->VolunteerCertificationsReferee;
+                $meta = $this->assessMeta;
+                break;
+            case 'Instructor':
+                $jsKey = $jsCert->VolunteerCertificationsInstructor;
+                $meta = $this->instMeta;
+                break;
+            case 'Evaluator':
+                $jsKey = $jsCert->VolunteerCertificationsInstructor;
+                $meta = $this->instEvalMeta;
+                break;
+            default:
+                $jsKey = null;
+                $meta = null;
+        }
+
+        if (!is_null($jsKey)) {
+            foreach ($jsKey as $k => $cls) {
+                if (is_bool(strpos($cls->CertificationDesc, 'Course'))) {
+                    if (array_search($cls->CertificationDesc, $meta) > array_search(
+                            $certs->certDesc,
+                            $meta
+                        )) {
+                        $certs->certDesc = $cls->CertificationDesc;
+                        $certs->certDate = $this->phpDate($cls->CertificationDate);
+
+//                        if($certs->certDesc == 'National Referee' AND $certs->certDate < '2004-07-01') {
+//                            $certs->certDesc = 'National 1 Referee';
+//                        }
+                    }
+                } else {
+                    if (array_search($cls->CertificationDesc, $meta) > array_search(
+                            $certs->courseDesc,
+                            $meta
+                        )) {
+                        $certs->courseDesc = $cls->CertificationDesc;
+                        $certs->courseDate = $this->phpDate($cls->CertificationDate);
+                    }
+                }
             }
         }
 
         return $certs;
+
     }
 
 ///**
