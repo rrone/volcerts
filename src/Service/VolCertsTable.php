@@ -21,7 +21,7 @@ class VolCertsTable
     /**
      * @const integer
      */
-    CONST MaxIDS = 2000;
+    CONST MaxIDS = 6000;
 
     /**
      * @const string

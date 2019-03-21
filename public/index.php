@@ -15,6 +15,9 @@ if ($_SERVER['APP_DEBUG']) {
     ini_set('xdebug.var_display_max_children', -1);
     ini_set('xdebug.var_display_max_data', -1);
 
+    ini_set('max_execution_time', 600);
+    ini_set('max_input_time', 600);
+
 }
 
 if ($trustedProxies = $_SERVER['TRUSTED_PROXIES'] ?? $_ENV['TRUSTED_PROXIES'] ?? false) {
