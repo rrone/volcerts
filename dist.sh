@@ -3,7 +3,7 @@
 set -e
 #set distribution folder alias
 src="$HOME"/Sites/AYSO/volcerts
-dist="$HOME"/GoogleDrive-rick.roberts.9/ayso/s1/web/ayso1ref/services/vc
+dist="$HOME"/GoogleDrive-ayso1sra/s1/web/ayso1ref/services/vc
 config="$HOME"/Sites/AYSO/volcerts/config
 PHP=/usr/local/etc/php/7.3/conf.d
 

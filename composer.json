@@ -4,9 +4,9 @@
     "require": {
         "php": "^7.0",
         "ext-ctype": "*",
-        "ext-curl": "^7.3",
+        "ext-curl": "*",
         "ext-iconv": "*",
-        "ext-json": "^1.6",
+        "ext-json": "*",
         "friendsofsymfony/rest-bundle": "^2.5",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/apache-pack": "^1.0",
