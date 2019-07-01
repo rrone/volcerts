@@ -69,10 +69,10 @@ class VolCertsFormController extends AbstractController
 
     /**
      * @Route("/{id}", name="app_list")
-     * @param integer $id
+     * @param string $id
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
-    public function get($id)
+    public function get(string $id)
     {
         $ids = explode(',', $this->request->get('id'));
 

@@ -76,6 +76,7 @@ class VolCerts
      * @var array
      */
     private $refMeta = [
+        '',     //blank required to match first certification
         'U-8 Official',
         'U8 Official',
         '8U Official',
@@ -430,6 +431,20 @@ class VolCerts
             return null;
         }
 
+        $certs = $this->parseCerts($jsCert, 'Official');
+        $this->and = '';
+
+        if (array_search($certs->courseDesc, $this->refMeta) > array_search($certs->certDesc, $this->refMeta)) {
+            if (!empty($certs->certDesc)) {
+                $this->and = ' / ';
+            }
+            $cert['RefCertDesc'] = $certs->certDesc.$this->and.$certs->courseDesc;
+            $cert['RefCertDate'] = $certs->certDate.$this->and.$certs->courseDate;
+        } else {
+            $cert['RefCertDesc'] = $certs->certDesc;
+            $cert['RefCertDate'] = $certs->certDate;
+        }
+
         $certs = $this->parseCerts($jsCert, 'Referee');
         $this->and = '';
 
@@ -541,6 +556,7 @@ class VolCerts
         ];
 
         switch ($type) {
+            case 'Official':
             case 'Referee':
                 $jsKey = $jsCert->VolunteerCertificationsReferee;
                 $meta = $this->refMeta;
