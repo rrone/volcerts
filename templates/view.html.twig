@@ -62,9 +62,11 @@
 {% endblock %}
 {% block content %}
     <div class="content">
-        <div class="mt-3">
-            <button type="submit" class="dt-button">Upload another file</button>
-        </div>
+        <form method="get" action="{{ url('app_file_form') }}">
+            <div class="mt-3">
+                <button type="submit" class="dt-button">Upload another file</button>
+            </div>
+        </form>
     </div>
 
     <div class="content">
