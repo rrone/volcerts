@@ -46,18 +46,14 @@ class VolCertsTable
      */
     private function loadFile($inputFileName)
     {
-        $inputFileType = ucfirst(pathinfo($inputFileName, PATHINFO_EXTENSION));
-
         $arrIds = [];
 
-        switch ($inputFileType) {
-            case 'Csv':
-                $arrIds = $this->loadCSVFile($inputFileName);
-                break;
-            case 'Xls':
-            case 'Xlsx':
-                $arrIds = $this->loadXLSXFile($inputFileName, $inputFileType);
-                break;
+        try {
+            $arrIds = $this->loadXLSXFile($inputFileName);
+        } catch (Exception $e) {
+
+            return $arrIds;
+
         }
 
         return $arrIds;
@@ -66,36 +62,16 @@ class VolCertsTable
 
     /**
      * @param $inputFileName
-     * @return array
-     */
-    private function loadCSVFile($inputFileName)
-    {
-        $arrIds = [];
-
-        $fileData = fopen($inputFileName, 'r');
-        while ($row = fgets($fileData)) {
-            $row = (int)$row;
-            if ($row > 0) {
-                $arrIds[] = $row;
-            };
-        }
-
-        $arrIds = array_slice($arrIds, 0, self::MaxIDS);
-
-        return $arrIds;
-    }
-
-    /**
-     * @param $inputFileName
-     * @param $inputFileType
      * @return array
      * @throws PhpSpreadsheet\Exception
      * @throws PhpSpreadsheet\Reader\Exception
      */
-    private function loadXLSXFile($inputFileName, $inputFileType)
+    private function loadXLSXFile($inputFileName)
     {
+        $type = PhpSpreadsheet\IOFactory::identify($inputFileName);
+
         /**  Create a new Reader of the type defined in $inputFileType  **/
-        $reader = PhpSpreadsheet\IOFactory::createReader($inputFileType);
+        $reader = PhpSpreadsheet\IOFactory::createReader($type);
         /**  Advise the Reader that we only want to load cell data  **/
         $reader->setReadDataOnly(true);
 
@@ -103,7 +79,9 @@ class VolCertsTable
 
         /**  Load $inputFileName to a Spreadsheet Object  **/
         /** @var PhpSpreadsheet\Spreadsheet $xls */
+
         $xls = $reader->load($inputFileName);
+
         $tmp = $xls->getActiveSheet()
             ->rangeToArray(
                 'A1:A100',     // The worksheet range that we want to retrieve
@@ -143,11 +121,6 @@ class VolCertsTable
             $volCert['AYSOID'] = $hrefAysoID;
         }
 
-//        $volCerts = [];
-//        foreach ($arrIds as $id) {
-//            $volCerts[$id] = $this->volCerts->retrieveVolCertData($id);
-//        }
-
         return $volCerts;
     }
 
@@ -167,37 +140,43 @@ class VolCertsTable
 <thead>
 <tr>
 EOD;
-        $hdrs = $this->volCerts->getHdrs();
-        foreach ($hdrs as $hdr) {
+        if (empty($content)) {
             $html .= <<<EOD
-<th>$hdr</th>
-EOD;
-        }
-
-        $html .= <<<EOD
-</tr>
-</thead>
-<tbody>
+<h6  class="error"><b>ERROR: <em>The file is not recognised as an CSV or Excel file type.</em></b></h6>
 EOD;
 
-        $keys = $this->volCerts->getKeys();
-
-        foreach ($content as $i => $cert) {
-            $html .= <<<EOD
-<tr>
-EOD;
-            foreach ($keys as $key) {
-
+        } else {
+            $hdrs = $this->volCerts->getHdrs();
+            foreach ($hdrs as $hdr) {
                 $html .= <<<EOD
-<td>{$cert[$key]}</td>
+<th>$hdr</th>
 EOD;
             }
 
             $html .= <<<EOD
 </tr>
+</thead>
+<tbody>
 EOD;
-        }
 
+            $keys = $this->volCerts->getKeys();
+
+            foreach ($content as $i => $cert) {
+                $html .= <<<EOD
+<tr>
+EOD;
+                foreach ($keys as $key) {
+
+                    $html .= <<<EOD
+<td>{$cert[$key]}</td>
+EOD;
+                }
+
+                $html .= <<<EOD
+</tr>
+EOD;
+            }
+        }
         $createDate = $this->getTimestamp().' '.self::TZ;
         $html .= <<<EOD
 </tbody>
@@ -220,7 +199,7 @@ EOD;
         $ts = new DateTime($utc, new DateTimeZone('UTC'));
         $ts->setTimezone(new DateTimeZone(self::TZ));
 
-        return $ts->format('Y - m - d H:i');
+        return $ts->format('Y-m-d  H:i');
     }
 
 }

@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Service\VolCerts;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
@@ -52,7 +53,7 @@ class VolCertsFormController extends AbstractController
 
     /**
      * @Route("/", name="app_file_form")
-     * @return \Symfony\Component\HttpFoundation\Response
+     * @return Response
      */
     public function index()
     {
@@ -69,8 +70,8 @@ class VolCertsFormController extends AbstractController
 
     /**
      * @Route("/{id}", name="app_list")
-     * @param string $ids
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
+     * @param string $id
+     * @return JsonResponse
      */
     public function get(string $id)
     {
