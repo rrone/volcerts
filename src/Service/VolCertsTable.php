@@ -84,7 +84,7 @@ class VolCertsTable
 
         $tmp = $xls->getActiveSheet()
             ->rangeToArray(
-                'A1:A100',     // The worksheet range that we want to retrieve
+                'A1:A25000',     // The worksheet range that we want to retrieve
                 '',        // Value that should be returned for empty cells
                 false,
                 // Should formulas be calculated (the equivalent of getCalculatedValue() for each cell)
