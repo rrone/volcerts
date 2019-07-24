@@ -27,7 +27,8 @@ class FileUploader
      */
     public function upload(UploadedFile $file)
     {
-        $fileName = $this->targetDirectory . '/' . uniqid(rand(), true) . '.csv';
+        $inputFileType = $file->getClientOriginalExtension();
+        $fileName = $this->targetDirectory . '/' . uniqid(rand(), true) . '.' . $inputFileType;
 
         try {
             $file->move($this->getTargetDirectory(), $fileName);

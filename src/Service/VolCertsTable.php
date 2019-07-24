@@ -5,6 +5,10 @@ namespace App\Service;
 use DateTime;
 use DateTimeZone;
 
+use Exception;
+
+use PhpOffice\PhpSpreadsheet;
+
 define("CERT_URL", "https://national.ayso.org/Volunteers/ViewCertification?UserName=");
 
 class VolCertsTable
@@ -13,10 +17,6 @@ class VolCertsTable
      * @var VolCerts $volCerts
      */
     private $volCerts;
-    /**
-     * @var string
-     */
-    private $filename;
 
     /**
      * @const integer
@@ -40,13 +40,39 @@ class VolCertsTable
     }
 
     /**
+     * @param $inputFileName
+     * @return array
+     * @throws PhpSpreadsheet\Exception
+     */
+    private function loadFile($inputFileName)
+    {
+        $inputFileType = ucfirst(pathinfo($inputFileName, PATHINFO_EXTENSION));
+
+        $arrIds = [];
+
+        switch ($inputFileType) {
+            case 'Csv':
+                $arrIds = $this->loadCSVFile($inputFileName);
+                break;
+            case 'Xls':
+            case 'Xlsx':
+                $arrIds = $this->loadXLSXFile($inputFileName, $inputFileType);
+                break;
+        }
+
+        return $arrIds;
+
+    }
+
+    /**
+     * @param $inputFileName
      * @return array
      */
-    private function loadFile()
+    private function loadCSVFile($inputFileName)
     {
         $arrIds = [];
 
-        $fileData = fopen($this->filename, 'r');
+        $fileData = fopen($inputFileName, 'r');
         while ($row = fgets($fileData)) {
             $row = (int)$row;
             if ($row > 0) {
@@ -60,14 +86,52 @@ class VolCertsTable
     }
 
     /**
-     * @param string $fileName
+     * @param $inputFileName
+     * @param $inputFileType
      * @return array
+     * @throws PhpSpreadsheet\Exception
+     * @throws PhpSpreadsheet\Reader\Exception
+     */
+    private function loadXLSXFile($inputFileName, $inputFileType)
+    {
+        /**  Create a new Reader of the type defined in $inputFileType  **/
+        $reader = PhpSpreadsheet\IOFactory::createReader($inputFileType);
+        /**  Advise the Reader that we only want to load cell data  **/
+        $reader->setReadDataOnly(true);
+
+        $arrIds = [];
+
+        /**  Load $inputFileName to a Spreadsheet Object  **/
+        /** @var PhpSpreadsheet\Spreadsheet $xls */
+        $xls = $reader->load($inputFileName);
+        $tmp = $xls->getActiveSheet()
+            ->rangeToArray(
+                'A1:A100',     // The worksheet range that we want to retrieve
+                '',        // Value that should be returned for empty cells
+                false,
+                // Should formulas be calculated (the equivalent of getCalculatedValue() for each cell)
+                false,        // Should values be formatted (the equivalent of getFormattedValue() for each cell)
+                false         // Should the array be indexed by cell row and cell column
+            );
+
+        foreach ($tmp as $key => $id) {
+            $id = implode($id);
+            if ((int)$id > 0) {
+                $arrIds[] = $id;
+            };
+        }
+
+        return $arrIds;
+    }
+
+    /**
+     * @param $fileName
+     * @return array|string
+     * @throws PhpSpreadsheet\Exception
      */
     public function retrieveVolCertData($fileName)
     {
-        $this->filename = $fileName;
-
-        $arrIds = $this->loadFile();
+        $arrIds = $this->loadFile($fileName);
 
         $volCerts = $this->volCerts->retrieveVolsCertData($arrIds);
 
@@ -90,7 +154,7 @@ class VolCertsTable
     /**
      * @param array $content
      * @return array|string
-     * @throws \Exception
+     * @throws Exception
      */
     public function renderView(array $content)
     {
@@ -147,7 +211,7 @@ EOD;
 
     /**
      * @return string
-     * @throws \Exception
+     * @throws Exception
      */
     protected function getTimestamp()
     {

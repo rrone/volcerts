@@ -69,31 +69,12 @@ class VolCertsFormController extends AbstractController
 
     /**
      * @Route("/{id}", name="app_list")
-     * @param string $id
+     * @param string $ids
      * @return \Symfony\Component\HttpFoundation\JsonResponse
      */
     public function get(string $id)
     {
         $ids = explode(',', $this->request->get('id'));
-
-        $response = new JsonResponse(
-            $this->volCerts->retrieveVolsCertData($ids),
-            JsonResponse::HTTP_OK
-        );
-
-        return $response;
-    }
-
-    /**
-     * @Route("/api/json", name="app_json")
-     * @param Request $request
-     * @return \Symfony\Component\HttpFoundation\JsonResponse
-     */
-    public function api(Request $request)
-    {
-        $content = $request->get('id');
-
-        $ids = explode(',',$content);
 
         $response = new JsonResponse(
             $this->volCerts->retrieveVolsCertData($ids),

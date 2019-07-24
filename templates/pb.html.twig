@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <title>Demo: Progress Bar</title>
+</head>
+<body>
+<br/>
+<input type="button" onclick="startTask()" value="Start Long Task"/>
+<input type="button" onclick="stopTask()" value="Stop Task"/>
+<br/>
+<br/>
+
+<p>Results</p>
+<br/>
+<div id="results"
+     style="border:1px solid #000; padding:10px; width:300px; height:250px; overflow:auto; background:#eee;"></div>
+<br/>
+
+<progress id='progressor' value="0" max='100' style=""></progress>
+<p id="percentage" style="text-align:left; display:block; margin-top:5px;">0</p>
+</body>
+
+<script
+        src="https://code.jquery.com/jquery-3.3.1.min.js"
+        integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+        crossorigin="anonymous"></script>
+
+<script>
+    let es;
+
+    function startTask() {
+        es = new EventSource("{{ url('app_slo') }}");
+
+//a message is received
+        es.addEventListener('message', function (e) {
+            let result = JSON.parse(e.data);
+
+            addLog(result.message);
+
+            if (e.lastEventId === 'CLOSE') {
+                addLog('Received CLOSE closing');
+                es.close();
+                let pBar = document.getElementById('progressor');
+                pBar.value = pBar.max; //max out the progress bar
+            } else {
+                let pBar = document.getElementById('progressor');
+                pBar.value = result.progress;
+                let perc = document.getElementById('percentage');
+                perc.innerHTML = result.progress + "%";
+                perc.style.width = (Math.floor(pBar.clientWidth * (result.progress / 100)) + 15) + 'px';
+            }
+        });
+
+        es.addEventListener('error', function () {
+            addLog('Error occurred');
+            es.close();
+        });
+    }
+
+    function stopTask() {
+        es.close();
+        addLog('Interrupted');
+    }
+
+    function addLog(message) {
+        let r = document.getElementById('results');
+        r.innerHTML += message + '<br>';
+        r.scrollTop = r.scrollHeight;
+    }
+</script>
+</html>

@@ -7,7 +7,7 @@
         "ext-curl": "*",
         "ext-iconv": "*",
         "ext-json": "*",
-        "friendsofsymfony/rest-bundle": "^2.5",
+        "phpoffice/phpspreadsheet": "^1.8",
         "sensio/framework-extra-bundle": "^5.1",
         "symfony/apache-pack": "^1.0",
         "symfony/asset": "4.2.*",

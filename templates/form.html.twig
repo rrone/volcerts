@@ -21,18 +21,16 @@
     <legend>
         <h4 style="font-weight:bold; font-style:italic; text-decoration: underline">NOTES:</h4>
         <ul>
-            <li>Input is a comma-separated variable file (CSV).</li>
+            <li>Input is a comma-separated variable file (CSV) or Excel file (XLS or XLSX).</li>
             <ul>
                 <li>Dataset size is limited due to default server settings.</li>
-                <li> Recommend dataset size for desktop: 900 IDs, for
-                    mobile: 700 IDs.
-                </li>
-                <li>First column in a CSV file must be an 8 or 9 digit integer (eAYSO or BS standard IDs).</li>
+                <li> Recommend dataset size: for desktop: 900 IDs, for mobile: 700 IDs</li>
+                <li>First column in the input file must be an 8 or 9 digit integer (eAYSO or BS standard IDs).</li>
                 <li>Any text in Column 1 will be ignored.</li>
                 <li>Duplicate entries will be ignored</li>
                 <li>Entries in columns 2 and greater are ignored.</li>
             </ul>
-            <li>Choose a CSV file to upload.</li>
+            <li>Choose a file to upload.</li>
             <li>Click "Submit"</li>
             <li>If you get a "504 Gateway Timeout" Error, reduce your dataset size and try again.</li>
         </ul>
@@ -42,9 +40,9 @@
     <form method="post" action="{{ url('app_ch') }}" enctype="multipart/form-data">
         <div class="file-upload">
             <div class="file-select">
-                <div class="file-select-button" id="fileName">Choose CSV File</div>
+                <div class="file-select-button" id="fileName">Choose CSV or Excel File</div>
                 <div class="file-select-name" id="noFile">No file chosen...</div>
-                <input type="file" name="csv_file" id="csv_file" accept="text/csv">
+                <input type="file" name="csv_file" id="csv_file" accept="text/csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
             </div>
         </div>
 
