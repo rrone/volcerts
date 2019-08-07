@@ -3,6 +3,7 @@
 namespace App\Service;
 
 use Symfony\Component\DomCrawler\Crawler;
+use stdClass;
 
 class VolCerts
 {
@@ -422,10 +423,10 @@ class VolCerts
     }
 
     /**
-     * @param \stdClass $jsCert
+     * @param stdClass $jsCert
      * @return array|null
      */
-    private function getCertificationsReferee(\stdClass $jsCert)
+    private function getCertificationsReferee(stdClass $jsCert)
     {
         if (empty($jsCert)) {
             return null;
@@ -463,10 +464,10 @@ class VolCerts
     }
 
     /**
-     * @param \stdClass $jsCert
+     * @param stdClass $jsCert
      * @return array|null
      */
-    private function getCertificationsAssessor(\stdClass $jsCert)
+    private function getCertificationsAssessor(stdClass $jsCert)
     {
         if (empty($jsCert)) {
             return null;
@@ -490,10 +491,10 @@ class VolCerts
     }
 
     /**
-     * @param \stdClass $jsCert
+     * @param stdClass $jsCert
      * @return array|null
      */
-    private function getCertificationsInstructor(\stdClass $jsCert)
+    private function getCertificationsInstructor(stdClass $jsCert)
     {
         if (empty($jsCert)) {
             return null;
@@ -517,10 +518,10 @@ class VolCerts
     }
 
     /**
-     * @param \stdClass $jsCert
+     * @param stdClass $jsCert
      * @return array|null
      */
-    private function getCertificationsInstructorEvaluator(\stdClass $jsCert)
+    private function getCertificationsInstructorEvaluator(stdClass $jsCert)
     {
         if (empty($jsCert)) {
             return null;
@@ -546,7 +547,7 @@ class VolCerts
 
     }
 
-    private function parseCerts(\stdClass $jsCert, string $type)
+    private function parseCerts(stdClass $jsCert, string $type)
     {
         $certs = (object)[
             'certDesc' => '',

@@ -1,29 +1,23 @@
 {
-  "name": "volcerts",
-  "version": "0.0.1",
-  "description": "Development of bulk volunteer certification lookup",
-  "repository": {},
-  "main": "index.js",
-  "directories": {
-    "test": "tests"
-  },
-  "dependencies": {
-    "bootstrap": "^4.2.1",
-    "datatables.net": "^1.10.19",
-    "datatables.net-dt": "^1.10.19",
-    "jquery": "^3.3.1",
-    "popper.js": "^1.14.6"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "buildDev": "encore dev",
-    "watchDev": "encore dev --watch",
-    "buildProd": "encore production"
-  },
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@symfony/webpack-encore": "^0.27.0",
-    "webpack-notifier": "^1.7.0"
-  }
+    "devDependencies": {
+        "@symfony/webpack-encore": "^0.27.0",
+        "core-js": "^3.0.0",
+        "regenerator-runtime": "^0.13.2",
+        "webpack-notifier": "^1.6.0"
+    },
+    "license": "UNLICENSED",
+    "private": true,
+    "scripts": {
+        "dev-server": "encore dev-server",
+        "dev": "encore dev",
+        "watch": "encore dev --watch",
+        "build": "encore production --progress"
+    },
+    "dependencies": {
+        "bootstrap": "^4.3.1",
+        "datatables.net": "^1.10.19",
+        "datatables.net-dt": "^1.10.19",
+        "jquery": "^3.4.1",
+        "popper.js": "^1.15.0"
+    }
 }

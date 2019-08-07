@@ -19,11 +19,6 @@ class VolCertsTable
     private $volCerts;
 
     /**
-     * @const integer
-     */
-    CONST MaxIDS = 6000;
-
-    /**
      * @const string
      */
     CONST TZ = 'PST';
@@ -42,7 +37,6 @@ class VolCertsTable
     /**
      * @param $inputFileName
      * @return array
-     * @throws PhpSpreadsheet\Exception
      */
     private function loadFile($inputFileName)
     {
@@ -105,7 +99,6 @@ class VolCertsTable
     /**
      * @param $fileName
      * @return array|string
-     * @throws PhpSpreadsheet\Exception
      */
     public function retrieveVolCertData($fileName)
     {

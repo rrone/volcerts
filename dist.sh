@@ -22,44 +22,45 @@ then
 fi
 
 echo ">>> Clear distribution folder..."
-rm -f -r ${dist}/*
+rm -f -r "${dist:?}"
+mkdir "${dist}"
 echo
 
 echo ">>> Copying app to distribution..."
-cp -f -r ./.env.dist ${dist}/.env
-cp -f ./*.json ${dist}
-cp -f ./*.lock ${dist}
+cp -f -r ./.env.dist "${dist}"/.env
+cp -f ./*.json "${dist}"
+cp -f ./*.lock "${dist}"
 
-mkdir ${dist}/bin
-cp bin/console ${dist}/bin
+mkdir "${dist}"/bin
+cp bin/console "${dist}"/bin
 
 
-cp -f -r config ${dist}
-rm -f -r ${dist}/config/packages/dev
-rm -f -r ${dist}/config/packages/test
-rm -f -r ${dist}/config/routes/dev
+cp -f -r "${config}" "${dist}"
+rm -f -r "${dist:?}"/config/packages/dev
+rm -f -r "${dist:?}"/config/packages/test
+rm -f -r "${dist:?}"/config/routes/dev
 
-cp -f -r public ${dist}
+cp -f -r public "${dist}"
 
-cp -f -r src ${dist}
+cp -f -r src "${dist}"
 
-cp -f -r templates ${dist}
+cp -f -r templates "${dist}"
 
-mkdir ${dist}/var
+mkdir "${dist}"/var
 echo
 
 echo ">>> Removing OSX jetsam..."
-find ${dist} -type f -name '.DS_Store' -delete
+find "${dist}" -type f -name '.DS_Store' -delete
 echo
 
 echo ">>> Removing development jetsam..."
-find ${dist}/src -type f -name '*Test.php' -delete
+find "${dist}"/src -type f -name '*Test.php' -delete
 echo
 
-cd ${dist}
+cd "${dist}"
 
-    cp -f ${src}/webpack.config.js ${dist}
-    cp -f -r ${src}/assets .
+    cp -f "${src}"/webpack.config.js "${dist}"
+    cp -f -r "${src}"/assets .
 
     echo ">>> Composer install production items..."
     composer install --no-dev --optimize-autoloader
@@ -67,7 +68,7 @@ cd ${dist}
 
     echo ">>> Install resources for production..."
     yarn install
-    yarn buildProd
+    yarn build
     yarn install --production=true
     echo
 
@@ -77,7 +78,7 @@ cd ${dist}
 
     bin/console cache:clear
 
-cd ${src}
+cd "${src}"
 
 echo ">>> Restore composer development items..."
 ## Restore xdebug
