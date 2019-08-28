@@ -13,7 +13,7 @@ class FileUploader
     private $targetDirectory;
 
     /**
-     * FileUploader constructor.
+     * FileUploader constructor
      * @param $targetDirectory
      */
     public function __construct($targetDirectory)

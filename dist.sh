@@ -68,7 +68,7 @@ cd "${dist}"
 
     echo ">>> Install resources for production..."
     yarn install
-    yarn build
+    yarn prod
     yarn install --production=true
     echo
 

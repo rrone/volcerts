@@ -11,7 +11,7 @@
         "dev-server": "encore dev-server",
         "dev": "encore dev",
         "watch": "encore dev --watch",
-        "build": "encore production --progress"
+        "prod": "encore production --progress"
     },
     "dependencies": {
         "bootstrap": "^4.3.1",

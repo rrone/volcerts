@@ -274,7 +274,7 @@ class VolCerts
      * @param $certData
      * @return array|string
      */
-    private function parseCertData(int $id, $certData)
+    private function parseCertData($id, $certData)
     {
         if (empty($certData)) {
             return '{}';
@@ -295,10 +295,10 @@ class VolCerts
 
     /**
      * @param int $id
-     * @param $nodeValue
+     * @param int $nodeValue
      * @return array
      */
-    private function parseNodeValue(int $id, $nodeValue)
+    private function parseNodeValue($id, $nodeValue)
     {
         if (is_null($nodeValue)) {
             return null;
@@ -637,13 +637,13 @@ class VolCerts
         $certs['CDCDate'] = '';
         $certs['SafeHavenDate'] = '';
         foreach ($jsCert->VolunteerCertificationsSafeHaven as $k => $cls) {
-            if (strpos($cls->CertificationDesc, 'CDC') !== false) {
+            if (strpos($cls->CertificationDesc, 'CDC Concussion Awareness') !== false) {
                 if ($this->phpDate($cls->CertificationDate) > $certs['CDCDate']) {
                     $certs['CDCDate'] = $this->phpDate($cls->CertificationDate);
                 }
             }
-            if (strpos($cls->CertificationDesc, 'Safe Haven') !== false OR
-                strpos($cls->CertificationDesc, 'Refugio Seguro') !== false) {
+            if (strpos($cls->CertificationDesc, 'AYSOs Safe Haven') !== false OR
+                strpos($cls->CertificationDesc, 'AYSOs Refugio Seguro') !== false) {
                 if ($this->phpDate($cls->CertificationDate) > $certs['SafeHavenDate']) {
                     $certs['SafeHavenDate'] = $this->phpDate($cls->CertificationDate);
                 }
