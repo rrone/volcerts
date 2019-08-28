@@ -23,7 +23,7 @@ class VolCerts
      */
     public function __construct()
     {
-//        $this->urlDetails = "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=";
+//        $this->urlDetails = "https://national.ayso.org/Volunteers/SelectVolunteerDetails";
         $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData";
 
         $this->and = '';
@@ -36,8 +36,8 @@ class VolCerts
         'AYSOID',
         'Full Name',
         'Type',
-        'MY',
         'SAR',
+        'MY',
         'Safe Haven Date',
         'CDC Date',
         'Ref Cert Desc',
@@ -58,8 +58,8 @@ class VolCerts
         'AYSOID',
         'FullName',
         'Type',
-        'MY',
         'SAR',
+        'MY',
         'SafeHavenDate',
         'CDCDate',
         'RefCertDesc',
@@ -351,7 +351,6 @@ class VolCerts
                 $fullName = explode(",", $certDetails->VolunteerFullName);
                 $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName[0])));
                 $cert['Type'] = $certDetails->Type;
-                $cert['MY'] = $certDetails->VolunteerMembershipYear;
 
                 $sar = explode('/', $certDetails->VolunteerSAR);
                 $s = isset($sar[0]) ? ltrim($sar[0], '0') : null;
@@ -367,6 +366,8 @@ class VolCerts
                     $sar .= '/'.$r;
                 }
                 $cert['SAR'] = $sar;
+
+                $cert['MY'] = $certDetails->VolunteerMembershipYear;
 
                 $cert['SafeHavenDate'] = isset($c['SafeHavenDate']) ? $c['SafeHavenDate'] : $cert['SafeHavenDate'];
                 $cert['CDCDate'] = isset($c['CDCDate']) ? $c['CDCDate'] : $cert['CDCDate'];
@@ -388,8 +389,8 @@ class VolCerts
                 $fullName = explode(",", $certDetails->VolunteerFullName);
                 $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName)));
                 $cert['Type'] = $certDetails->VolunteerType;
-                $cert['MY'] = $certDetails->VolunteerMembershipYear;
                 $cert['SAR'] = $certDetails->VolunteerSAR;
+                $cert['MY'] = $certDetails->VolunteerMembershipYear;
                 $cert['SafeHavenDate'] = '';
                 $cert['CDCDate'] = '';
                 $cert['RefCertDesc'] = '';
@@ -405,8 +406,8 @@ class VolCerts
             $cert['AYSOID'] = $id;
             $cert['FullName'] = '*** '.trim($nv->ReturnMessage).' ***';
             $cert['Type'] = '';
-            $cert['MY'] = '';
             $cert['SAR'] = '';
+            $cert['MY'] = '';
             $cert['SafeHavenDate'] = '';
             $cert['CDCDate'] = '';
             $cert['RefCertDesc'] = '';
@@ -637,15 +638,16 @@ class VolCerts
         $certs['CDCDate'] = '';
         $certs['SafeHavenDate'] = '';
         foreach ($jsCert->VolunteerCertificationsSafeHaven as $k => $cls) {
-            if (strpos($cls->CertificationDesc, 'CDC Concussion Awareness') !== false) {
-                if ($this->phpDate($cls->CertificationDate) > $certs['CDCDate']) {
-                    $certs['CDCDate'] = $this->phpDate($cls->CertificationDate);
+            $date = $this->phpDate($cls->CertificationDate);
+            if (strpos($cls->CertificationDesc, 'Concussion Awareness') !== false) {
+                if ($date > $certs['CDCDate']) {
+                    $certs['CDCDate'] = $date;
                 }
             }
             if (strpos($cls->CertificationDesc, 'AYSOs Safe Haven') !== false OR
                 strpos($cls->CertificationDesc, 'AYSOs Refugio Seguro') !== false) {
-                if ($this->phpDate($cls->CertificationDate) > $certs['SafeHavenDate']) {
-                    $certs['SafeHavenDate'] = $this->phpDate($cls->CertificationDate);
+                if ($date > $certs['SafeHavenDate']) {
+                    $certs['SafeHavenDate'] = $date;
                 }
             }
         }
