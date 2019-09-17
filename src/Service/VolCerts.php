@@ -100,10 +100,10 @@ class VolCerts
      * @var array
      */
     private $instMeta = [
+        '',     //blank required to match first certification
         'Referee Instructor Course',
         'Regional Referee Instructor',
         'Intermediate Referee Instructor',
-        'Referee Instructor',
         'Advanced Referee Instructor Course',
         'Advanced Referee Instructor',
         'National Referee Instructor',
@@ -113,6 +113,7 @@ class VolCerts
      * @var array
      */
     private $instEvalMeta = [
+        '',     //blank required to match first certification
         'Referee Instructor Evaluator Course',
         'Referee Instructor Evaluator',
     ];
@@ -122,6 +123,7 @@ class VolCerts
      * @var array
      */
     private $assessMeta = [
+        '',     //blank required to match first certification
         'Referee Assessor Course',
         'Referee Assessor',
         'National Referee Assessor Course',
@@ -259,7 +261,7 @@ class VolCerts
      */
     private function phpDate(string $certDate)
     {
-        if($certDate == '/Date(-62135568000000)/') {
+        if ($certDate == '/Date(-62135568000000)/') {
             return '1964-09-15';
         }
 
