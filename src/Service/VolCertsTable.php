@@ -19,6 +19,21 @@ class VolCertsTable
     private $volCerts;
 
     /**
+     * @var boolean $merge
+     */
+    private $mergeData;
+
+    /**
+     * @var array $dataIn
+     */
+    private $dataIn;
+
+    /**
+     * @var array $volCertData
+     */
+    private $volCertData;
+
+    /**
      * @const string
      */
     CONST TZ = 'PST';
@@ -26,12 +41,16 @@ class VolCertsTable
     /**
      * VolCertsEntity constructor
      * @param VolCerts $volCerts
+     * @param bool $mergeData
      */
-    public function __construct(VolCerts $volCerts)
+    public function __construct(VolCerts $volCerts, bool $mergeData)
     {
         set_time_limit(0);
 
         $this->volCerts = $volCerts;
+        $this->mergeData = $mergeData;
+        $this->dataIn = [];
+        $this->volCertData = [];
     }
 
     /**
@@ -76,9 +95,11 @@ class VolCertsTable
 
         $xls = $reader->load($inputFileName);
 
+        $hrc = $xls->getActiveSheet()->getHighestRowAndColumn();
+        $usedRange = "A1:".$hrc['column'].$hrc['row'];
         $tmp = $xls->getActiveSheet()
             ->rangeToArray(
-                'A1:A25000',     // The worksheet range that we want to retrieve
+                $usedRange,     // The worksheet range that we want to retrieve
                 '',        // Value that should be returned for empty cells
                 false,
                 // Should formulas be calculated (the equivalent of getCalculatedValue() for each cell)
@@ -86,11 +107,20 @@ class VolCertsTable
                 false         // Should the array be indexed by cell row and cell column
             );
 
-        foreach ($tmp as $key => $id) {
-            $id = implode($id);
-            if ((int)$id > 0) {
-                $arrIds[] = $id;
+        foreach ($tmp as $key => $row) {
+            if ($key < 1) {
+                array_shift($row);
+                $this->dataIn[] = $row;
+                continue;
+            }
+
+            if ((int)$row[0] > 0) {
+                $arrIds[] = $id = $row[0];
+                // remove the AYSOID; duplicate content
+                array_shift($row);
+                $this->dataIn[$id] = $row;
             };
+
         }
 
         return $arrIds;
@@ -105,24 +135,29 @@ class VolCertsTable
         $arrIds = $this->loadFile($fileName);
 
         $volCerts = $this->volCerts->retrieveVolsCertData($arrIds);
+        $vc = [];
 
-        foreach ($volCerts as &$volCert) {
+        foreach ($volCerts as $volCert) {
 
             $aysoID = $volCert['AYSOID'];
             $url = CERT_URL.$aysoID;
             $hrefAysoID = "<a href=\"$url\" target=\"_blank\">$aysoID</a>";
             $volCert['AYSOID'] = $hrefAysoID;
+            $vc[$aysoID] = $volCert;
         }
 
-        return $volCerts;
+        $this->volCertData = $vc;
+
+        return $vc;
     }
 
     /**
      * @param array $content
+     * @param bool $merge
      * @return array|string
      * @throws Exception
      */
-    public function renderView(array $content)
+    public function renderView(array $content, bool $merge)
     {
         if (is_null($content)) {
             return $content;
@@ -145,7 +180,13 @@ EOD;
 <th>$hdr</th>
 EOD;
             }
-
+            if ($merge) {
+                foreach ($this->dataIn[0] as $hdr) {
+                    $html .= <<<EOD
+<th>$hdr</th>
+EOD;
+                }
+            }
             $html .= <<<EOD
 </tr>
 </thead>
@@ -159,10 +200,17 @@ EOD;
 <tr>
 EOD;
                 foreach ($keys as $key) {
-
                     $html .= <<<EOD
 <td>{$cert[$key]}</td>
 EOD;
+                }
+                if ($merge) {
+                    foreach ($this->dataIn[$i] as $item) {
+                        $html .= <<<EOD
+<td>{$item}</td>
+EOD;
+
+                    }
                 }
 
                 $html .= <<<EOD
@@ -170,6 +218,7 @@ EOD;
 EOD;
             }
         }
+
         $createDate = $this->getTimestamp().' '.self::TZ;
         $html .= <<<EOD
 </tbody>
@@ -185,7 +234,7 @@ EOD;
      * @return string
      * @throws Exception
      */
-    protected function getTimestamp()
+    protected function getTimestamp(): string
     {
         $utc = date("Y-m-d H:i:s");;
 
@@ -195,4 +244,19 @@ EOD;
         return $ts->format('Y-m-d  H:i');
     }
 
+    /**
+     * @return array
+     */
+    public function getDataIn(): array
+    {
+        return $this->dataIn;
+    }
+
+    /**
+     * @return array
+     */
+    public function getVolCertData(): array
+    {
+        return $this->volCertData;
+    }
 }

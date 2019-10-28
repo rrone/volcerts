@@ -72,12 +72,14 @@ class VolCertTableController extends AbstractController
 
         }
 
+        $merge = !is_null($this->request->get('merge'));
+
         $fileName = $this->fileUploader->upload($file);
 
         $title = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file->getClientOriginalName());
 
         $content = $this->volCertsTable->retrieveVolCertData($fileName);
-        $html = $this->volCertsTable->renderView($content);
+        $html = $this->volCertsTable->renderView($content, $merge);
         $response = $this->render('view.html.twig', [
             'title' => $title,
             'table' => $html,

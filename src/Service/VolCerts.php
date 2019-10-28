@@ -351,7 +351,7 @@ class VolCerts
         }
 
         $cert['AYSOID'] = $id;
-        $cert['FullName'] =
+        $cert['FullName'] = '*** Volunteer not found ***';
         $cert['Type'] =
         $cert['SAR'] =
         $cert['MY'] =
