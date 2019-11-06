@@ -69,7 +69,7 @@ class VolCertsFormController extends AbstractController
     }
 
     /**
-     * @Route("/{id}", name="app_list")
+     * @Route("/api/{id}", name="app_list")
      * @param string $id
      * @return JsonResponse
      */
