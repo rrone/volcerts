@@ -5,7 +5,7 @@
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
     locale: 'en'
-    app.version: '2020.01.17.00'
+    app.version: '2020.01.19.00'
 
     upload_directory: '%kernel.project_dir%/var/uploads'
 

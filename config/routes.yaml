@@ -1,3 +1,11 @@
 #index:
 #    path: /
 #    controller: App\Controller\DefaultController::index
+
+app__mystery__url:
+    path: /{url}/
+    defaults:
+        _controller: FrameworkBundle:Redirect:urlRedirect
+        path: /
+        requirements:
+            url: [.*]
