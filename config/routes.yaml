@@ -2,10 +2,7 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
-app__mystery__url:
-    path: /{url}/
-    defaults:
-        _controller: FrameworkBundle:Redirect:urlRedirect
-        path: /
-        requirements:
-            url: [.*]
+#   must load last
+app_mystery_routes:
+    resource: "routes/mystery_routes.yaml"
+    prefix: /

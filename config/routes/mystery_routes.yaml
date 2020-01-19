@@ -1,0 +1,11 @@
+#   unknown path trap
+#   must be loaded last
+
+app__mystery__url:
+    path: /{url}/
+    controller: Symfony\Bundle\FrameworkBundle\Controller\RedirectController::urlRedirectAction
+    defaults:
+        path: /
+        permanent: true
+        requirements:
+            url: [.*]
