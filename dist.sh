@@ -2,9 +2,9 @@
 ## Exit immediately if a command exits with a non-zero status.
 set -e
 #set distribution folder alias
-src="$HOME"/Sites/AYSO/volcerts
-dist="$HOME"/GoogleDrive-ayso1sra/s1/web/ayso1ref/services/vc
-config="$HOME"/Sites/AYSO/volcerts/config
+src="$HOME"/Sites/AYSO/_dev/volcerts
+dist="$HOME"/Sites/AYSO/_services/vc
+config="$HOME"/Sites/AYSO/_dev/volcerts/config
 PHP=/usr/local/etc/php/7.3/conf.d
 
 ## clear the screen
@@ -16,10 +16,11 @@ echo
 
 echo ">>> Purge development items..."
 ## Disable xdebug for composer performance
-if [[ -e $PHP"/ext-xdebug.ini" ]]
+if [[ -e ${PHP}"/ext-xdebug.ini" ]]
 then
     mv "$PHP"/ext-xdebug.ini "$PHP"/ext-xdebug.~ini
 fi
+yarn prod
 
 echo ">>> Clear distribution folder..."
 rm -f -r "${dist:?}"
@@ -34,11 +35,12 @@ cp -f ./*.lock "${dist}"
 mkdir "${dist}"/bin
 cp bin/console "${dist}"/bin
 
-
+echo ">>> Copying config to distribution..."
 cp -f -r "${config}" "${dist}"
-rm -f -r "${dist:?}"/config/packages/dev
-rm -f -r "${dist:?}"/config/packages/test
-rm -f -r "${dist:?}"/config/routes/dev
+echo ">>> Clear distribution config..."
+rm -f -r "${dist}"/config/packages/dev
+rm -f -r "${dist}"/config/packages/test
+rm -f -r "${dist}"/config/routes/dev
 
 cp -f -r public "${dist}"
 
@@ -58,34 +60,25 @@ find "${dist}"/src -type f -name '*Test.php' -delete
 echo
 
 cd "${dist}"
-
-    cp -f "${src}"/webpack.config.js "${dist}"
     cp -f -r "${src}"/assets .
-
-    echo ">>> Composer install production items..."
-    composer install --no-dev --optimize-autoloader
-    echo
-
-    echo ">>> Install resources for production..."
-    yarn install
-    yarn prod
-    yarn install --production=true
-    echo
 
     rm -f -r ./assets
     rm -f -r ./bin/doctrine*
-    rm -f ./webpack.config.js
+
+    composer install --no-dev
 
     bin/console cache:clear
+echo "here"
 
 cd "${src}"
 
 echo ">>> Restore composer development items..."
 ## Restore xdebug
-if [[ -e $PHP"/ext-xdebug.~ini" ]]
+if [[ -e ${PHP}"/ext-xdebug.~ini" ]]
 then
-    mv "$PHP"/ext-xdebug.~ini "$PHP"/ext-xdebug.ini
+    mv "${PHP}"/ext-xdebug.~ini "${PHP}"/ext-xdebug.ini
 fi
+yarn dev
 
 echo "...distribution complete"
 
