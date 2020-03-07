@@ -562,6 +562,7 @@ class VolCerts
         }
 
         ksort($cert['InstCertDesc']);
+        unset($cert['InstCertDesc']['']);
         $c['InstCertDesc'] = implode('<br><br>', array_values($cert['InstCertDesc']));
         $c['InstCertDate'] = implode('<br><br>', array_keys($cert['InstCertDesc']));
 
