@@ -540,43 +540,32 @@ class VolCerts
         }
 
         $certs = $this->parseCerts($jsCert, 'Referee Instructor');
-        $cert['InstCertDesc'] = $certs->certDesc;
-        $cert['InstCertDate'] = $certs->certDate;
+        $cert['InstCertDesc'][$certs->certDate] = $certs->certDesc;
+
         if (array_search($certs->courseDesc, $this->instRefMeta) > array_search($certs->certDesc, $this->instRefMeta)) {
-            if (!empty($certs->certDesc)) {
-                $cert['InstCertDesc'] .= '/';
-                $cert['InstCertDate'] .= '/';
-            }
-            $cert['InstCertDesc'] .= $certs->courseDesc;
-            $cert['InstCertDate'] .= $certs->courseDate;
+            $cert['InstCertDesc'][$certs->courseDate] = $certs->courseDesc;
         }
 
         $certs = $this->parseCerts($jsCert, 'Coach Instructor');
         if(!empty($certs)) {
-            if ($cert['InstCertDesc'] == 'Introduction to Instruction') {
-                $cert['InstCertDesc'] = '';
-                $cert['InstCertDate'] = '';
+            if(!in_array('Introduction to Instruction', $cert['InstCertDesc'])) {
+                $cert['InstCertDesc'][$certs->certDate] = $certs->certDesc;
             }
-        }
-        if (!empty($cert['InstCertDesc'])) {
-            $cert['InstCertDesc'] .= "<br><br>";
-            $cert['InstCertDate'] .= "<br><br>";
-        }
-        $cert['InstCertDesc'] .= $certs->certDesc;
-        $cert['InstCertDate'] .= $certs->certDate;
-        if (array_search($certs->courseDesc, $this->instCoachMeta) > array_search(
-                $certs->certDesc,
-                $this->instCoachMeta
-            )) {
-            if (!empty($certs->certDesc)) {
-                $cert['InstCertDesc'] .= '/';
-                $cert['InstCertDate'] .= '/';
+            if (array_search($certs->courseDesc, $this->instCoachMeta) > array_search(
+                    $certs->certDesc,
+                    $this->instCoachMeta
+                )) {
+                if (!strpos($cert['InstCertDesc'], 'Introduction to Instruction')) {
+                    $cert['InstCertDesc'][$certs->courseDate] = $certs->courseDesc;
+                }
             }
-            $cert['InstCertDesc'] .= $certs->courseDesc;
-            $cert['InstCertDate'] .= $certs->courseDate;
         }
 
-        return $cert;
+        ksort($cert['InstCertDesc']);
+        $c['InstCertDesc'] = implode('<br><br>', array_values($cert['InstCertDesc']));
+        $c['InstCertDate'] = implode('<br><br>', array_keys($cert['InstCertDesc']));
+
+        return $c;
 
     }
 
