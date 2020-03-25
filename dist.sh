@@ -69,7 +69,6 @@ cd "${prod}"
     yarn install --production=true
     
     bin/console cache:clear
-echo "here"
 
 cd "${dev}"
 
