@@ -10,6 +10,10 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class VolCertsFormController
+ * @package App\Controller
+ */
 class VolCertsFormController extends AbstractController
 {
     /**
@@ -57,32 +61,23 @@ class VolCertsFormController extends AbstractController
      */
     public function index()
     {
-        $response = $this->render(
+        return $this->render(
             'form.html.twig',
             [
                 'appVersion' => $this->appVersion,
                 'projectDir' => $this->projectDir,
             ]
         );
-
-        return $response;
     }
 
-    /**
-     * @Route("/api/{id}", name="app_list")
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function get(string $id)
+    public function get(string $id) : object
     {
         $ids = explode(',', $this->request->get('id'));
 
-        $response = new JsonResponse(
+        return new JsonResponse(
             $this->volCerts->retrieveVolsCertData($ids),
             JsonResponse::HTTP_OK
         );
-
-        return $response;
     }
 
 }
