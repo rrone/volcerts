@@ -49,7 +49,7 @@ class VolCertTableController extends AbstractController
         $this->volCertsTable = $volCertsTable;
         $this->appVersion = $appVersion;
         $this->fileUploader = $fileUploader;
-        $this->request = $requestStack->getCurrentRequest();;
+        $this->request = $requestStack->getCurrentRequest();
     }
 
     /**

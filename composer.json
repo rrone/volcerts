@@ -4,6 +4,7 @@
     "require": {
         "php": "^7.3",
         "ext-ctype": "*",
+        "ext-curl": "*",
         "ext-iconv": "*",
         "ext-json": "*",
         "laminas/laminas-code": "^3.4",

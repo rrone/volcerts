@@ -3,8 +3,7 @@
 namespace App\Tests\Service;
 
 use App\Service\FileUploader;
-use Symfony\Bundle\FrameworkBundle\Tests\TestCase;
-use Symfony\Component\HttpFoundation\File\File;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 /**

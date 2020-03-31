@@ -11,10 +11,10 @@ class VolCertTableControllerTest extends WebTestCase
         $client = static::createClient();
 
         $client->request('GET', '/ch');
-
-        var_dump($client->getRequest());die();
+        $client->followRedirect();
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        var_dump($client->getRequest()->getUri());
     }
 
 }

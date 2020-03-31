@@ -119,7 +119,7 @@ class VolCertsTable
                 // remove the AYSOID; duplicate content
                 array_shift($row);
                 $this->dataIn[$id] = $row;
-            };
+            }
 
         }
 
@@ -236,7 +236,7 @@ EOD;
      */
     protected function getTimestamp(): string
     {
-        $utc = date("Y-m-d H:i:s");;
+        $utc = date("Y-m-d H:i:s");
 
         $ts = new DateTime($utc, new DateTimeZone('UTC'));
         $ts->setTimezone(new DateTimeZone(self::TZ));

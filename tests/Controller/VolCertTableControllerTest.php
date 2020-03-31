@@ -9,7 +9,7 @@ class VolCertsFormControllerTest extends WebTestCase
     public function testRoot()
     {
         $client = static::createClient();
-
+        $client->followRedirects();
         $client->request('GET', '/');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());

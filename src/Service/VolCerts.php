@@ -5,23 +5,10 @@ namespace App\Service;
 use Symfony\Component\DomCrawler\Crawler;
 use stdClass;
 
+define ("VIEW_CERT_URL","https://national.ayso.org/Volunteers/SelectViewCertificationInitialData");
+
 class VolCerts
 {
-
-    /**
-     * @var string
-     */
-    private $urlCert;
-
-    /**
-     * VolCertsEntity constructor
-     */
-    public function __construct()
-    {
-//        $this->urlDetails = "https://national.ayso.org/Volunteers/SelectVolunteerDetails";
-        $this->urlCert = "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData";
-
-    }
 
     /**
      * @var array
@@ -210,7 +197,7 @@ class VolCerts
 
         $certs = [];
         foreach ($certsGroup as $group) {
-            $certs = array_merge($certs, $this->curl_multi_get($this->urlCert, $group));
+            $certs = array_merge($certs, $this->curl_multi_get(VIEW_CERT_URL, $group));
         }
 
         $certData = [];
@@ -220,7 +207,6 @@ class VolCerts
 
         return $certData;
     }
-
 
     /**
      * @param $url
@@ -271,7 +257,7 @@ class VolCerts
 //    public function retrieveVolCertData($id)
 //    {
 //
-//        return $this->parseCertData($id, $this->curl_get($this->urlCert, ['AYSOID' => $id]));
+//        return $this->parseCertData($id, $this->curl_get(VIEW_CERT_URL, ['AYSOID' => $id]));
 //    }
 
 //    /**
@@ -310,9 +296,8 @@ class VolCerts
         }
 
         $ts = preg_replace('/[^0-9]/', '', $certDate);
-        $date = date("Y-m-d", $ts / 1000);
 
-        return $date;
+        return date("Y-m-d", $ts / 1000);
     }
 
     /**

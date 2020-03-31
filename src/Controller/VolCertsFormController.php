@@ -70,6 +70,11 @@ class VolCertsFormController extends AbstractController
         );
     }
 
+    /**
+     * @Route("/{id}", name="app_list")
+     * @param string $id
+     * @return JsonResponse
+     */
     public function get(string $id) : object
     {
         $ids = explode(',', $this->request->get('id'));
