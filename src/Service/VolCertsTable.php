@@ -4,9 +4,7 @@ namespace App\Service;
 
 use DateTime;
 use DateTimeZone;
-
 use Exception;
-
 use PhpOffice\PhpSpreadsheet;
 
 define("CERT_URL", "https://national.ayso.org/Volunteers/ViewCertification?UserName=");
@@ -41,14 +39,13 @@ class VolCertsTable
     /**
      * VolCertsEntity constructor
      * @param VolCerts $volCerts
-     * @param bool $mergeData
      */
-    public function __construct(VolCerts $volCerts, bool $mergeData)
+    public function __construct(VolCerts $volCerts)
     {
         set_time_limit(0);
 
         $this->volCerts = $volCerts;
-        $this->mergeData = $mergeData;
+        $this->mergeData = false;
         $this->dataIn = [];
         $this->volCertData = [];
     }
@@ -91,7 +88,6 @@ class VolCertsTable
         $arrIds = [];
 
         /**  Load $inputFileName to a Spreadsheet Object  **/
-        /** @var PhpSpreadsheet\Spreadsheet $xls */
 
         $xls = $reader->load($inputFileName);
 
@@ -153,14 +149,13 @@ class VolCertsTable
 
     /**
      * @param array $content
-     * @param bool $merge
      * @return array|string
      * @throws Exception
      */
-    public function renderView(array $content, bool $merge)
+    public function renderView(array $content)
     {
         if (is_null($content)) {
-            return $content;
+            return null;
         }
 
         $html = <<<EOD
@@ -180,7 +175,7 @@ EOD;
 <th>$hdr</th>
 EOD;
             }
-            if ($merge) {
+            if ($this->mergeData) {
                 foreach ($this->dataIn[0] as $hdr) {
                     $html .= <<<EOD
 <th>$hdr</th>
@@ -204,7 +199,7 @@ EOD;
 <td>{$cert[$key]}</td>
 EOD;
                 }
-                if ($merge) {
+                if ($this->mergeData) {
                     foreach ($this->dataIn[$i] as $item) {
                         $html .= <<<EOD
 <td>{$item}</td>
@@ -258,5 +253,9 @@ EOD;
     public function getVolCertData(): array
     {
         return $this->volCertData;
+    }
+
+    public function setMerge(bool $merge) {
+        $this->mergeData = $merge;
     }
 }

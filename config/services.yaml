@@ -4,39 +4,36 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    locale: 'en'
-    app.version: '2020.03.31.10'
+    app.version: '2020.06.09.00'
 
-    upload_directory: '%kernel.project_dir%/var/uploads'
+    sra:
+        name: 'Rick Roberts'
+        email: 'ayso1sra@gmail.com'
+        subject: 'subject=Suggestion for vc.ayso1ref.com'
 
+    issueTracker: 'https://github.com/rrone/volcerts/issues'
+
+    settings.test: false
 services:
     # default configuration for services in *this* file
     _defaults:
         autowire: true      # Automatically injects dependencies in your services.
         autoconfigure: true # Automatically registers your services as commands, event subscribers, etc.
-        public: false
+        bind:
+            $appVersion: '%app.version%'
+            $projectDir: '%kernel.project_dir%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name
     App\:
         resource: '../src/*'
-        exclude: '../src/{DependencyInjection,Tests,Kernel.php}'
+        exclude: '../src/{DependencyInjection,Entity,Migrations,Tests,Kernel.php}'
 
     # controllers are imported separately to make sure services can be injected
     # as action arguments even if you don't extend any base controller class
     App\Controller\:
         resource: '../src/Controller'
         tags: ['controller.service_arguments']
-        bind:
-            $appVersion: '%app.version%'
-            $projectDir: '%kernel.project_dir%'
 
     # add more service definitions when explicit configuration is needed
     # please note that last definitions always *replace* previous ones
-    App\Service\FileUploader:
-        arguments:
-            $targetDirectory: '%upload_directory%'
-
-    App\Service\VolCertsTable:
-        arguments:
-            $mergeData: boolean

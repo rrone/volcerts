@@ -4,7 +4,7 @@ namespace App\Tests\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class VolCertsFormControllerTest extends WebTestCase
+class VolCertsTableControllerTest extends WebTestCase
 {
     public function testRoot()
     {
@@ -19,7 +19,7 @@ class VolCertsFormControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/97815888');
+        $client->request('GET', '/id/97815888');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
@@ -28,7 +28,7 @@ class VolCertsFormControllerTest extends WebTestCase
     {
         $client = static::createClient();
 
-        $client->request('GET', '/97815888,96383440');
+        $client->request('GET', '/id/97815888,96383440');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }

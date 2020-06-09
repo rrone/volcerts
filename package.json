@@ -8,16 +8,17 @@
         "prod": "encore production --progress"
     },
     "dependencies": {
-        "@symfony/webpack-encore": "^0.28.2",
-        "bootstrap": "^4.3.1",
-        "datatables.net": "^1.10.19",
-        "datatables.net-dt": "^1.10.19",
-        "jquery": "^3.4.1",
-        "popper.js": "^1.15.0",
-        "webpack-notifier": "^1.6.0"
+        "@popperjs/core": "^2.4.1",
+        "@symfony/webpack-encore": "^0.28",
+        "bootstrap": "^4.5",
+        "datatables.net": "^1.10",
+        "datatables.net-dt": "^1.10",
+        "jquery": "^3.4",
+        "popper.js": "^1.16",
+        "webpack-notifier": "^1.8"
     },
     "devDependencies": {
-        "core-js": "^3.0.0",
-        "regenerator-runtime": "^0.13.2"
+        "core-js": "^3.6",
+        "regenerator-runtime": "^0.13"
     }
 }

@@ -1,2 +1,5 @@
 twig:
     strict_variables: true
+    globals:
+        env_banner: '%env(APP_BANNER)%'
+        projectDir: '%kernel.project_dir%'

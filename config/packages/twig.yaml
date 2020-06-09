@@ -4,3 +4,4 @@ twig:
     strict_variables: '%kernel.debug%'
     globals:
         env_banner: '%env(APP_BANNER)%'
+        projectDir: '%kernel.project_dir%'

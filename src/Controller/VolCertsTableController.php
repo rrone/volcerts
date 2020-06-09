@@ -3,8 +3,10 @@
 namespace App\Controller;
 
 use App\Service\FileUploader;
+use App\Service\VolCerts;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use App\Service\VolCertsTable;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Request;
@@ -12,8 +14,13 @@ use Symfony\Component\HttpFoundation\RedirectResponse;
 use Symfony\Component\HttpFoundation\Response;
 use Exception;
 
-class VolCertTableController extends AbstractController
+class VolCertsTableController extends AbstractController
 {
+    /**
+     * @var VolCerts $volCerts
+     */
+    private $volCerts;
+
     /**
      * @var VolCertsTable $volCertsTable
      */
@@ -33,19 +40,22 @@ class VolCertTableController extends AbstractController
     private $request;
 
     /**
-     * VolCertTableController constructor
+     * VolCertsTableController constructor
+     * @param VolCerts $volCerts
      * @param VolCertsTable $volCertsTable
      * @param string $appVersion
      * @param FileUploader $fileUploader
      * @param RequestStack $requestStack
      */
     public function __construct(
+        VolCerts $volCerts,
         VolCertsTable $volCertsTable,
-        string $appVersion,
+        $appVersion,
         FileUploader $fileUploader,
         RequestStack $requestStack
         )
     {
+        $this->volCerts = $volCerts;
         $this->volCertsTable = $volCertsTable;
         $this->appVersion = $appVersion;
         $this->fileUploader = $fileUploader;
@@ -60,36 +70,55 @@ class VolCertTableController extends AbstractController
     public function index()
     {
         if(!$this->request->isMethod('POST')) {
-
-            return $this->redirect('/');
-
+            return $this->home();
         }
 
-        $file = $this->request->files->get('uploadFilename');
-        if(is_null($file)){
-
-            return $this->redirect('/');
-
+        $fileName = $this->fileUploader->upload($this->request);
+        if(!file_exists($fileName)) {
+            return $this->home();
         }
 
-        $merge = !is_null($this->request->get('merge'));
-
-        $fileName = $this->fileUploader->upload($file);
-
-        $title = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file->getClientOriginalName());
-
+        $title = preg_replace('/\\.[^.\\s]{3,4}$/', '', $fileName);
+        $this->volCertsTable->setMerge(!is_null($this->request->get('merge')));
         $content = $this->volCertsTable->retrieveVolCertData($fileName);
-        $html = $this->volCertsTable->renderView($content, $merge);
-        $response = $this->render('view.html.twig', [
+
+        unlink($fileName);
+
+        $html = $this->volCertsTable->renderView($content);
+
+        return $this->render('view.html.twig', [
             'title' => $title,
             'table' => $html,
             'appVersion' => $this->appVersion
         ]);
 
-        unlink($fileName);
-
-        return $response;
-
     }
 
+    /**
+     * @Route("/id/{ids}", name="app_get")
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function get(string $id = null): object
+    {
+        $ids = explode(',', $this->request->get('ids'));
+
+        if(empty($ids)) {
+
+            return $this->home();
+        }
+
+        return new JsonResponse(
+            $this->volCerts->retrieveVolsCertData($ids),
+            JsonResponse::HTTP_OK
+        );
+    }
+
+    /**
+     * @Route("/home", name="app_home")
+     */
+    public function home()
+    {
+        return $this->redirect('/');
+    }
 }

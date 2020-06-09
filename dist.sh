@@ -68,7 +68,7 @@ cd "${prod}"
     composer install --no-dev
     yarn install --production=true
     
-    bin/console cache:clear
+    bin/console cache:clear --env=prod
 
 cd "${dev}"
 

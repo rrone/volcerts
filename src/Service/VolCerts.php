@@ -187,6 +187,17 @@ class VolCerts
     {
         //strip out duplicates
         $idList = array_values(array_unique($idList, SORT_NUMERIC));
+        foreach ($idList as $id) {
+            $id = intval($id) ;
+            if(10000000 < $id && $id < 999999999) {
+                $ids[] = $id;
+            }
+        }
+        if (empty($ids)) {
+            return null;
+        }
+
+        $idList = $ids;
 
         //size the groups to avoid gateway timeouts -- SiteGround limitation
         $groupSize = 30;

@@ -2,7 +2,6 @@
 
 namespace App\Controller;
 
-use App\Service\VolCerts;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -32,19 +31,13 @@ class VolCertsFormController extends AbstractController
     private $projectDir;
 
     /**
-     * @var VolCerts $volCerts
-     */
-    private $volCerts;
-
-    /**
      * VolCertsFormController constructor
      * @param RequestStack $requestStack
-     * @param string $appVersion
-     * @param string $projectDir
-     * @param VolCerts $volCerts
+     * @param  $appVersion
+     * @param  $projectDir
      */
 
-    public function __construct(RequestStack $requestStack, string $appVersion, string $projectDir, VolCerts $volCerts)
+    public function __construct(RequestStack $requestStack, $appVersion, $projectDir)
     {
         $this->request = $requestStack->getCurrentRequest();
 
@@ -52,7 +45,6 @@ class VolCertsFormController extends AbstractController
 
         $this->projectDir = $projectDir;
 
-        $this->volCerts = $volCerts;
     }
 
     /**
@@ -69,20 +61,4 @@ class VolCertsFormController extends AbstractController
             ]
         );
     }
-
-    /**
-     * @Route("/{id}", name="app_list")
-     * @param string $id
-     * @return JsonResponse
-     */
-    public function get(string $id) : object
-    {
-        $ids = explode(',', $this->request->get('id'));
-
-        return new JsonResponse(
-            $this->volCerts->retrieveVolsCertData($ids),
-            JsonResponse::HTTP_OK
-        );
-    }
-
 }
