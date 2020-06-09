@@ -11,9 +11,11 @@
         "@popperjs/core": "^2.4.1",
         "@symfony/webpack-encore": "^0.28",
         "bootstrap": "^4.5",
+        "chokidar": "3",
         "datatables.net": "^1.10",
         "datatables.net-dt": "^1.10",
-        "jquery": "^3.4",
+        "fsevents": "2",
+        "jquery": "^3.5",
         "popper.js": "^1.16",
         "webpack-notifier": "^1.8"
     },
