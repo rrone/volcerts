@@ -73,16 +73,16 @@ class VolCertsTableController extends AbstractController
             return $this->home();
         }
 
-        $fileName = $this->fileUploader->upload($this->request);
-        if(!file_exists($fileName)) {
+        $file = $this->fileUploader->upload($this->request);
+        if(!file_exists($file->fileName)) {
             return $this->home();
         }
 
-        $title = preg_replace('/\\.[^.\\s]{3,4}$/', '', $fileName);
+        $title = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file->originalName);
         $this->volCertsTable->setMerge(!is_null($this->request->get('merge')));
-        $content = $this->volCertsTable->retrieveVolCertData($fileName);
+        $content = $this->volCertsTable->retrieveVolCertData($file->fileName);
 
-        unlink($fileName);
+        unlink($file->fileName);
 
         $html = $this->volCertsTable->renderView($content);
 

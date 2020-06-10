@@ -47,13 +47,13 @@ class ServiceTest extends TestCase
 
         $csvFile = new UploadedFile($dest.'/Book.50.csv', 'Book.50.csv', "text/csv", null, true);
         $request->files->add(['uploadFilename' => $csvFile]);
-        $fileName = $fileUploader->upload($request);
-        $this->assertFileExists($fileName);
+        $file = $fileUploader->upload($request);
+        $this->assertFileExists($file->fileName);
 
         $vcTable->setMerge(true);
-        $content = $vcTable->retrieveVolCertData($fileName);
-        if (file_exists($fileName)) {
-            unlink($fileName);
+        $content = $vcTable->retrieveVolCertData($file->fileName);
+        if (file_exists($file->fileName)) {
+            unlink($file->fileName);
         }
         try {
             $html = $vcTable->renderView($content);
@@ -64,13 +64,13 @@ class ServiceTest extends TestCase
 
         $xlsFile = new UploadedFile($dest.'/Book.50.xls', 'Book.50.xls', "application/vnd.ms-excel", null, true);
         $request->files->add(['uploadFilename' => $xlsFile]);
-        $fileName = $fileUploader->upload($request);
-        $this->assertFileExists($fileName);
+        $file = $fileUploader->upload($request);
+        $this->assertFileExists($file->fileName);
 
         $vcTable->setMerge(true);
-        $content = $vcTable->retrieveVolCertData($fileName);
-        if (file_exists($fileName)) {
-            unlink($fileName);
+        $content = $vcTable->retrieveVolCertData($file->fileName);
+        if (file_exists($file->fileName)) {
+            unlink($file->fileName);
         }
         try {
             $html = $vcTable->renderView($content);
@@ -87,13 +87,13 @@ class ServiceTest extends TestCase
             true
         );
         $request->files->add(['uploadFilename' => $xlsxFile]);
-        $fileName = $fileUploader->upload($request);
-        $this->assertFileExists($fileName);
+        $file = $fileUploader->upload($request);
+        $this->assertFileExists($file->fileName);
 
         $vcTable->setMerge(true);
-        $content = $vcTable->retrieveVolCertData($fileName);
-        if (file_exists($fileName)) {
-            unlink($fileName);
+        $content = $vcTable->retrieveVolCertData($file->fileName);
+        if (file_exists($file->fileName)) {
+            unlink($file->fileName);
         }
         try {
             $html = $vcTable->renderView($content);

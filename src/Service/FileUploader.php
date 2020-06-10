@@ -33,7 +33,6 @@ class FileUploader
         if(is_null($file)){
             return null;
         }
-
         $inputFileType = $file->getClientOriginalExtension();
         $fileName =  uniqid(rand(), true) . '.' . $inputFileType;
 
@@ -43,7 +42,10 @@ class FileUploader
             // ... handle exception if something happens during file upload
         }
 
-        return $this->getTargetDirectory() . '/' . $fileName;
+        return (object) array(
+            'fileName' => $this->getTargetDirectory() . '/' . $fileName,
+            'originalName' => $file->getClientOriginalName()
+        );
     }
 
     /**

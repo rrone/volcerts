@@ -16,7 +16,7 @@ echo ">>> Checkout master branch from Git repository..."
 #git checkout master
 echo
 
-echo ">>> Purge development items..."
+echo ">>> Disable xdebug..."
 ## Disable xdebug for composer performance
 if [[ -e ${PHP}"/ext-xdebug.ini" ]]
 then
@@ -55,10 +55,6 @@ echo ">>> Removing OSX jetsam..."
 find "${prod}" -type f -name '.DS_Store' -delete
 echo
 
-echo ">>> Removing development jetsam..."
-find "${prod}"/src -type f -name '*Test.php' -delete
-echo
-
 cd "${prod}"
     cp -f -r "${dev}"/assets .
 
@@ -72,7 +68,12 @@ cd "${prod}"
 
 cd "${dev}"
 
-echo ">>> Restore composer development items..."
+echo ">>> Removing development jetsam..."
+find "${prod}"/src -type f -name '*Test.php' -delete
+find "${prod}" -type f -name '.gitignore' -delete
+echo
+
+echo ">>> Re-enable xdebug..."
 ## Restore xdebug
 if [[ -e ${PHP}"/ext-xdebug.~ini" ]]
 then
