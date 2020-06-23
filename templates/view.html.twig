@@ -103,7 +103,7 @@
 
     <script>
         function zeroPad(input) {
-            return (input<10?"0"+input:input)
+            return (input < 10 ? "0" + input : input)
         }
 
         function getFormattedDate(input) {
@@ -131,14 +131,15 @@
                         customize: function (doc) {
                             //Remove the title created by datatTables
                             doc.content.splice(0, 1);
-                            doc.pageMargins = [5,20,5,40];
+                            doc.pageMargins = [5, 20, 5, 40];
                             //Create a date string that we use in the footer. Format is dd-mm-yyyy
                             let now = new Date();
                             let jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
-                            h = now.getHours();
-                            m = now.getMinutes();
+                            let h = now.getHours();
+                            let m = now.getMinutes();
                             let jsTime = zeroPad(h) + ':' + zeroPad(m);
-                            let dmyDateTime = getFormattedDate(jsDate) + ' ' + jsTime;
+                            let dmyDateTime = getFormattedDate(jsDate) + ' at ' + jsTime + ' Pacific Time';
+                            // let dmyDateTime = moment().format('LT');
                             doc['footer'] = (function (page, pages) {
                                 return {
                                     columns: [

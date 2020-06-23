@@ -21,6 +21,7 @@ class VolCerts
         'MY',
         'Safe Haven Date',
         'CDC Date',
+        'SCA Date',
         'Ref Cert Desc',
         'Ref Cert Date',
         'Assessor Cert Desc',
@@ -45,6 +46,7 @@ class VolCerts
         'MY',
         'SafeHavenDate',
         'CDCDate',
+        'SCADate',
         'RefCertDesc',
         'RefCertDate',
         'AssessorCertDesc',
@@ -353,6 +355,7 @@ class VolCerts
         $cert['MY'] =
         $cert['SafeHavenDate'] =
         $cert['CDCDate'] =
+        $cert['SCADate'] =
         $cert['RefCertDesc'] =
         $cert['RefCertDate'] =
         $cert['AssessorCertDesc'] =
@@ -437,6 +440,7 @@ class VolCerts
 
                 $cert['SafeHavenDate'] = isset($c['SafeHavenDate']) ? $c['SafeHavenDate'] : $cert['SafeHavenDate'];
                 $cert['CDCDate'] = isset($c['CDCDate']) ? $c['CDCDate'] : $cert['CDCDate'];
+                $cert['SCADate'] = isset($c['SCADate']) ? $c['SCADate'] : $cert['SCADate'];
 
                 $cert['RefCertDesc'] = isset($c['RefCertDesc']) ? $c['RefCertDesc'] : $cert['RefCertDesc'];
                 $cert['RefCertDate'] = isset($c['RefCertDate']) ? $c['RefCertDate'] : $cert['RefCertDate'];
@@ -709,6 +713,7 @@ class VolCerts
 
         $certs['CDCDate'] = '';
         $certs['SafeHavenDate'] = '';
+        $certs['SCADate'] = '';
         foreach ($jsCert->VolunteerCertificationsSafeHaven as $k => $cls) {
             $date = $this->phpDate($cls->CertificationDate);
             if (strpos($cls->CertificationDesc, 'Concussion Awareness') !== false) {
@@ -720,6 +725,11 @@ class VolCerts
                 strpos($cls->CertificationDesc, 'AYSOs Refugio Seguro') !== false) {
                 if ($date > $certs['SafeHavenDate']) {
                     $certs['SafeHavenDate'] = $date;
+                }
+            }
+            if (strpos($cls->CertificationDesc, 'NFHS Sudden Cardiac Arrest Training') !== false) {
+                if ($date > $certs['SCADate']) {
+                    $certs['SCADate'] = $date;
                 }
             }
         }

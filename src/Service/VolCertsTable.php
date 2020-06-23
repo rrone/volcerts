@@ -231,10 +231,8 @@ EOD;
      */
     protected function getTimestamp(): string
     {
-        $utc = date("Y-m-d H:i:s");
-
-        $ts = new DateTime($utc, new DateTimeZone('UTC'));
-        $ts->setTimezone(new DateTimeZone(self::TZ));
+        $ts = new DateTime(date('Y-m-d  H:i'), new DateTimeZone('UTC'));
+        $ts->setTimezone(new DateTimeZone('America/Los_Angeles'));
 
         return $ts->format('Y-m-d  H:i');
     }
