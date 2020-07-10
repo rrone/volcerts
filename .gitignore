@@ -31,3 +31,4 @@ yarn-error.log
 .phpunit.result.cache
 ###< phpunit/phpunit ###
 .env*
+tests/var

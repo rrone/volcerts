@@ -56,9 +56,9 @@ find "${prod}" -type f -name '.DS_Store' -delete
 echo
 
 cd "${prod}"
-    cp -f -r "${dev}"/assets .
-
-    rm -f -r ./assets
+#    cp -f -r "${src}"/assets .
+#
+#    rm -f -r ./assets
     rm -f -r ./bin/doctrine*
 
     composer install --no-dev

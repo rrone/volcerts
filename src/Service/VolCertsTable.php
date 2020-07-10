@@ -214,7 +214,7 @@ EOD;
             }
         }
 
-        $createDate = $this->getTimestamp().' '.self::TZ;
+        $createDate = $this->getTimestamp().' Pacific Time';
         $html .= <<<EOD
 </tbody>
 </table> 
@@ -231,8 +231,8 @@ EOD;
      */
     protected function getTimestamp(): string
     {
-        $ts = new DateTime(date('Y-m-d  H:i'), new DateTimeZone('UTC'));
-        $ts->setTimezone(new DateTimeZone('America/Los_Angeles'));
+        date_default_timezone_set('US/Pacific');
+        $ts = new DateTime(date('Y-m-d  H:i'));
 
         return $ts->format('Y-m-d  H:i');
     }
