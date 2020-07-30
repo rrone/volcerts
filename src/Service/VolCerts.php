@@ -5,7 +5,7 @@ namespace App\Service;
 use Symfony\Component\DomCrawler\Crawler;
 use stdClass;
 
-define ("VIEW_CERT_URL","https://national.ayso.org/Volunteers/SelectViewCertificationInitialData");
+define("VIEW_CERT_URL", "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData");
 
 class VolCerts
 {
@@ -190,8 +190,8 @@ class VolCerts
         //strip out duplicates
         $idList = array_values(array_unique($idList, SORT_NUMERIC));
         foreach ($idList as $id) {
-            $id = intval($id) ;
-            if(10000000 < $id && $id < 999999999) {
+            $id = intval($id);
+            if (10000000 < $id && $id < 999999999) {
                 $ids[] = $id;
             }
         }
@@ -253,7 +253,7 @@ class VolCerts
         } while ($active);
 
         $content = array();
-        foreach ($ch AS $i => $c) {
+        foreach ($ch as $i => $c) {
             $content[$i] = curl_multi_getcontent($c);
             curl_multi_remove_handle($mh, $c);
         }
@@ -421,7 +421,7 @@ class VolCerts
                 $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName[0])));
                 $cert['Type'] = $certDetails->Type;
 
-                $sar = explode('/', $certDetails->VolunteerSAR);
+                $sar = explode('<br>/<br>', $certDetails->VolunteerSAR);
                 $s = isset($sar[0]) ? ltrim($sar[0], '0') : null;
                 $a = isset($sar[1]) ? ltrim($sar[1], '0') : null;
                 $r = isset($sar[2]) ? ltrim($sar[2], '0') : null;
@@ -429,10 +429,10 @@ class VolCerts
                     $sar = $s;
                 }
                 if (!is_null($a)) {
-                    $sar .= '/'.$a;
+                    $sar .= '<br>/<br>'.$a;
                 }
                 if (!is_null($r)) {
-                    $sar .= '/'.$r;
+                    $sar .= '<br>/<br>'.$r;
                 }
                 $cert['SAR'] = $sar;
 
@@ -490,8 +490,8 @@ class VolCerts
             $cert['RefCertDate'] = $certs->certDate;
             if (array_search($certs->courseDesc, $this->refMeta) > array_search($certs->certDesc, $this->refMeta)) {
                 if (!empty($certs->certDesc)) {
-                    $cert['RefCertDesc'] .= '/';
-                    $cert['RefCertDate'] .= '/';
+                    $cert['RefCertDesc'] .= '<br>/<br>';
+                    $cert['RefCertDate'] .= '<br>/<br>';
                 }
                 $cert['RefCertDesc'] .= $certs->courseDesc;
                 $cert['RefCertDate'] .= $certs->courseDate;
@@ -519,8 +519,8 @@ class VolCerts
 
         if (array_search($certs->courseDesc, $this->assessMeta) > array_search($certs->certDesc, $this->assessMeta)) {
             if (!empty($certs->certDesc)) {
-                $cert['AssessorCertDesc'] .= '/';
-                $cert['AssessorCertDate'] .= '/';
+                $cert['AssessorCertDesc'] .= '<br>/<br>';
+                $cert['AssessorCertDate'] .= '<br>/<br>';
             }
             $cert['AssessorCertDesc'] .= $certs->courseDesc;
             $cert['AssessorCertDate'] .= $certs->courseDate;
@@ -547,8 +547,8 @@ class VolCerts
         }
 
         $certs = $this->parseCerts($jsCert, 'Coach Instructor');
-        if(!empty($certs)) {
-            if(!in_array('Introduction to Instruction', $cert['InstCertDesc'])) {
+        if (!empty($certs)) {
+            if (!in_array('Introduction to Instruction', $cert['InstCertDesc'])) {
                 $cert['InstCertDesc'][$certs->certDate] = $certs->certDesc;
             }
             if (array_search($certs->courseDesc, $this->instCoachMeta) > array_search(
@@ -563,8 +563,8 @@ class VolCerts
 
         ksort($cert['InstCertDesc']);
         unset($cert['InstCertDesc']['']);
-        $c['InstCertDesc'] = implode('<br><br>', array_values($cert['InstCertDesc']));
-        $c['InstCertDate'] = implode('<br><br>', array_keys($cert['InstCertDesc']));
+        $c['InstCertDesc'] = implode('<br>/<br>', array_values($cert['InstCertDesc']));
+        $c['InstCertDate'] = implode('<br>/<br>', array_keys($cert['InstCertDesc']));
 
         return $c;
 
@@ -589,8 +589,8 @@ class VolCerts
                 $this->instEvalMeta
             )) {
             if (!empty($certs->certDesc)) {
-                $cert['InstEvalCertDesc'] .= '/';
-                $cert['InstEvalCertDate'] .= '/';
+                $cert['InstEvalCertDesc'] .= '<br>/<br>';
+                $cert['InstEvalCertDate'] .= '<br>/<br>';
             }
             $cert['InstEvalCertDesc'] .= $certs->courseDesc;
             $cert['InstEvalCertDate'] .= $certs->courseDate;
@@ -616,8 +616,8 @@ class VolCerts
         $cert['CoachCertDate'] = $certs->certDate;
         if (array_search($certs->courseDesc, $this->coachMeta) > array_search($certs->certDesc, $this->coachMeta)) {
             if (!empty($certs->certDesc)) {
-                $cert['CoachCertDesc'] .= '/';
-                $cert['CoachCertDate'] .= '/';
+                $cert['CoachCertDesc'] .= '<br>/<br>';
+                $cert['CoachCertDate'] .= '<br>/<br>';
             }
             $cert['CoachCertDesc'] .= $certs->courseDesc;
             $cert['CoachCertDate'] .= $certs->courseDate;
@@ -721,17 +721,19 @@ class VolCerts
                     $certs['CDCDate'] = $date;
                 }
             }
-            if (strpos($cls->CertificationDesc, 'AYSOs Safe Haven') !== false OR
+            if (strpos($cls->CertificationDesc, 'AYSOs Safe Haven') !== false or
                 strpos($cls->CertificationDesc, 'AYSOs Refugio Seguro') !== false) {
                 if ($date > $certs['SafeHavenDate']) {
                     $certs['SafeHavenDate'] = $date;
                 }
             }
-            if (strpos($cls->CertificationDesc, 'NFHS Sudden Cardiac Arrest Training') !== false) {
-                if ($date > $certs['SCADate']) {
-                    $certs['SCADate'] = $date;
-                }
+            if (strpos($cls->CertificationDesc, 'NFHS Sudden Cardiac Arrest Training') !== false or
+                strpos($cls->CertificationDesc, 'Z- Online Sudden Cardiac Arrest Training') !==false){
+                {if ($date > $certs['SCADate']) {
+                $certs['SCADate'] = $date;
             }
+        }
+        }
         }
 
         return $certs;

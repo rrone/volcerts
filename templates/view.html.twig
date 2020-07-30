@@ -134,6 +134,8 @@
                             doc.pageMargins = [5, 20, 5, 40];
                             //Create a date string that we use in the footer. Format is dd-mm-yyyy
                             let now = new Date();
+                            this.filename = this.filename + '.' + now.getFullYear() + (now.getMonth() + 1) + now
+                                .getDate()
                             let jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
                             let h = now.getHours();
                             let m = now.getMinutes();
