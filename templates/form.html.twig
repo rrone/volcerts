@@ -26,12 +26,15 @@
                 <li>For Excel files with multiple sheets, the first sheet will be processed</li>
                 <li>Dataset size is limited due to default server settings</li>
                 <li>Recommend dataset size: for desktop: 900 IDs, for mobile: 700 IDs</li>
+                <li>Row 1 is assumed to be column labels and will be ignored</li>
                 <li>First column in the input file must be an 8 or 9 digit integer (eAYSO or BS standard IDs)</li>
                 <li>Any text in Column 1 will be ignored</li>
                 <li>Duplicate entries will be ignored</li>
                 <li>Entries in columns 2 and greater are ignored</li>
             </ul>
             <li>Choose a file to upload</li>
+            <li>Check "Merge certs with input data" option below if you want the input data appended to the cert
+                data</li>
             <li>Click "Submit"</li>
             <li>If you get a "504 Gateway Timeout" Error, reduce your dataset size and try again</li>
         </ul>
