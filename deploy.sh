@@ -59,7 +59,7 @@ cd "${prod}"
 #    cp -f -r "${src}"/assets .
 #
 #    rm -f -r ./assets
-    rm -f -r ./bin/doctrine*
+#    rm -f -r ./bin/doctrine*
 
     composer install --no-dev
     yarn install --production=true

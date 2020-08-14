@@ -421,7 +421,7 @@ class VolCerts
                 $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName[0])));
                 $cert['Type'] = $certDetails->Type;
 
-                $sar = explode('<br>/<br>', $certDetails->VolunteerSAR);
+                $sar = explode('<br>---<br>', $certDetails->VolunteerSAR);
                 $s = isset($sar[0]) ? ltrim($sar[0], '0') : null;
                 $a = isset($sar[1]) ? ltrim($sar[1], '0') : null;
                 $r = isset($sar[2]) ? ltrim($sar[2], '0') : null;
@@ -429,10 +429,10 @@ class VolCerts
                     $sar = $s;
                 }
                 if (!is_null($a)) {
-                    $sar .= '<br>/<br>'.$a;
+                    $sar .= '<br>---<br>'.$a;
                 }
                 if (!is_null($r)) {
-                    $sar .= '<br>/<br>'.$r;
+                    $sar .= '<br>---<br>'.$r;
                 }
                 $cert['SAR'] = $sar;
 
@@ -490,8 +490,8 @@ class VolCerts
             $cert['RefCertDate'] = $certs->certDate;
             if (array_search($certs->courseDesc, $this->refMeta) > array_search($certs->certDesc, $this->refMeta)) {
                 if (!empty($certs->certDesc)) {
-                    $cert['RefCertDesc'] .= '<br>/<br>';
-                    $cert['RefCertDate'] .= '<br>/<br>';
+                    $cert['RefCertDesc'] .= '<br>---<br>';
+                    $cert['RefCertDate'] .= '<br>---<br>';
                 }
                 $cert['RefCertDesc'] .= $certs->courseDesc;
                 $cert['RefCertDate'] .= $certs->courseDate;
@@ -519,8 +519,8 @@ class VolCerts
 
         if (array_search($certs->courseDesc, $this->assessMeta) > array_search($certs->certDesc, $this->assessMeta)) {
             if (!empty($certs->certDesc)) {
-                $cert['AssessorCertDesc'] .= '<br>/<br>';
-                $cert['AssessorCertDate'] .= '<br>/<br>';
+                $cert['AssessorCertDesc'] .= '<br>---<br>';
+                $cert['AssessorCertDate'] .= '<br>---<br>';
             }
             $cert['AssessorCertDesc'] .= $certs->courseDesc;
             $cert['AssessorCertDate'] .= $certs->courseDate;
@@ -563,8 +563,18 @@ class VolCerts
 
         ksort($cert['InstCertDesc']);
         unset($cert['InstCertDesc']['']);
-        $c['InstCertDesc'] = implode('<br>/<br>', array_values($cert['InstCertDesc']));
-        $c['InstCertDate'] = implode('<br>/<br>', array_keys($cert['InstCertDesc']));
+        foreach ($cert as $r) {
+            foreach ($r as $k => $v) {
+                if(sizeof($r) > 1) {
+                    if ($v == 'Introduction to Instruction') {
+                        unset($cert['InstCertDesc'][$k]);
+                    }
+                }
+            }
+        }
+
+        $c['InstCertDesc'] = implode('<br>---<br>', array_values($cert['InstCertDesc']));
+        $c['InstCertDate'] = implode('<br>---<br>', array_keys($cert['InstCertDesc']));
 
         return $c;
 
@@ -589,8 +599,8 @@ class VolCerts
                 $this->instEvalMeta
             )) {
             if (!empty($certs->certDesc)) {
-                $cert['InstEvalCertDesc'] .= '<br>/<br>';
-                $cert['InstEvalCertDate'] .= '<br>/<br>';
+                $cert['InstEvalCertDesc'] .= '<br>---<br>';
+                $cert['InstEvalCertDate'] .= '<br>---<br>';
             }
             $cert['InstEvalCertDesc'] .= $certs->courseDesc;
             $cert['InstEvalCertDate'] .= $certs->courseDate;
@@ -616,8 +626,8 @@ class VolCerts
         $cert['CoachCertDate'] = $certs->certDate;
         if (array_search($certs->courseDesc, $this->coachMeta) > array_search($certs->certDesc, $this->coachMeta)) {
             if (!empty($certs->certDesc)) {
-                $cert['CoachCertDesc'] .= '<br>/<br>';
-                $cert['CoachCertDate'] .= '<br>/<br>';
+                $cert['CoachCertDesc'] .= '<br>---<br>';
+                $cert['CoachCertDate'] .= '<br>---<br>';
             }
             $cert['CoachCertDesc'] .= $certs->courseDesc;
             $cert['CoachCertDate'] .= $certs->courseDate;
