@@ -539,42 +539,54 @@ class VolCerts
             return null;
         }
 
+        $cert = [];
         $certs = $this->parseCerts($jsCert, 'Referee Instructor');
-        $cert['InstCertDesc'][$certs->certDate] = $certs->certDesc;
+
+        $k = sizeof($cert);
+        $cert[$k]['InstCertDesc'] = $certs->certDesc;
+        $cert[$k]['InstCertDate'] = $certs->certDate;
 
         if (array_search($certs->courseDesc, $this->instRefMeta) > array_search($certs->certDesc, $this->instRefMeta)) {
-            $cert['InstCertDesc'][$certs->courseDate] = $certs->courseDesc;
+            $k = sizeof($cert);
+            $cert[$k]['InstCertDesc'] = $certs->courseDesc;
+            $cert[$k]['InstCertDate'] = $certs->courseDate;
         }
 
         $certs = $this->parseCerts($jsCert, 'Coach Instructor');
-        if (!empty($certs)) {
-            if (!in_array('Introduction to Instruction', $cert['InstCertDesc'])) {
-                $cert['InstCertDesc'][$certs->certDate] = $certs->certDesc;
-            }
-            if (array_search($certs->courseDesc, $this->instCoachMeta) > array_search(
-                    $certs->certDesc,
-                    $this->instCoachMeta
-                )) {
-                if (!strpos($cert['InstCertDesc'], 'Introduction to Instruction')) {
-                    $cert['InstCertDesc'][$certs->courseDate] = $certs->courseDesc;
-                }
-            }
-        }
 
-        ksort($cert['InstCertDesc']);
-        unset($cert['InstCertDesc']['']);
-        foreach ($cert as $r) {
-            foreach ($r as $k => $v) {
-                if(sizeof($r) > 1) {
-                    if ($v == 'Introduction to Instruction') {
-                        unset($cert['InstCertDesc'][$k]);
+        $k = sizeof($cert);
+        $cert[$k]['InstCertDesc'] = $certs->certDesc;
+        $cert[$k]['InstCertDate'] = $certs->certDate;
+
+        if (array_search($certs->courseDesc, $this->instCoachMeta) > array_search(
+                $certs->certDesc,
+                $this->instCoachMeta
+            )) {
+            $k = sizeof($cert);
+            $cert[$k]['InstCertDesc'] = $certs->courseDesc;
+            $cert[$k]['InstCertDate'] = $certs->courseDate;
+        }
+        foreach ($cert as $k => $r) {
+            foreach ($r as $kk => $vv) {
+                if(sizeof($cert) > 1) {
+                    if ($vv == 'Introduction to Instruction') {
+                        unset($cert[$k]);
                     }
                 }
             }
         }
+        $c = [];
+        foreach ($cert as $k => $r) {
+            if(empty($c)) {
+                $c = ['InstCertDesc' => '', 'InstCertDate' => ''];
+            } else {
+                $c['InstCertDesc'] .= '<br>---<br>';
+                $c['InstCertDate'] .= '<br>---<br>';
+            }
 
-        $c['InstCertDesc'] = implode('<br>---<br>', array_values($cert['InstCertDesc']));
-        $c['InstCertDate'] = implode('<br>---<br>', array_keys($cert['InstCertDesc']));
+            $c['InstCertDesc'] .= $r['InstCertDesc'];
+            $c['InstCertDate'] .= $r['InstCertDate'];
+        }
 
         return $c;
 
