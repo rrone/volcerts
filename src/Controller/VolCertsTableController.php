@@ -74,6 +74,10 @@ class VolCertsTableController extends AbstractController
         }
 
         $file = $this->fileUploader->upload($this->request);
+        if(is_null($file)) {
+            return $this->home();
+        }
+
         if(!file_exists($file->fileName)) {
             return $this->home();
         }
@@ -96,7 +100,7 @@ class VolCertsTableController extends AbstractController
 
     /**
      * @Route("/id/{ids}", name="app_get")
-     * @param string $id
+     * @param string|null $id
      * @return JsonResponse
      */
     public function get(string $id = null): object
