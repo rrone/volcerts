@@ -580,10 +580,11 @@ class VolCerts
             if(empty($c)) {
                 $c = ['InstCertDesc' => '', 'InstCertDate' => ''];
             } else {
-                $c['InstCertDesc'] .= '<br>---<br>';
-                $c['InstCertDate'] .= '<br>---<br>';
+                if (!empty($r['InstCertDesc'])) {
+                    $c['InstCertDesc'] .= '<br>---<br>';
+                    $c['InstCertDate'] .= '<br>---<br>';
+                }
             }
-
             $c['InstCertDesc'] .= $r['InstCertDesc'];
             $c['InstCertDate'] .= $r['InstCertDate'];
         }
