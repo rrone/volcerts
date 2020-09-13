@@ -2,7 +2,7 @@
     "type": "project",
     "license": "MIT",
     "require": {
-        "php": "7.3.*",
+        "php": "7.4.*",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-iconv": "*",
@@ -35,7 +35,7 @@
     },
     "require-dev": {
         "enumag/no-thanks": "^0.1.0",
-        "phpunit/phpunit": "9.*",
+        "phpunit/phpunit": "^9.3",
         "symfony/browser-kit": "5.1.*",
         "symfony/debug-pack": "*",
         "symfony/http-client": "5.1.*",
@@ -66,6 +66,7 @@
         "paragonie/random_compat": "2.*",
         "symfony/polyfill-ctype": "*",
         "symfony/polyfill-iconv": "*",
+        "symfony/polyfill-php74": "*",
         "symfony/polyfill-php73": "*",
         "symfony/polyfill-php72": "*",
         "symfony/polyfill-php71": "*",
