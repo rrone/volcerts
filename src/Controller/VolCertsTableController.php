@@ -63,7 +63,7 @@ class VolCertsTableController extends AbstractController
     }
 
     /**
-     * @Route("/ch", name="app_ch")
+     * @Route("/ch", name="response")
      * @return RedirectResponse | Response
      * @throws Exception
      */

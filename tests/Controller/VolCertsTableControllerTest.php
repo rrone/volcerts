@@ -14,7 +14,7 @@ class VolCertsTableControllerTest extends WebTestCase
     {
         $client = static::createClient();
         $client->followRedirects();
-        $client->request('GET', '/');
+        $client->request('GET', '/response');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }

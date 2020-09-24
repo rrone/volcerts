@@ -1,6 +1,6 @@
 {
     "license": "MIT",
-    "private": true,
+    "private": false,
     "scripts": {
         "dev-server": "encore dev-server",
         "dev": "encore dev",
@@ -8,20 +8,18 @@
         "prod": "encore production --progress"
     },
     "dependencies": {
-        "@popperjs/core": "^2.4.1",
-        "@symfony/webpack-encore": "^0.28",
-        "bootstrap": "^4.5",
-        "chokidar": "3",
+        "bootstrap": "^4.5.2",
         "datatables.net": "^1.10",
         "datatables.net-dt": "^1.10",
-        "fsevents": "2",
         "jquery": "^3.5",
-        "mini-css-extract-plugin": "0.11.2",
-        "popper.js": "^1.16",
-        "webpack-notifier": "^1.8"
+        "source-map-resolve": "^0.6.0"
     },
     "devDependencies": {
+        "@symfony/webpack-encore": "^0.31.0",
         "core-js": "^3.6",
-        "regenerator-runtime": "^0.13"
+        "fsevents": "2",
+        "popper.js": "^1.16.1",
+        "regenerator-runtime": "^0.13",
+        "webpack-notifier": "^1.8"
     }
 }

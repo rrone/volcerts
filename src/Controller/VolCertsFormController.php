@@ -48,7 +48,7 @@ class VolCertsFormController extends AbstractController
     }
 
     /**
-     * @Route("/", name="app_file_form")
+     * @Route("/", name="home")
      * @return Response
      */
     public function index()
