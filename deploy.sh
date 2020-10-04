@@ -32,7 +32,7 @@ mkdir "${prod}"
 echo
 
 echo ">>> Copying app to distribution..."
-cp -f -r ./.env.dist "${prod}"/.env
+cp -f ./.env.dist "${prod}"/.env
 cp -f ./*.json "${prod}"
 cp -f ./*.lock "${prod}"
 
@@ -71,7 +71,6 @@ cd "${prod}"
   rm webpack.config.js
 
   bin/console cache:clear
-
 
 cd "${dev}"
 
