@@ -3,9 +3,7 @@
 namespace App\Service;
 
 use Symfony\Component\DomCrawler\Crawler;
-use stdClass;
-
-define("VIEW_CERT_URL", "https://national.ayso.org/Volunteers/SelectViewCertificationInitialData");
+use Symfony\Component\Form\ClearableErrorsInterface;
 
 class VolCerts
 {
@@ -61,110 +59,6 @@ class VolCerts
     ];
 
     /**
-     * @var array
-     */
-    private $refMeta = [
-        '',     //blank required to match first certification
-        'U-8 Official',
-        'U8 Official',
-        '8U Official',
-        'Assistant Referee',
-        'Z-Online Regional Referee Course',
-        'Regional Referee Online Companion Course',
-        'Regional Referee & Safe Haven Referee',
-        'Regional Referee',
-        'Intermediate Referee Course',
-        'Intermediate Referee',
-        'Advanced Referee Course',
-        'Advanced Referee',
-        'National 2 Referee',
-        'National Referee Course',
-        'National Referee',
-        'National 1 Referee',
-    ];
-
-    /**
-     * @var array
-     */
-    private $coachMeta = [
-        '',     //blank required to match first certification
-        'B Coach',
-        'C Coach',
-        'Z- Online Playground and Schoolyard Program Leader',
-        'Z-Online U-6 Coach',
-        'U-6 Coach',
-        'Z-Online U-8 Coach',
-        'U-8 Coach',
-        'Z-Online U-10 Coach',
-        'U-10 Coach',
-        '12U Coach',
-        'U-12 Coach - Cross Certification',
-        'Z-Online 12U Coach Pre Course',
-        'U-12 Coach',
-        'Intermediate Coach - Cross Certification',
-        'Z-Online Intermediate Coach Pre Course',
-        'Intermediate Coach',
-        'Advanced Coach - Cross Certification',
-        'Z-Online Advanced Coach Pre Course',
-        'Advanced Coach',
-        'National Coaching Course',
-        'National Coach',
-    ];
-
-
-    /**
-     * @var array
-     */
-    private $instRefMeta = [
-        '',     //blank required to match first certification
-        'Introduction to Instruction',
-        'Referee Instructor Course',
-        'Referee Instructor',
-        'Regional Referee Instructor',
-        'Intermediate Referee Instructor',
-        'Advanced Referee Instructor Course',
-        'Advanced Referee Instructor',
-        'National Referee Instructor',
-    ];
-
-    /**
-     * @var array
-     */
-    private $instCoachMeta = [
-        '',     //blank required to match first certification
-        'Introduction to Instruction',
-        'Basic Coach Instructor Course',
-        'Basic Coach Instructor',
-        'Grade2 Coach Instructor',
-        'Coach Instructor Course',
-        'Coach Instructor',
-        'Advanced Coach Instructor Course',
-        'Advanced Coach Instructor',
-        'National Coach Instructor',
-    ];
-
-    /**
-     * @var array
-     */
-    private $instEvalMeta = [
-        '',     //blank required to match first certification
-        'Referee Instructor Evaluator Course',
-        'Referee Instructor Evaluator',
-    ];
-
-//
-    /**
-     * @var array
-     */
-    private $assessMeta = [
-        '',     //blank required to match first certification
-        'Referee Assessor Course',
-        'Referee Assessor',
-        'National Referee Assessor Course',
-        'National Referee Assessor',
-    ];
-
-    /**
      * @return array
      */
     public function getHdrs()
@@ -210,7 +104,7 @@ class VolCerts
 
         $certs = [];
         foreach ($certsGroup as $group) {
-            $certs = array_merge($certs, $this->curl_multi_get(VIEW_CERT_URL, $group));
+            $certs = array_merge($certs, (new CurlWorker)->curl_multi_get(VIEW_CERT_URL, $group));
         }
 
         $certData = [];
@@ -221,104 +115,13 @@ class VolCerts
         return $certData;
     }
 
-    /**
-     * @param $url
-     * @param array|null $get
-     * @return array
-     */
-//    Reference: https://www.toni-develops.com/2017/09/05/curl-multi-fetch/
-
-    private function curl_multi_get($url, array $get = null)
-    {
-        if (is_null($get)) {
-            return array();
-        }
-
-        $ch = array();
-        $mh = curl_multi_init();
-
-        foreach ($get as $i => $id) {
-
-            $ch[$i] = curl_init();
-            curl_setopt($ch[$i], CURLOPT_URL, $url.'?'.http_build_query(['AYSOID' => $id]));
-            curl_setopt($ch[$i], CURLOPT_HEADER, 0);
-            curl_setopt($ch[$i], CURLOPT_RETURNTRANSFER, true);
-            curl_multi_add_handle($mh, $ch[$i]);
-        }
-
-        $active = null;
-        do {
-            curl_multi_exec($mh, $active);
-            usleep(100); // May needed to limit CPU load
-        } while ($active);
-
-        $content = array();
-        foreach ($ch as $i => $c) {
-            $content[$i] = curl_multi_getcontent($c);
-            curl_multi_remove_handle($mh, $c);
-        }
-
-        curl_multi_close($mh);
-
-        return $content;
-    }
-
-//    /**
-//     * @param $id
-//     * @return string
-//     */
-//    public function retrieveVolCertData($id)
-//    {
-//
-//        return $this->parseCertData($id, $this->curl_get(VIEW_CERT_URL, ['AYSOID' => $id]));
-//    }
-
-//    /**
-//     * Send a GET request using cURL
-//     * @param string $url to request
-//     * @param array $get values to send
-//     * @param array $options for cURL
-//     * @return string
-//     */
-//    private function curl_get($url, array $get = null, array $options = array())
-//    {
-//        $defaults = array(
-//            CURLOPT_URL => $url.(strpos($url, '?') === false ? '?' : '').http_build_query($get),
-//            CURLOPT_HEADER => 0,
-//            CURLOPT_RETURNTRANSFER => true,
-//        );
-//
-//        $ch = curl_init();
-//        curl_setopt_array($ch, ($options + $defaults));
-//        if (!$result = curl_exec($ch)) {
-//            trigger_error(curl_error($ch));
-//        }
-//        curl_close($ch);
-//
-//        return $result;
-//    }
-
-    /**
-     * @param string $certDate
-     * @return false|string
-     */
-    private function phpDate(string $certDate)
-    {
-        if ($certDate == '/Date(-62135568000000)/') {
-            return '1964-09-15';
-        }
-
-        $ts = preg_replace('/[^0-9]/', '', $certDate);
-
-        return date("Y-m-d", $ts / 1000);
-    }
 
     /**
      * @param int $id
      * @param $certData
      * @return array|string
      */
-    private function parseCertData($id, $certData)
+    private function parseCertData(int $id, $certData)
     {
         if (empty($certData)) {
             return '{}';
@@ -339,10 +142,10 @@ class VolCerts
 
     /**
      * @param int $id
-     * @param int $nodeValue
+     * @param string $nodeValue
      * @return array
      */
-    private function parseNodeValue($id, $nodeValue)
+    private function parseNodeValue(int $id, string $nodeValue)
     {
         if (is_null($nodeValue)) {
             return null;
@@ -372,71 +175,48 @@ class VolCerts
         $nv = json_decode($nodeValue);
         if ($nv->ReturnStatus == 0) {
             $certDetails = $nv->VolunteerCertificationDetails;
-            $certRef = $this->getCertificationsReferee($certDetails);
-            if (!is_null($certRef)) {
-                foreach ($certRef as $k => $c) {
-                    $certList[$k] = $c;
-                }
-            }
 
-            $certRef = $this->getCertificationsAssessor($certDetails);
-            if (!is_null($certRef)) {
-                foreach ($certRef as $k => $c) {
-                    $certList[$k] = $c;
-                }
-            }
+            $certRef = (new RefCerts($certDetails))->getCertifications();
+            $certList = array_merge($certList, $certRef);
 
-            $certInstructor = $this->getCertificationsInstructor($certDetails);
-            if (!is_null($certInstructor)) {
-                foreach ($certInstructor as $k => $c) {
-                    $certList[$k] = $c;
-                }
-            }
+            $certRef = (new AssessorCerts($certDetails))->getCertifications();
+            $certList = array_merge($certList, $certRef);
 
-            $certInstructor = $this->getCertificationsInstructorEvaluator($certDetails);
-            if (!is_null($certInstructor)) {
-                foreach ($certInstructor as $k => $c) {
-                    $certList[$k] = $c;
-                }
-            }
+            $certInstructor = (new InstructorCerts($certDetails))->getCertifications();
+            $certList = array_merge($certList, $certInstructor);
 
-            $certCoach = $this->getCertificationsCoach($certDetails);
-            if (!is_null($certCoach)) {
-                foreach ($certCoach as $k => $c) {
-                    $certList[$k] = $c;
-                }
+            $certInstructor = (new InstructorEvaluatorCerts($certDetails))->getCertifications();
+            $certList = array_merge($certList, $certInstructor);
+
+            $certCoach = (new CoachCerts($certDetails))->getCertifications();
+            $certList = array_merge($certList, $certCoach);
+
+            $certSH = (new SafeHavenCerts($certDetails))->getCertifications();
+            $certList = array_merge($certList, $certSH);
+
+            $cert['AYSOID'] = $certDetails->VolunteerAYSOID;
+            $fullName = explode(",", $certDetails->VolunteerFullName);
+            $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName[0])));
+            $cert['Type'] = $certDetails->Type;
+
+            $sar = explode('<br>---<br>', $certDetails->VolunteerSAR);
+            $s = isset($sar[0]) ? ltrim($sar[0], '0') : null;
+            $a = isset($sar[1]) ? ltrim($sar[1], '0') : null;
+            $r = isset($sar[2]) ? ltrim($sar[2], '0') : null;
+            if (!is_null($s)) {
+                $sar = $s;
             }
-            $certSH = $this->getCertificationsSafeHaven($certDetails);
-            if (!is_null($certSH)) {
-                foreach ($certSH as $k => $c) {
-                    $certList[$k] = $c;
-                }
+            if (!is_null($a)) {
+                $sar .= '<br>---<br>'.$a;
             }
+            if (!is_null($r)) {
+                $sar .= '<br>---<br>'.$r;
+            }
+            $cert['SAR'] = $sar;
+            $cert['MY'] = $certDetails->VolunteerMembershipYear;
 
             if (!empty($certList)) {
                 $c = $certList;
-
-                $cert['AYSOID'] = $certDetails->VolunteerAYSOID;
-                $fullName = explode(",", $certDetails->VolunteerFullName);
-                $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName[0])));
-                $cert['Type'] = $certDetails->Type;
-
-                $sar = explode('<br>---<br>', $certDetails->VolunteerSAR);
-                $s = isset($sar[0]) ? ltrim($sar[0], '0') : null;
-                $a = isset($sar[1]) ? ltrim($sar[1], '0') : null;
-                $r = isset($sar[2]) ? ltrim($sar[2], '0') : null;
-                if (!is_null($s)) {
-                    $sar = $s;
-                }
-                if (!is_null($a)) {
-                    $sar .= '<br>---<br>'.$a;
-                }
-                if (!is_null($r)) {
-                    $sar .= '<br>---<br>'.$r;
-                }
-                $cert['SAR'] = $sar;
-
-                $cert['MY'] = $certDetails->VolunteerMembershipYear;
 
                 $cert['SafeHavenDate'] = isset($c['SafeHavenDate']) ? $c['SafeHavenDate'] : $cert['SafeHavenDate'];
                 $cert['CDCDate'] = isset($c['CDCDate']) ? $c['CDCDate'] : $cert['CDCDate'];
@@ -456,310 +236,10 @@ class VolCerts
 
                 $cert['CoachCertDesc'] = isset($c['CoachCertDesc']) ? $c['CoachCertDesc'] : $cert['CoachCertDesc'];
                 $cert['CoachCertDate'] = isset($c['CoachCertDate']) ? $c['CoachCertDate'] : $cert['CoachCertDate'];
-
-            } else {
-                $cert['AYSOID'] = $certDetails->VolunteerAYSOID;
-                $fullName = explode(",", $certDetails->VolunteerFullName);
-                $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName)));
-                $cert['Type'] = $certDetails->VolunteerType;
-                $cert['SAR'] = $certDetails->VolunteerSAR;
-                $cert['MY'] = $certDetails->VolunteerMembershipYear;
             }
         }
 
         return $cert;
-    }
-
-    /**
-     * @param stdClass $jsCert
-     * @return array|null
-     */
-    private function getCertificationsReferee(stdClass $jsCert)
-    {
-        if (empty($jsCert)) {
-            return null;
-        }
-
-        $seek = ['Official', 'Referee'];
-        $cert = null;
-
-        foreach ($seek as $role) {
-            $certs = $this->parseCerts($jsCert, $role);
-
-            $cert['RefCertDesc'] = $certs->certDesc;
-            $cert['RefCertDate'] = $certs->certDate;
-            if (array_search($certs->courseDesc, $this->refMeta) > array_search($certs->certDesc, $this->refMeta)) {
-                if (!empty($certs->certDesc)) {
-                    $cert['RefCertDesc'] .= '<br>---<br>';
-                    $cert['RefCertDate'] .= '<br>---<br>';
-                }
-                $cert['RefCertDesc'] .= $certs->courseDesc;
-                $cert['RefCertDate'] .= $certs->courseDate;
-            }
-        }
-
-        return $cert;
-    }
-
-    /**
-     * @param stdClass $jsCert
-     * @return array|null
-     */
-    private function getCertificationsAssessor(stdClass $jsCert)
-    {
-        if (empty($jsCert)) {
-            return null;
-        }
-
-        $certs = $this->parseCerts($jsCert, 'Assessor');
-        $cert = null;
-
-        $cert['AssessorCertDesc'] = $certs->certDesc;
-        $cert['AssessorCertDate'] = $certs->certDate;
-
-        if (array_search($certs->courseDesc, $this->assessMeta) > array_search($certs->certDesc, $this->assessMeta)) {
-            if (!empty($certs->certDesc)) {
-                $cert['AssessorCertDesc'] .= '<br>---<br>';
-                $cert['AssessorCertDate'] .= '<br>---<br>';
-            }
-            $cert['AssessorCertDesc'] .= $certs->courseDesc;
-            $cert['AssessorCertDate'] .= $certs->courseDate;
-        }
-
-        return $cert;
-    }
-
-    /**
-     * @param stdClass $jsCert
-     * @return array|null
-     */
-    private function getCertificationsInstructor(stdClass $jsCert)
-    {
-        if (empty($jsCert)) {
-            return null;
-        }
-
-        $cert = [];
-        $certs = $this->parseCerts($jsCert, 'Referee Instructor');
-
-        $k = sizeof($cert);
-        $cert[$k]['InstCertDesc'] = $certs->certDesc;
-        $cert[$k]['InstCertDate'] = $certs->certDate;
-
-        if (array_search($certs->courseDesc, $this->instRefMeta) > array_search($certs->certDesc, $this->instRefMeta)) {
-            $k = sizeof($cert);
-            $cert[$k]['InstCertDesc'] = $certs->courseDesc;
-            $cert[$k]['InstCertDate'] = $certs->courseDate;
-        }
-
-        $certs = $this->parseCerts($jsCert, 'Coach Instructor');
-
-        $k = sizeof($cert);
-        $cert[$k]['InstCertDesc'] = $certs->certDesc;
-        $cert[$k]['InstCertDate'] = $certs->certDate;
-
-        if (array_search($certs->courseDesc, $this->instCoachMeta) > array_search(
-                $certs->certDesc,
-                $this->instCoachMeta
-            )) {
-            $k = sizeof($cert);
-            $cert[$k]['InstCertDesc'] = $certs->courseDesc;
-            $cert[$k]['InstCertDate'] = $certs->courseDate;
-        }
-        foreach ($cert as $k => $r) {
-            foreach ($r as $kk => $vv) {
-                if(sizeof($cert) > 1) {
-                    if ($vv == 'Introduction to Instruction') {
-                        unset($cert[$k]);
-                    }
-                }
-            }
-        }
-        $c = [];
-        foreach ($cert as $k => $r) {
-            if(empty($c)) {
-                $c = ['InstCertDesc' => '', 'InstCertDate' => ''];
-            } else {
-                if (!empty($c['InstCertDesc']) && !empty($r['InstCertDesc'])) {
-                    $c['InstCertDesc'] .= '<br>---<br>';
-                    $c['InstCertDate'] .= '<br>---<br>';
-                }
-            }
-            $c['InstCertDesc'] .= $r['InstCertDesc'];
-            $c['InstCertDate'] .= $r['InstCertDate'];
-        }
-
-        return $c;
-
-    }
-
-    /**
-     * @param stdClass $jsCert
-     * @return array|null
-     */
-    private function getCertificationsInstructorEvaluator(stdClass $jsCert)
-    {
-        if (empty($jsCert)) {
-            return null;
-        }
-
-        $certs = $this->parseCerts($jsCert, 'Evaluator');
-
-        $cert['InstEvalCertDesc'] = $certs->certDesc;
-        $cert['InstEvalCertDate'] = $certs->certDate;
-        if (array_search($certs->courseDesc, $this->instEvalMeta) > array_search(
-                $certs->certDesc,
-                $this->instEvalMeta
-            )) {
-            if (!empty($certs->certDesc)) {
-                $cert['InstEvalCertDesc'] .= '<br>---<br>';
-                $cert['InstEvalCertDate'] .= '<br>---<br>';
-            }
-            $cert['InstEvalCertDesc'] .= $certs->courseDesc;
-            $cert['InstEvalCertDate'] .= $certs->courseDate;
-        }
-
-        return $cert;
-
-    }
-
-    /**
-     * @param $jsCert
-     * @return string|null
-     */
-    private function getCertificationsCoach($jsCert)
-    {
-        if (is_null($jsCert)) {
-            return null;
-        }
-
-        $certs = $this->parseCerts($jsCert, 'Coach');
-
-        $cert['CoachCertDesc'] = $certs->certDesc;
-        $cert['CoachCertDate'] = $certs->certDate;
-        if (array_search($certs->courseDesc, $this->coachMeta) > array_search($certs->certDesc, $this->coachMeta)) {
-            if (!empty($certs->certDesc)) {
-                $cert['CoachCertDesc'] .= '<br>---<br>';
-                $cert['CoachCertDate'] .= '<br>---<br>';
-            }
-            $cert['CoachCertDesc'] .= $certs->courseDesc;
-            $cert['CoachCertDate'] .= $certs->courseDate;
-        }
-
-        return $cert;
-
-    }
-
-    private function parseCerts(stdClass $jsCert, string $type)
-    {
-        $certs = (object)[
-            'certDesc' => '',
-            'certDate' => '',
-            'courseDesc' => '',
-            'courseDate' => '',
-        ];
-
-        switch ($type) {
-            case 'Official':
-            case 'Referee':
-                $jsKey = $jsCert->VolunteerCertificationsReferee;
-                $meta = $this->refMeta;
-                break;
-            case 'Assessor':
-                $jsKey = $jsCert->VolunteerCertificationsReferee;
-                $meta = $this->assessMeta;
-                break;
-            case 'Referee Instructor':
-                $jsKey = $jsCert->VolunteerCertificationsInstructor;
-                $meta = $this->instRefMeta;
-                break;
-            case 'Coach Instructor':
-                $jsKey = $jsCert->VolunteerCertificationsInstructor;
-                $meta = $this->instCoachMeta;
-                break;
-            case 'Evaluator':
-                $jsKey = $jsCert->VolunteerCertificationsInstructor;
-                $meta = $this->instEvalMeta;
-                break;
-            case 'Coach':
-                $jsKey = $jsCert->VolunteerCertificationsCoach;
-                $meta = $this->coachMeta;
-                break;
-            default:
-                $jsKey = null;
-                $meta = null;
-        }
-
-        if (!is_null($jsKey)) {
-            foreach ($jsKey as $k => $cls) {
-                if (is_bool(strpos($cls->CertificationDesc, 'Course'))) {
-                    if (array_search($cls->CertificationDesc, $meta) > array_search(
-                            $certs->certDesc,
-                            $meta
-                        )) {
-                        $certs->certDesc = $cls->CertificationDesc;
-                        $certs->certDate = $this->phpDate($cls->CertificationDate);
-
-                        $certs->certDesc = str_replace(' & ', '', $certs->certDesc);
-                        $certs->certDesc = str_replace('Safe Haven Referee', '', $certs->certDesc);
-                        $certs->certDesc = str_replace('Safe Haven Coach', '', $certs->certDesc);
-
-//                        if($certs->certDesc == 'National Referee' AND $certs->certDate < '2004-07-01') {
-//                            $certs->certDesc = 'National 1 Referee';
-//                        }
-                    }
-                } else {
-                    if (array_search($cls->CertificationDesc, $meta) > array_search(
-                            $certs->courseDesc,
-                            $meta
-                        )) {
-                        $certs->courseDesc = $cls->CertificationDesc;
-                        $certs->courseDate = $this->phpDate($cls->CertificationDate);
-                    }
-                }
-            }
-        }
-
-        return $certs;
-
-    }
-
-    /**
-     * @param $jsCert
-     * @return array|null
-     */
-    private function getCertificationsSafeHaven($jsCert)
-    {
-        if (is_null($jsCert)) {
-            return null;
-        }
-
-        $certs['CDCDate'] = '';
-        $certs['SafeHavenDate'] = '';
-        $certs['SCADate'] = '';
-        foreach ($jsCert->VolunteerCertificationsSafeHaven as $k => $cls) {
-            $date = $this->phpDate($cls->CertificationDate);
-            if (strpos($cls->CertificationDesc, 'Concussion Awareness') !== false) {
-                if ($date > $certs['CDCDate']) {
-                    $certs['CDCDate'] = $date;
-                }
-            }
-            if (strpos($cls->CertificationDesc, 'AYSOs Safe Haven') !== false or
-                strpos($cls->CertificationDesc, 'AYSOs Refugio Seguro') !== false) {
-                if ($date > $certs['SafeHavenDate']) {
-                    $certs['SafeHavenDate'] = $date;
-                }
-            }
-            if (strpos($cls->CertificationDesc, 'NFHS Sudden Cardiac Arrest Training') !== false or
-                strpos($cls->CertificationDesc, 'Z- Online Sudden Cardiac Arrest Training') !==false){
-                {if ($date > $certs['SCADate']) {
-                $certs['SCADate'] = $date;
-            }
-        }
-        }
-        }
-
-        return $certs;
     }
 
 }

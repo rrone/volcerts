@@ -3,7 +3,6 @@
 namespace App\Service;
 
 use DateTime;
-use DateTimeZone;
 use Exception;
 use PhpOffice\PhpSpreadsheet;
 
@@ -30,11 +29,6 @@ class VolCertsTable
      * @var array $volCertData
      */
     private $volCertData;
-
-    /**
-     * @const string
-     */
-    CONST TZ = 'PST';
 
     /**
      * VolCertsEntity constructor
@@ -131,18 +125,21 @@ class VolCertsTable
         $arrIds = $this->loadFile($fileName);
 
         $volCerts = $this->volCerts->retrieveVolsCertData($arrIds);
+
         $vc = [];
 
-        foreach ($volCerts as $volCert) {
+        if(!empty($volCerts)) {
+            foreach ($volCerts as $volCert) {
 
-            $aysoID = $volCert['AYSOID'];
-            $url = CERT_URL.$aysoID;
-            $hrefAysoID = "<a href=\"$url\" target=\"_blank\">$aysoID</a>";
-            $volCert['AYSOID'] = $hrefAysoID;
-            $vc[$aysoID] = $volCert;
+                $aysoID = $volCert['AYSOID'];
+                $url = CERT_URL . $aysoID;
+                $hrefAysoID = "<a href=\"$url\" target=\"_blank\">$aysoID</a>";
+                $volCert['AYSOID'] = $hrefAysoID;
+                $vc[$aysoID] = $volCert;
+            }
+
+            $this->volCertData = $vc;
         }
-
-        $this->volCertData = $vc;
 
         return $vc;
     }

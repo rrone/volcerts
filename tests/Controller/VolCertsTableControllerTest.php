@@ -69,6 +69,29 @@ class VolCertsTableControllerTest extends WebTestCase
         $this->assertStringContainsString('Upload another file', $client->getResponse()->getContent());
     }
 
+    public function testBadUpload()
+    {
+        $client = static::createClient();
+
+        copy(self::VAR . '/files/Book.3.bad.csv', self::VAR . '/uploads/Book.3.bad.csv');
+        $file = new UploadedFile(
+            self::VAR .'/uploads/Book.3.bad.csv',
+            'Book.3.bad.csv',
+            'text/csv',
+            null
+        );
+
+        $client->request(
+            'POST',
+            '/ch',
+            [],
+            ['uploadFilename' => $file]
+        );
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Upload another file', $client->getResponse()->getContent());
+    }
+
     public function testXLSUpload()
     {
         $client = static::createClient();
