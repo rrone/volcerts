@@ -7,6 +7,7 @@ use Exception;
 use PhpOffice\PhpSpreadsheet;
 
 define("CERT_URL", "https://national.ayso.org/Volunteers/ViewCertification?UserName=");
+define ("NATIONAL_CERT_URL", "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=");
 
 class VolCertsTable
 {

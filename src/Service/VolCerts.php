@@ -129,7 +129,6 @@ class VolCerts
 
         $crawler = new Crawler($certData);
         $nodeValue = $crawler->filter('body')->text();
-
         if (!is_null($nodeValue)) {
             $nv = $this->parseNodeValue($id, $nodeValue);
             $nv['DataSource'] = 'e3';
@@ -228,8 +227,8 @@ class VolCerts
                 $cert['AssessorCertDesc'] = isset($c['AssessorCertDesc']) ? $c['AssessorCertDesc'] : $cert['AssessorCertDesc'];
                 $cert['AssessorCertDate'] = isset($c['AssessorCertDate']) ? $c['AssessorCertDate'] : $cert['AssessorCertDate'];
 
-                $cert['InstCertDesc'] = isset($c['InstCertDesc']) ? $c['InstCertDesc'] : $cert['InstCertDesc'];
-                $cert['InstCertDate'] = isset($c['InstCertDate']) ? $c['InstCertDate'] : $cert['InstCertDate'];
+                $cert['InstCertDesc'] = isset($c['InstructorCertDesc']) ? $c['InstructorCertDesc'] : $cert['InstructorCertDesc'];
+                $cert['InstCertDate'] = isset($c['InstructorCertDate']) ? $c['InstructorCertDate'] : $cert['InstructorCertDate'];
 
                 $cert['InstEvalCertDesc'] = isset($c['InstEvalCertDesc']) ? $c['InstEvalCertDesc'] : $cert['InstEvalCertDesc'];
                 $cert['InstEvalCertDate'] = isset($c['InstEvalCertDate']) ? $c['InstEvalCertDate'] : $cert['InstEvalCertDate'];
