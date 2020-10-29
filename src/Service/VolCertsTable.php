@@ -7,7 +7,7 @@ use Exception;
 use PhpOffice\PhpSpreadsheet;
 
 define("CERT_URL", "https://national.ayso.org/Volunteers/ViewCertification?UserName=");
-define ("NATIONAL_CERT_URL", "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=");
+define("NATIONAL_CERT_URL", "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=");
 
 class VolCertsTable
 {
@@ -87,7 +87,7 @@ class VolCertsTable
         $xls = $reader->load($inputFileName);
 
         $hrc = $xls->getActiveSheet()->getHighestRowAndColumn();
-        $usedRange = "A1:".$hrc['column'].$hrc['row'];
+        $usedRange = "A1:" . $hrc['column'] . $hrc['row'];
         $tmp = $xls->getActiveSheet()
             ->rangeToArray(
                 $usedRange,     // The worksheet range that we want to retrieve
@@ -129,7 +129,7 @@ class VolCertsTable
 
         $vc = [];
 
-        if(!empty($volCerts)) {
+        if (!empty($volCerts)) {
             foreach ($volCerts as $volCert) {
 
                 $aysoID = $volCert['AYSOID'];
@@ -152,67 +152,45 @@ class VolCertsTable
      */
     public function renderView(array $content)
     {
-        if (is_null($content)) {
-            return null;
-        }
+        $html = '';
 
-        $html = <<<EOD
-<table id="vol_certs" class="display">
-<thead>
-<tr>
-EOD;
         if (empty($content)) {
-            $html .= <<<EOD
+            $html = <<<EOD
 <h6  class="error"><b>ERROR: <em>The file is not recognised as an CSV or Excel file type.</em></b></h6>
 EOD;
 
-        } else {
-            $hdrs = $this->volCerts->getHdrs();
-            foreach ($hdrs as $hdr) {
+            return $html;
+        }
+
+        $this->renderHeaders();
+
+        $keys = $this->volCerts->getKeys();
+
+        foreach ($content as $i => $cert) {
+            $html .= <<<EOD
+<tr>
+EOD;
+            foreach ($keys as $key) {
                 $html .= <<<EOD
-<th>$hdr</th>
+<td>{$cert[$key]}</td>
 EOD;
             }
             if ($this->mergeData) {
-                foreach ($this->dataIn[0] as $hdr) {
+                foreach ($this->dataIn[$i] as $item) {
                     $html .= <<<EOD
-<th>$hdr</th>
-EOD;
-                }
-            }
-            $html .= <<<EOD
-</tr>
-</thead>
-<tbody>
-EOD;
-
-            $keys = $this->volCerts->getKeys();
-
-            foreach ($content as $i => $cert) {
-                $html .= <<<EOD
-<tr>
-EOD;
-                foreach ($keys as $key) {
-                    $html .= <<<EOD
-<td>{$cert[$key]}</td>
-EOD;
-                }
-                if ($this->mergeData) {
-                    foreach ($this->dataIn[$i] as $item) {
-                        $html .= <<<EOD
 <td>{$item}</td>
 EOD;
 
-                    }
                 }
+            }
 
-                $html .= <<<EOD
+            $html .= <<<EOD
 </tr>
 EOD;
-            }
         }
 
-        $createDate = $this->getTimestamp().' Pacific Time';
+
+        $createDate = $this->getTimestamp() . ' Pacific Time';
         $html .= <<<EOD
 </tbody>
 </table> 
@@ -251,7 +229,33 @@ EOD;
         return $this->volCertData;
     }
 
-    public function setMerge(bool $merge) {
+    public function setMerge(bool $merge)
+    {
         $this->mergeData = $merge;
+    }
+
+    protected function renderHeaders()
+    {
+        $html = '';
+
+        $hdrs = $this->volCerts->getHdrs();
+        foreach ($hdrs as $hdr) {
+            $html .= <<<EOD
+<th>$hdr</th>
+EOD;
+        }
+
+        if ($this->mergeData) {
+            foreach ($this->dataIn[0] as $hdr) {
+                $html .= <<<EOD
+<th>$hdr</th>
+EOD;
+            }
+        }
+
+        $html .= <<<EOD
+</tr>
+</thead>
+EOD;
     }
 }

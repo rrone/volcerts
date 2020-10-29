@@ -46,6 +46,12 @@ class ServiceTest extends TestCase
             'POST'
         );
 
+        try {
+            $html = $vcTable->renderView([]);
+            $this->assertStringContainsString('<b>ERROR: <em>', $html);
+        } catch (Exception $e) {
+        }
+
         $csvFile = new UploadedFile($dest.'/Book.50.csv', 'Book.50.csv', "text/csv", null, true);
         $request->files->add(['uploadFilename' => $csvFile]);
         $file = $fileUploader->upload($request);
@@ -91,11 +97,8 @@ class ServiceTest extends TestCase
         $file = $fileUploader->upload($request);
         $this->assertFileExists($file->fileName);
 
-        $vcTable->setMerge(true);
+        $vcTable->setMerge(false);
         $content = $vcTable->retrieveVolCertData($file->fileName);
-        if (file_exists($file->fileName)) {
-            unlink($file->fileName);
-        }
         try {
             $html = $vcTable->renderView($content);
         } catch (Exception $e) {
@@ -107,6 +110,25 @@ class ServiceTest extends TestCase
                 '94015164', $vcTable->getVolCertData()[94015164]['AYSOID']
             );
         }
+
+        $vcTable->setMerge(true);
+        $content = $vcTable->retrieveVolCertData($file->fileName);
+        try {
+            $html = $vcTable->renderView($content);
+        } catch (Exception $e) {
+        }
+        $this->assertStringContainsString('<table id="vol_certs" class="display">', $html);
+        $this->assertGreaterThan(50, $vcTable->getDataIn());
+        if(isset($vcTable->getVolCertData()[94015164])) {
+            $this->assertStringContainsString(
+                '<td>First+Last</td>', $html
+            );
+        }
+
+        if (file_exists($file->fileName)) {
+            unlink($file->fileName);
+        }
+
 
     }
 
