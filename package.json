@@ -12,6 +12,7 @@
         "datatables.net": "^1.10",
         "datatables.net-dt": "^1.10",
         "jquery": "^3.5",
+        "object-path": "^0.11.5",
         "source-map-resolve": "^0.6.0"
     },
     "devDependencies": {
