@@ -152,17 +152,16 @@ class VolCertsTable
      */
     public function renderView(array $content)
     {
-        $html = '';
-
         if (empty($content)) {
-            $html = <<<EOD
+            return <<<EOD
 <h6  class="error"><b>ERROR: <em>The file is not recognised as an CSV or Excel file type.</em></b></h6>
 EOD;
-
-            return $html;
         }
+        $html = <<<EOD
+<table id="vol_certs" class="display">
+EOD;
 
-        $this->renderHeaders();
+        $html .= $this->renderHeaders();
 
         $keys = $this->volCerts->getKeys();
 
@@ -194,7 +193,7 @@ EOD;
         $html .= <<<EOD
 </tbody>
 </table> 
-
+<br>
 <p class="createdOn">Created at $createDate </p>     
 EOD;
 
@@ -236,11 +235,14 @@ EOD;
 
     protected function renderHeaders()
     {
-        $html = '';
-
+        $html = <<<EOD
+<thead>
+<tr>
+EOD;
         $hdrs = $this->volCerts->getHdrs();
         foreach ($hdrs as $hdr) {
             $html .= <<<EOD
+
 <th>$hdr</th>
 EOD;
         }
@@ -257,5 +259,6 @@ EOD;
 </tr>
 </thead>
 EOD;
+        return $html;
     }
 }
