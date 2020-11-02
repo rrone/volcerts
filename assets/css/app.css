@@ -69,7 +69,7 @@ button.dt-button {
 div.dt-buttons {
     position: relative;
     float: left;
-    margin-top: 0.35rem;
+    margin-top: -0.35rem;
 }
 
 .error { font-size: 0.9rem }
@@ -88,7 +88,7 @@ div.dt-buttons {
 .file-upload .file-select.file-select-disabled:hover .file-select-button{background:#dce4ec;color:#666666;padding:0 10px;display:inline-block;height:40px;line-height:40px;}
 .file-upload .file-select.file-select-disabled:hover .file-select-name{line-height:40px;display:inline-block;padding:0 10px;}
 
-.merge { margin: 1rem }
+.merge { margin: 0.5rem }
 
 .banner {
     width: 100%;
@@ -101,4 +101,30 @@ div.dt-buttons {
 }
 label {
     font-size: 1rem;
+}
+
+.dataTables_length { float: left; margin-top: -3px; }
+
+.dataTables_filter { margin-top: -3px; }
+
+.btn {
+    border-radius: 0.25rem !important;
+    background-color: #007bff;
+    padding: 4px 8px;
+}
+
+.dt-buttons button {
+    margin-right: 15px;
+}
+
+.btn-secondary:hover  {
+    background-color: #0066ff;
+}
+
+.btn-secondary:active {
+    background-color: #0040ff;
+}
+
+.dataTable td {
+    text-align: center;
 }

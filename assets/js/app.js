@@ -9,15 +9,14 @@
 require('../css/app.css');
 
 // Need jQuery? Install it with "yarn add jquery", then uncomment to require it.
-// const $ = require('jquery');
+const $ = require('jquery');
 
 $('#uploadFilename').bind('change', function () {
     let filename = $("#uploadFilename").val();
     if (/^\s*$/.test(filename)) {
         $(".file-upload").removeClass('active');
         $("#noFile").text("No file chosen...");
-    }
-    else {
+    } else {
         $(".file-upload").addClass('active');
         $("#noFile").text(filename.replace("C:\\fakepath\\", ""));
     }

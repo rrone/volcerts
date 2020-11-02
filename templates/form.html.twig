@@ -2,6 +2,8 @@
 
 {% block title %}Volunteer Certs{% endblock %}
 {% block link %}
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link href="https://cdn.jsdelivr.net/gh/gitbrent/bootstrap4-toggle@3.6.1/css/bootstrap4-toggle.min.css" rel="stylesheet">
 {% endblock %}
 {% block stylesheets %}
     <style>
@@ -34,7 +36,8 @@
             </ul>
             <li>Choose a file to upload</li>
             <li>Check "Merge certs with input data" option below if you want the input data appended to the cert
-                data</li>
+                data
+            </li>
             <li>Click "Submit"</li>
             <li>If you get a "504 Gateway Timeout" Error, reduce your dataset size and try again</li>
         </ul>
@@ -46,18 +49,19 @@
             <div class="file-select">
                 <div class="file-select-button" id="fileName">Choose CSV or Excel File</div>
                 <div class="file-select-name" id="noFile">No file chosen...</div>
-                <input type="file" name="uploadFilename" id="uploadFilename" accept="text/csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
+                <input type="file" name="uploadFilename" id="uploadFilename"
+                       accept="text/csv, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet">
             </div>
         </div>
 
         <div class="checkbox">
-            <label><input class="merge" type="checkbox" name="merge" checked>Merge certs with input data</label>
+            <label>
+            <input class="merge" type="checkbox" name="merge" checked > Merge input data with certs
+            </label>
         </div>
 
         <div class="mt-3">
             <button type="submit" class="btn btn-primary btn-sm">Submit</button>
         </div>
     </form>
-{% endblock %}
-{% block javascripts %}
 {% endblock %}
