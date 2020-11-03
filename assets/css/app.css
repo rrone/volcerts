@@ -125,6 +125,7 @@ label {
     background-color: #0040ff;
 }
 
+.dataTable th,
 .dataTable td {
     text-align: center;
 }
