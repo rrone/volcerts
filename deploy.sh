@@ -7,7 +7,7 @@ config="${dev}"/config
 
 prod="$HOME"/Sites/AYSO/_services/vc
 
-PHP=/usr/local/etc/php/7.4/conf.d
+PHP=/usr/local/etc/php/8.0/conf.d
 
 ## clear the screen
 printf "\033c"
@@ -17,7 +17,7 @@ echo ">>> Checkout master branch from Git repository..."
 echo
 
 echo ">>> Build production assets..."
-encore production --progress
+yarn encore production --progress
 echo
 
 echo ">>> Disable xdebug..."
