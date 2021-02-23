@@ -13,16 +13,18 @@
         "datatables.net": "^1.10",
         "datatables.net-dt": "^1.10",
         "jquery": "^3.5.1",
+        "node-notifier": "^8.0.1",
         "object-path": "^0.11.5",
         "popper.js": "^1.16.1",
         "source-map-resolve": "^0.6.0"
     },
     "devDependencies": {
-        "@symfony/webpack-encore": "^0.31.0",
-        "core-js": "^3.6",
-        "fsevents": "2",
-        "popper.js": "^1.16.1",
-        "regenerator-runtime": "^0.13",
-        "webpack-notifier": "^1.8"
+        "@symfony/webpack-encore": "^1",
+        "core-js": "^3",
+        "file-loader": "^6.0.0",
+        "fsevents": "^2",
+        "popper.js": "^1",
+        "regenerator-runtime": "^0",
+        "webpack-notifier": "^1"
     }
 }

@@ -1,11 +1,13 @@
 #!/usr/bin/env bash
 ## Exit immediately if a command exits with a non-zero status.
 set -e
-#set distribution folder alias
-dev="$HOME"/Sites/AYSO/_dev/volcerts
+#set folder aliases
+ayso="$HOME"/Sites/AYSO
+
+dev="${ayso}"/_dev/volcerts
 config="${dev}"/config
 
-prod="$HOME"/Sites/AYSO/_services/vc
+prod="$HOME"/Sites/AYSO/_services/vc.ayso1ref.com/vc
 
 PHP=/usr/local/etc/php/8.0/conf.d
 
@@ -71,7 +73,9 @@ cd "${prod}"
   rm webpack.config.js
 
   bin/console cache:clear
-
+  
+  ln -s public ../public_html
+  
 cd "${dev}"
 
 echo ">>> Re-enable xdebug..."
