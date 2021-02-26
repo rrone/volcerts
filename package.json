@@ -9,9 +9,9 @@
     },
     "dependencies": {
         "@popperjs/core": "^2.5.4",
-        "bootstrap": "^4.5.2",
-        "datatables.net": "^1.10",
-        "datatables.net-dt": "^1.10",
+        "bootstrap": "^4.6.0",
+        "datatables.net": "^1.10.23",
+        "datatables.net-dt": "^1.10.23",
         "jquery": "^3.5.1",
         "node-notifier": "^8.0.1",
         "object-path": "^0.11.5",

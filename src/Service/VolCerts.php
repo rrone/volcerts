@@ -2,8 +2,8 @@
 
 namespace App\Service;
 
+use Monolog\Logger;
 use Symfony\Component\DomCrawler\Crawler;
-use Symfony\Component\Form\ClearableErrorsInterface;
 
 class VolCerts
 {
@@ -96,7 +96,7 @@ class VolCerts
         $idList = $ids;
 
         //size the groups to avoid gateway timeouts -- SiteGround limitation
-        $groupSize = 30;
+        $groupSize = 15;
         $certsGroup = [];
         for ($k = 0; $k < count($idList); $k += $groupSize) {
             $certsGroup[] = array_slice($idList, $k, $groupSize);
@@ -104,12 +104,17 @@ class VolCerts
 
         $certs = [];
         foreach ($certsGroup as $group) {
-            $certs = array_merge($certs, (new CurlWorker)->curl_multi_get(VIEW_CERT_URL, $group));
+            $c_get = (new CurlWorker)->curl_multi_get(VIEW_CERT_URL, $group);
+            if (!empty($c_get)) {
+                $certs = array_merge($certs, $c_get);
+            }
         }
 
         $certData = [];
         foreach ($certs as $id => $cert) {
-            $certData[] = $this->parseCertData($idList[$id], $cert);
+            if (!empty($cert)) {
+                $certData[] = $this->parseCertData($idList[$id], $cert);
+            }
         }
 
         return $certData;
@@ -195,7 +200,7 @@ class VolCerts
 
             $cert['AYSOID'] = $certDetails->VolunteerAYSOID;
             $fullName = explode(",", $certDetails->VolunteerFullName);
-            $cert['FullName'] = trim(ucwords(strtolower($fullName[1].' '.$fullName[0])));
+            $cert['FullName'] = trim(ucwords(strtolower($fullName[1] . ' ' . $fullName[0])));
             $cert['Type'] = $certDetails->Type;
 
             $sar = explode('<br>---<br>', $certDetails->VolunteerSAR);
@@ -206,10 +211,10 @@ class VolCerts
                 $sar = $s;
             }
             if (!is_null($a)) {
-                $sar .= '<br>---<br>'.$a;
+                $sar .= '<br>---<br>' . $a;
             }
             if (!is_null($r)) {
-                $sar .= '<br>---<br>'.$r;
+                $sar .= '<br>---<br>' . $r;
             }
             $cert['SAR'] = $sar;
             $cert['MY'] = $certDetails->VolunteerMembershipYear;
