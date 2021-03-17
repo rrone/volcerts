@@ -2,7 +2,6 @@
 
 namespace App\Service;
 
-use Monolog\Logger;
 use Symfony\Component\DomCrawler\Crawler;
 
 class VolCerts
@@ -12,66 +11,41 @@ class VolCerts
      * @var array
      */
     private $hdrs = [
-        'AYSOID',
-        'Full Name',
-        'Type',
-        'SAR',
-        'MY',
-        'Safe Haven Date',
-        'CDC Date',
-        'SCA Date',
-        'Ref Cert Desc',
-        'Ref Cert Date',
-        'Assessor Cert Desc',
-        'Assessor Cert Date',
-        'Inst Cert Desc',
-        'Inst Cert Date',
-        'Inst Eval Cert Desc',
-        'Inst Eval Cert Date',
-        'Coach Cert Desc',
-        'Coach Cert Date',
-        'Data Source',
-    ];
-
-    /**
-     * @var array
-     */
-    private $keys = [
-        'AYSOID',
-        'FullName',
-        'Type',
-        'SAR',
-        'MY',
-        'SafeHavenDate',
-        'CDCDate',
-        'SCADate',
-        'RefCertDesc',
-        'RefCertDate',
-        'AssessorCertDesc',
-        'AssessorCertDate',
-        'InstCertDesc',
-        'InstCertDate',
-        'InstEvalCertDesc',
-        'InstEvalCertDate',
-        'CoachCertDesc',
-        'CoachCertDate',
-        'DataSource',
+        'AYSOID' => 'AYSOID',
+        'FullName' => 'Full Name',
+        'Type' => 'Type',
+        'SAR' => 'SAR',
+        'MY' => 'MY',
+        'SafeHavenDate' => 'Safe Haven Date',
+        'CDCDate' => 'CDC Date',
+        'SCADate' => 'SCA Date',
+        'RefCertDesc' => 'Ref Cert Desc',
+        'RefCertDate' => 'Ref Cert Date',
+        'AssessorCertDesc' => 'Assessor Cert Desc',
+        'AssessorCertDate' => 'Assessor Cert Date',
+        'InstCertDesc' => 'Inst Cert Desc',
+        'InstCertDate' => 'Inst Cert Date',
+        'InstEvalCertDesc' =>'Inst Eval Cert Desc',
+        'InstEvalCertDate' => 'Inst Eval Cert Date',
+        'CoachCertDesc' => 'Coach Cert Desc',
+        'CoachCertDate' => 'Coach Cert Date',
+        'DataSource' => 'Data Source',
     ];
 
     /**
      * @return array
      */
-    public function getHdrs()
+    public function getHdrs(): array
     {
-        return $this->hdrs;
+        return array_values($this->hdrs);
     }
 
     /**
      * @return array
      */
-    public function getKeys()
+    public function getKeys(): array
     {
-        return $this->keys;
+        return array_keys($this->hdrs);
     }
 
 
@@ -149,7 +123,7 @@ class VolCerts
      * @param string $nodeValue
      * @return array
      */
-    private function parseNodeValue(int $id, string $nodeValue)
+    private function parseNodeValue(int $id, string $nodeValue): ?array
     {
         if (is_null($nodeValue)) {
             return null;

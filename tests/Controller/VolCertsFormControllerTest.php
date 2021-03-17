@@ -8,7 +8,7 @@ class VolCertsFormControllerTest extends WebTestCase
 {
     public function testRoute()
     {
-        $client = static::createClient();
+        $client = self::createClient();
 
         $client->request('GET', '/ch');
 

@@ -33,3 +33,4 @@ tests/var
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
+bin/.phpunit

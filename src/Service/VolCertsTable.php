@@ -27,6 +27,11 @@ class VolCertsTable
     private $dataIn;
 
     /**
+     * @var array $dataOut
+     */
+    private $dataOut;
+
+    /**
      * @var array $volCertData
      */
     private $volCertData;
@@ -42,6 +47,7 @@ class VolCertsTable
         $this->volCerts = $volCerts;
         $this->mergeData = false;
         $this->dataIn = [];
+        $this->dataOut = [];
         $this->volCertData = [];
     }
 
@@ -49,7 +55,7 @@ class VolCertsTable
      * @param $inputFileName
      * @return array
      */
-    private function loadFile($inputFileName)
+    private function loadFile($inputFileName): array
     {
         $arrIds = [];
 
@@ -71,7 +77,7 @@ class VolCertsTable
      * @throws PhpSpreadsheet\Exception
      * @throws PhpSpreadsheet\Reader\Exception
      */
-    private function loadXLSXFile($inputFileName)
+    private function loadXLSXFile($inputFileName): array
     {
         $type = PhpSpreadsheet\IOFactory::identify($inputFileName);
 
@@ -118,41 +124,52 @@ class VolCertsTable
     }
 
     /**
-     * @param $fileName
-     * @return array|string
+     * @param $vCerts
+     * @return array
      */
-    public function retrieveVolCertData($fileName)
+    private function linkAYSOID($vCerts): array
     {
-        $arrIds = $this->loadFile($fileName);
-
-        $volCerts = $this->volCerts->retrieveVolsCertData($arrIds);
-
-        $vc = [];
-
-        if (!empty($volCerts)) {
-            foreach ($volCerts as $volCert) {
-
-                $aysoID = $volCert['AYSOID'];
+        if (!empty($vCerts)) {
+            foreach ($vCerts as $aysoID => &$vCert) {
                 $url = CERT_URL . $aysoID;
                 $hrefAysoID = "<a href=\"$url\" target=\"_blank\">$aysoID</a>";
-                $volCert['AYSOID'] = $hrefAysoID;
-                $vc[$aysoID] = $volCert;
+                $vCert['AYSOID'] = $hrefAysoID;
             }
-
-            $this->volCertData = $vc;
         }
 
-        return $vc;
+        return $vCerts;
     }
 
     /**
-     * @param array $content
+     * @param $fileName
+     * @param bool $addLink
+     */
+    public function retrieveVolCertData($fileName, bool $addLink = false)
+    {
+        $arrIds = $this->loadFile($fileName);
+
+        $vCerts = $this->volCerts->retrieveVolsCertData($arrIds);
+
+        if(is_null($vCerts)){
+            return;
+        }
+
+        $vc = [];
+        foreach ($vCerts as $cert) {
+            $vc[$cert['AYSOID']] = $cert;
+        }
+
+        $this->volCertData = $addLink ? $this->linkAYSOID($vc) : $vc;
+
+    }
+
+    /**
      * @return array|string
      * @throws Exception
      */
-    public function renderView(array $content)
+    public function renderView()
     {
-        if (empty($content)) {
+        if (empty($this->dataOut)) {
             return <<<EOD
 <h6  class="error"><b>ERROR: <em>The file is not recognised as an CSV or Excel file type.</em></b></h6>
 EOD;
@@ -163,31 +180,20 @@ EOD;
 
         $html .= $this->renderHeaders();
 
-        $keys = $this->volCerts->getKeys();
-
-        foreach ($content as $i => $cert) {
+        foreach ($this->dataOut as $i => $cert) {
             $html .= <<<EOD
 <tr>
 EOD;
-            foreach ($keys as $key) {
+            foreach ($cert as $d) {
                 $html .= <<<EOD
-<td>{$cert[$key]}</td>
+<td>$d</td>
 EOD;
-            }
-            if ($this->mergeData) {
-                foreach ($this->dataIn[$i] as $item) {
-                    $html .= <<<EOD
-<td>{$item}</td>
-EOD;
-
-                }
             }
 
             $html .= <<<EOD
 </tr>
 EOD;
         }
-
 
         $createDate = $this->getTimestamp() . ' Pacific Time';
         $html .= <<<EOD
@@ -228,31 +234,50 @@ EOD;
         return $this->volCertData;
     }
 
-    public function setMerge(bool $merge)
+    /**
+     * @param bool $merge
+     * @return array
+     */
+    public function getDataOut(bool $merge): array
     {
-        $this->mergeData = $merge;
+        $keys = $this->volCerts->getKeys();
+        $hdrs = $this->volCerts->getHdrs();
+
+        foreach ($this->volCertData as $id => $certs) {
+            $this->dataOut[$id] = array_combine($hdrs, array_values(array_merge(array_flip($keys), $certs)));
+            if ($merge) {
+                foreach ($this->dataIn as $k => $row) {
+                    if ($k > 0) {
+                        foreach ($this->dataIn[0] as $c => $hdr) {
+                            $this->dataOut[$id][$hdr] = $this->dataIn[$id][$c];
+                        }
+                    }
+                }
+            }
+        }
+
+        return $this->dataOut;
     }
 
-    protected function renderHeaders()
+    /**
+     * @return string
+     */
+    protected function renderHeaders(): string
     {
+        if(empty($this->dataOut)) {
+            return '';
+        }
+
         $html = <<<EOD
 <thead>
 <tr>
 EOD;
-        $hdrs = $this->volCerts->getHdrs();
-        foreach ($hdrs as $hdr) {
+        $hdrs = array_values($this->dataOut)[0];
+        foreach ($hdrs as $hdr => $v) {
             $html .= <<<EOD
 
 <th>$hdr</th>
 EOD;
-        }
-
-        if ($this->mergeData) {
-            foreach ($this->dataIn[0] as $hdr) {
-                $html .= <<<EOD
-<th>$hdr</th>
-EOD;
-            }
         }
 
         $html .= <<<EOD

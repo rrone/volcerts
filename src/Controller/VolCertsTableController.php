@@ -50,7 +50,7 @@ class VolCertsTableController extends AbstractController
     public function __construct(
         VolCerts $volCerts,
         VolCertsTable $volCertsTable,
-        $appVersion,
+        string $appVersion,
         FileUploader $fileUploader,
         RequestStack $requestStack
         )
@@ -83,12 +83,22 @@ class VolCertsTableController extends AbstractController
         }
 
         $title = preg_replace('/\\.[^.\\s]{3,4}$/', '', $file->originalName);
-        $this->volCertsTable->setMerge(!is_null($this->request->get('merge')));
-        $content = $this->volCertsTable->retrieveVolCertData($file->fileName);
+
+        $this->volCertsTable->retrieveVolCertData($file->fileName, is_null($this->request->get('json')));
+        $content = $this->volCertsTable->getDataOut(
+            !is_null($this->request->get('merge')),
+        );
 
         unlink($file->fileName);
 
-        $html = $this->volCertsTable->renderView($content);
+        if (!is_null($this->request->get('json'))){
+            return new JsonResponse(
+                $content,
+                JsonResponse::HTTP_OK
+            );
+        }
+
+        $html = $this->volCertsTable->renderView();
 
         return $this->render('view.html.twig', [
             'title' => $title,
@@ -121,7 +131,7 @@ class VolCertsTableController extends AbstractController
     /**
      * @Route("/home", name="app_home")
      */
-    public function home()
+    public function home(): RedirectResponse
     {
         return $this->redirect('/');
     }
