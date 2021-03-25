@@ -12,6 +12,7 @@
         "bootstrap": "^4.6.0",
         "datatables.net": "^1.10.23",
         "datatables.net-dt": "^1.10.23",
+        "is-svg": "^4.2.2",
         "jquery": "^3.5.1",
         "node-notifier": "^8.0.1",
         "object-path": "^0.11.5",

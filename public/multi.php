@@ -21,7 +21,5 @@ foreach ($_FILES["myfile"]["error"] as $key => $error) {
 if (isset($_POST['data'])) {
     print_r($_POST['data']);
 }
-
 echo "\n success: \n";
 
-print_r($nameList);

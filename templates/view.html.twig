@@ -115,17 +115,17 @@
                 buttons: [
                     {
                         extend: 'csv',
-                        filename: 'Volunteer_Certs_' + document.title + '.' + now.getFullYear() + (('0' + now.getMonth()).slice(-2)) + (('0' + now.getDate()).slice(-2))
+                        filename: 'Volunteer_Certs_' + document.title + '.' + now.getFullYear() + (('0' + (now.getMonth()+1)).slice(-2)) + (('0' + now.getDate()).slice(-2))
                     },
                     {
                         extend: 'excel',
-                        filename: 'Volunteer_Certs_' + document.title + '.' + now.getFullYear() + (('0' + now.getMonth()).slice(-2)) + (('0' + now.getDate()).slice(-2))
+                        filename: 'Volunteer_Certs_' + document.title + '.' + now.getFullYear() + (('0' + (now.getMonth()+1)).slice(-2)) + (('0' + now.getDate()).slice(-2))
                     },
                     {
                         extend: 'pdfHtml5',
                         orientation: 'landscape',
                         pageSize: 'A4',
-                        filename: 'Volunteer_Certs_' + document.title + '.' + now.getFullYear() + (('0' + now.getMonth()).slice(-2)) + (('0' + now.getDate()).slice(-2)),
+                        filename: 'Volunteer_Certs_' + document.title + '.' + now.getFullYear() + (('0' + (now.getMonth()+1)).slice(-2)) + (('0' + now.getDate()).slice(-2)),
                         customize: function (doc) {
                             //Remove the title created by datatTables
                             doc.content.splice(0, 1);
