@@ -1,4 +1,7 @@
 {
+    "doctrine/deprecations": {
+        "version": "v0.5.3"
+    },
     "ezyang/htmlpurifier": {
         "version": "v4.13.0"
     },
