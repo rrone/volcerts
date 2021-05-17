@@ -10,7 +10,7 @@ class VolCerts
     /**
      * @var array
      */
-    private $hdrs = [
+    private array $hdrs = [
         'AYSOID' => 'AYSOID',
         'FullName' => 'Full Name',
         'Type' => 'Type',
@@ -25,10 +25,12 @@ class VolCerts
         'AssessorCertDate' => 'Assessor Cert Date',
         'InstCertDesc' => 'Inst Cert Desc',
         'InstCertDate' => 'Inst Cert Date',
-        'InstEvalCertDesc' =>'Inst Eval Cert Desc',
+        'InstEvalCertDesc' => 'Inst Eval Cert Desc',
         'InstEvalCertDate' => 'Inst Eval Cert Date',
         'CoachCertDesc' => 'Coach Cert Desc',
         'CoachCertDate' => 'Coach Cert Date',
+        'MgmtCertDesc' => 'Mgmt Cert Desc',
+        'MgmtCertDate' => 'Mgmt Cert Date',
         'DataSource' => 'Data Source',
     ];
 
@@ -51,9 +53,9 @@ class VolCerts
 
     /**
      * @param array $idList
-     * @return array|string
+     * @return array
      */
-    public function retrieveVolsCertData(array $idList)
+    public function retrieveVolsCertData(array $idList): ?array
     {
         //strip out duplicates
         $idList = array_values(array_unique($idList, SORT_NUMERIC));
@@ -110,7 +112,7 @@ class VolCerts
         $nodeValue = $crawler->filter('body')->text();
         if (!is_null($nodeValue)) {
             $nv = $this->parseNodeValue($id, $nodeValue);
-            $nv['DataSource'] = 'e3';
+            $nv['DataSource'] = DATA_SOURCE;
 
             return $nv;
         } else {
@@ -169,6 +171,9 @@ class VolCerts
             $certCoach = (new CoachCerts($certDetails))->getCertifications();
             $certList = array_merge($certList, $certCoach);
 
+            $certMgmt = (new ManagementCerts($certDetails))->getCertifications();
+            $certList = array_merge($certList, $certMgmt);
+
             $certSH = (new SafeHavenCerts($certDetails))->getCertifications();
             $certList = array_merge($certList, $certSH);
 
@@ -196,24 +201,27 @@ class VolCerts
             if (!empty($certList)) {
                 $c = $certList;
 
-                $cert['SafeHavenDate'] = isset($c['SafeHavenDate']) ? $c['SafeHavenDate'] : $cert['SafeHavenDate'];
-                $cert['CDCDate'] = isset($c['CDCDate']) ? $c['CDCDate'] : $cert['CDCDate'];
-                $cert['SCADate'] = isset($c['SCADate']) ? $c['SCADate'] : $cert['SCADate'];
+                $cert['SafeHavenDate'] = $c['SafeHavenDate'] ?? $cert['SafeHavenDate'];
+                $cert['CDCDate'] = $c['CDCDate'] ?? $cert['CDCDate'];
+                $cert['SCADate'] = $c['SCADate'] ?? $cert['SCADate'];
 
-                $cert['RefCertDesc'] = isset($c['RefCertDesc']) ? $c['RefCertDesc'] : $cert['RefCertDesc'];
-                $cert['RefCertDate'] = isset($c['RefCertDate']) ? $c['RefCertDate'] : $cert['RefCertDate'];
+                $cert['RefCertDesc'] = $c['RefCertDesc'] ?? $cert['RefCertDesc'];
+                $cert['RefCertDate'] = $c['RefCertDate'] ?? $cert['RefCertDate'];
 
-                $cert['AssessorCertDesc'] = isset($c['AssessorCertDesc']) ? $c['AssessorCertDesc'] : $cert['AssessorCertDesc'];
-                $cert['AssessorCertDate'] = isset($c['AssessorCertDate']) ? $c['AssessorCertDate'] : $cert['AssessorCertDate'];
+                $cert['AssessorCertDesc'] = $c['AssessorCertDesc'] ?? $cert['AssessorCertDesc'];
+                $cert['AssessorCertDate'] = $c['AssessorCertDate'] ?? $cert['AssessorCertDate'];
 
-                $cert['InstCertDesc'] = isset($c['InstructorCertDesc']) ? $c['InstructorCertDesc'] : $cert['InstructorCertDesc'];
-                $cert['InstCertDate'] = isset($c['InstructorCertDate']) ? $c['InstructorCertDate'] : $cert['InstructorCertDate'];
+                $cert['InstCertDesc'] = $c['InstructorCertDesc'] ?? $cert['InstructorCertDesc'];
+                $cert['InstCertDate'] = $c['InstructorCertDate'] ?? $cert['InstructorCertDate'];
 
-                $cert['InstEvalCertDesc'] = isset($c['InstEvalCertDesc']) ? $c['InstEvalCertDesc'] : $cert['InstEvalCertDesc'];
-                $cert['InstEvalCertDate'] = isset($c['InstEvalCertDate']) ? $c['InstEvalCertDate'] : $cert['InstEvalCertDate'];
+                $cert['InstEvalCertDesc'] = $c['InstEvalCertDesc'] ?? $cert['InstEvalCertDesc'];
+                $cert['InstEvalCertDate'] = $c['InstEvalCertDate'] ?? $cert['InstEvalCertDate'];
 
-                $cert['CoachCertDesc'] = isset($c['CoachCertDesc']) ? $c['CoachCertDesc'] : $cert['CoachCertDesc'];
-                $cert['CoachCertDate'] = isset($c['CoachCertDate']) ? $c['CoachCertDate'] : $cert['CoachCertDate'];
+                $cert['CoachCertDesc'] = $c['CoachCertDesc'] ?? $cert['CoachCertDesc'];
+                $cert['CoachCertDate'] = $c['CoachCertDate'] ?? $cert['CoachCertDate'];
+
+                $cert['MgmtCertDesc'] = $c['MgmtCertDesc'] ?? $cert['MgmtCertDesc'];
+                $cert['MgmtCertDate'] = $c['MgmtCertDate'] ?? $cert['MgmtCertDate'];
             }
         }
 

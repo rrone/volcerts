@@ -24,9 +24,9 @@ class FileUploader
 
     /**
      * @param Request $request
-     * @return string
+     * @return object|null
      */
-    public function upload(Request $request)
+    public function upload(Request $request): ?object
     {
         $file = $request->files->get('uploadFilename');
 
@@ -49,9 +49,9 @@ class FileUploader
     }
 
     /**
-     * @return mixed
+     * @return string
      */
-    public function getTargetDirectory()
+    public function getTargetDirectory(): string
     {
         return $this->projectDir . '/var/uploads';
     }

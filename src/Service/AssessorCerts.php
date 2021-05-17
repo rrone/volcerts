@@ -13,7 +13,7 @@ class AssessorCerts extends AbstractVolCerts
     /**
      * @var array
      */
-    private $certMeta = [
+    private array $certMeta = [
         '',     //blank required to match first certification
         'Referee Assessor Course',
         'Referee Assessor',
@@ -25,7 +25,7 @@ class AssessorCerts extends AbstractVolCerts
     /**
      * @return array|null
      */
-    public function getCertifications()
+    public function getCertifications(): ?array
     {
         parent::getCertifications();
 
@@ -45,7 +45,7 @@ class AssessorCerts extends AbstractVolCerts
         return $this->cert;
     }
 
-    public function parseCerts()
+    public function parseCerts(): object
     {
         $this->jsKey = $this->jsCert->VolunteerCertificationsReferee;
         $this->meta = $this->certMeta;

@@ -19,25 +19,25 @@ class VolCertsTableController extends AbstractController
     /**
      * @var VolCerts $volCerts
      */
-    private $volCerts;
+    private VolCerts $volCerts;
 
     /**
      * @var VolCertsTable $volCertsTable
      */
-    private $volCertsTable;
+    private VolCertsTable $volCertsTable;
 
     /**
      * @var string $appVersion
      */
-    private $appVersion;
+    private string $appVersion;
 
     /** @var FileUploader $fileUploader */
-    private $fileUploader;
+    private FileUploader $fileUploader;
 
     /**
-     * @var Request $reqest
+     * @var Request|null $request
      */
-    private $request;
+    private ?Request $request;
 
     /**
      * VolCertsTableController constructor

@@ -4,17 +4,17 @@ namespace App\Service;
 
 abstract class AbstractVolCerts
 {
-    protected $jsCert;
+    protected object $jsCert;
 
-    protected $jsKey;
+    protected array $jsKey;
 
-    protected $meta;
+    protected array $meta;
 
-    protected $certs;
+    protected object $certs;
 
-    protected $cert;
+    protected array $cert;
 
-    protected $certList;
+    protected array $certList;
 
     public function getCertifications()
     {
@@ -22,13 +22,13 @@ abstract class AbstractVolCerts
             return null;
         }
 
-        $this->cert = null;
+        $this->cert = [];
 
         $this->certList = [];
 
     }
 
-    protected function parseCerts()
+    protected function parseCerts(): object
     {
         $certs = (object)[
             'certDesc' => '',
@@ -38,7 +38,7 @@ abstract class AbstractVolCerts
         ];
 
         if (!is_null($this->jsKey)) {
-            foreach ($this->jsKey as $k => $cls) {
+            foreach ($this->jsKey as $cls) {
                 if (is_bool(strpos($cls->CertificationDesc, 'Course'))) {
                     if (array_search($cls->CertificationDesc, $this->meta) > array_search(
                             $certs->certDesc,
@@ -47,8 +47,8 @@ abstract class AbstractVolCerts
                         $certs->certDesc = $cls->CertificationDesc;
                         $certs->certDate = $this->phpDate($cls->CertificationDate);
 
-                        $certs->certDesc = str_replace(' & ', '', $certs->certDesc);
-
+//                        $certs->certDesc = str_replace(' & ', '', $certs->certDesc);
+//
 //                        if($certs->certDesc == 'National Referee' AND $certs->certDate < '2004-07-01') {
 //                            $certs->certDesc = 'National 1 Referee';
 //                        }

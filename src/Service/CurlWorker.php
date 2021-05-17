@@ -14,7 +14,7 @@ class CurlWorker
      */
 //    Reference: https://www.toni-develops.com/2017/09/05/curl-multi-fetch/
 
-    public function curl_multi_get($url, array $get = null)
+    public function curl_multi_get($url, array $get = null): array
     {
         if (is_null($get)) {
             return array();

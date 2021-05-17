@@ -12,7 +12,7 @@ class SafeHavenCerts extends AbstractVolCerts
     /**
      * @return array|null
      */
-    public function getCertifications()
+    public function getCertifications(): ?array
     {
         if (is_null($this->jsCert)) {
             return null;
@@ -21,7 +21,7 @@ class SafeHavenCerts extends AbstractVolCerts
         $certs['CDCDate'] = '';
         $certs['SafeHavenDate'] = '';
         $certs['SCADate'] = '';
-        foreach ($this->jsCert->VolunteerCertificationsSafeHaven as $k => $cls) {
+        foreach ($this->jsCert->VolunteerCertificationsSafeHaven as $cls) {
             $date = $this->phpDate($cls->CertificationDate);
             if (strpos($cls->CertificationDesc, 'Concussion Awareness') !== false) {
                 if ($date > $certs['CDCDate']) {

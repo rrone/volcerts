@@ -5,36 +5,33 @@ namespace App\Service;
 use DateTime;
 use Exception;
 use PhpOffice\PhpSpreadsheet;
+use function PHPUnit\Framework\isType;
 
 define("CERT_URL", "https://national.ayso.org/Volunteers/ViewCertification?UserName=");
 define("NATIONAL_CERT_URL", "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=");
+define("DATA_SOURCE", 'e3');
 
 class VolCertsTable
 {
     /**
      * @var VolCerts $volCerts
      */
-    private $volCerts;
-
-    /**
-     * @var boolean $merge
-     */
-    private $mergeData;
+    private VolCerts $volCerts;
 
     /**
      * @var array $dataIn
      */
-    private $dataIn;
+    private array $dataIn;
 
     /**
      * @var array $dataOut
      */
-    private $dataOut;
+    private array $dataOut;
 
     /**
      * @var array $volCertData
      */
-    private $volCertData;
+    private array $volCertData;
 
     /**
      * VolCertsEntity constructor
@@ -45,7 +42,6 @@ class VolCertsTable
         set_time_limit(0);
 
         $this->volCerts = $volCerts;
-        $this->mergeData = false;
         $this->dataIn = [];
         $this->dataOut = [];
         $this->volCertData = [];
@@ -150,7 +146,7 @@ class VolCertsTable
 
         $vCerts = $this->volCerts->retrieveVolsCertData($arrIds);
 
-        if(is_null($vCerts)){
+        if (is_null($vCerts)) {
             return;
         }
 
@@ -164,10 +160,10 @@ class VolCertsTable
     }
 
     /**
-     * @return array|string
+     * @return string
      * @throws Exception
      */
-    public function renderView()
+    public function renderView(): string
     {
         if (empty($this->dataOut)) {
             return <<<EOD
@@ -179,12 +175,12 @@ EOD;
 EOD;
 
         $html .= $this->renderHeaders();
-
-        foreach ($this->dataOut as $i => $cert) {
+        foreach ($this->dataOut as $cert) {
             $html .= <<<EOD
 <tr>
 EOD;
             foreach ($cert as $d) {
+                $d = is_string($d) ? $d : '';
                 $html .= <<<EOD
 <td>$d</td>
 EOD;
@@ -238,7 +234,7 @@ EOD;
      * @param bool $merge
      * @return array
      */
-    public function getDataOut(bool $merge): array
+    public function getDataOut(bool $merge = false): array
     {
         $keys = $this->volCerts->getKeys();
         $hdrs = $this->volCerts->getHdrs();
@@ -264,7 +260,7 @@ EOD;
      */
     protected function renderHeaders(): string
     {
-        if(empty($this->dataOut)) {
+        if (empty($this->dataOut)) {
             return '';
         }
 

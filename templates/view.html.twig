@@ -124,12 +124,12 @@
                     {
                         extend: 'pdfHtml5',
                         orientation: 'landscape',
-                        pageSize: 'A4',
+                        pageSize: 'A2',
                         filename: 'Volunteer_Certs_' + document.title + '.' + now.getFullYear() + (('0' + (now.getMonth()+1)).slice(-2)) + (('0' + now.getDate()).slice(-2)),
                         customize: function (doc) {
                             //Remove the title created by datatTables
                             doc.content.splice(0, 1);
-                            doc.pageMargins = [5, 20, 5, 40];
+                            doc.pageMargins = [5, 5, 5, 40];
                             //Create a date string that we use in the footer. Format is dd-mm-yyyy
                             let jsDate = (now.getMonth() + 1) + '-' + now.getDate() + '-' + now.getFullYear();
                             let h = now.getHours();

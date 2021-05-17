@@ -13,13 +13,15 @@ class RefCerts extends AbstractVolCerts
     /**
      * @var array
      */
-    private $certMeta = [
+    private array $certMeta = [
         '',     //blank required to match first certification
         'U-8 Official',
         'U8 Official',
         '8U Official',
         'Assistant Referee',
+        'z-Online Regional Referee without Safe Haven',
         'Z-Online Regional Referee Course',
+        'Z-Online Regional Referee',
         'Regional Referee Online Companion Course',
         'Regional Referee & Safe Haven Referee',
         'Regional Referee',
@@ -36,7 +38,7 @@ class RefCerts extends AbstractVolCerts
     /**
      * @return array|null
      */
-    public function getCertifications()
+    public function getCertifications(): ?array
     {
         parent::getCertifications();
 
@@ -60,7 +62,7 @@ class RefCerts extends AbstractVolCerts
         return $this->certList;
     }
 
-    protected function parseCerts()
+    protected function parseCerts(): object
     {
         $this->jsKey = $this->jsCert->VolunteerCertificationsReferee;
         $this->meta = $this->certMeta;
