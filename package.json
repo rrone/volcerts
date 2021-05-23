@@ -24,7 +24,6 @@
         "core-js": "^3",
         "file-loader": "^6.0.0",
         "fsevents": "^2",
-        "popper.js": "^1",
         "regenerator-runtime": "^0",
         "webpack-notifier": "^1"
     }

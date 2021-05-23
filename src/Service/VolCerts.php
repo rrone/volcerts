@@ -171,9 +171,6 @@ class VolCerts
             $certCoach = (new CoachCerts($certDetails))->getCertifications();
             $certList = array_merge($certList, $certCoach);
 
-            $certMgmt = (new ManagementCerts($certDetails))->getCertifications();
-            $certList = array_merge($certList, $certMgmt);
-
             $certSH = (new SafeHavenCerts($certDetails))->getCertifications();
             $certList = array_merge($certList, $certSH);
 
@@ -220,8 +217,6 @@ class VolCerts
                 $cert['CoachCertDesc'] = $c['CoachCertDesc'] ?? $cert['CoachCertDesc'];
                 $cert['CoachCertDate'] = $c['CoachCertDate'] ?? $cert['CoachCertDate'];
 
-                $cert['MgmtCertDesc'] = $c['MgmtCertDesc'] ?? $cert['MgmtCertDesc'];
-                $cert['MgmtCertDate'] = $c['MgmtCertDate'] ?? $cert['MgmtCertDate'];
             }
         }
 
