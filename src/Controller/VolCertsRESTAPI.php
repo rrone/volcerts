@@ -4,7 +4,6 @@
 namespace App\Controller;
 
 
-use App\Service\VolCerts;
 use App\Service\VolCertsTable;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,10 +17,10 @@ class VolCertsRESTAPI extends AbstractController
     /**
      * @var VolCertsTable $volCertsTable
      */
-    private $volCertsTable;
+    private VolCertsTable $volCertsTable;
 
     /**
-     * @var Request $reqest
+     * @var null | Request $reqest
      */
     private $request;
 

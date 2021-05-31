@@ -29,8 +29,6 @@ class VolCerts
         'InstEvalCertDate' => 'Inst Eval Cert Date',
         'CoachCertDesc' => 'Coach Cert Desc',
         'CoachCertDate' => 'Coach Cert Date',
-        'MgmtCertDesc' => 'Mgmt Cert Desc',
-        'MgmtCertDate' => 'Mgmt Cert Date',
         'DataSource' => 'Data Source',
     ];
 

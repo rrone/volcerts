@@ -7,14 +7,13 @@ use Symfony\Component\HttpFoundation\File\UploadedFile;
 
 class VolCertsTableControllerTest extends WebTestCase
 {
-
     const VHX = '/var/www/volcerts.vhx.cloud/tests/var';
     const LCL = '/Users/rick/Sites/AYSO/_dev/volcerts/tests/var';
 
     /**
      * @var string
      */
-    private $var;
+    private string $var;
 
     public function setUp(): void
     {
