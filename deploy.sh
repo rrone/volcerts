@@ -37,6 +37,8 @@ echo ">>> Copying app to distribution..."
 cp -f ./.env.dist "${prod}"/.env
 cp -f ./*.json "${prod}"
 cp -f ./*.lock "${prod}"
+cp -f .yarnrc.yml "${prod}"
+cp -rf .yarn "${prod}"
 
 mkdir "${prod}"/bin
 cp bin/console "${prod}"/bin
@@ -65,12 +67,14 @@ find "${prod}" -type f -name '.gitignore' -delete
 echo
 
 cd "${prod}"
-  yarn install --prod=true
+  yarn workspaces focus --production
   composer install --no-dev
 
   rm -r ./assets
   rm -r ./migrations
   rm webpack.config.js
+  rm -rf .yarn
+  rm -rf .yarnrc.yml
 
   bin/console cache:clear
   

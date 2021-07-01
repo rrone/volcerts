@@ -180,7 +180,7 @@ EOD;
 <tr>
 EOD;
             foreach ($cert as $d) {
-                $d = is_string($d) ? $d : '';
+                $d = trim((string) $d);
                 $html .= <<<EOD
 <td>$d</td>
 EOD;

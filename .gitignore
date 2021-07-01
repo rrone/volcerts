@@ -1,3 +1,8 @@
+.idea
+.env*
+tests/var
+*.bak
+
 ###> symfony/framework-bundle ###
 /.env.local
 /.env.prod.php
@@ -8,29 +13,27 @@
 /vendor/
 ###< symfony/framework-bundle ###
 
-###> symfony/phpunit-bridge ###
-/phpunit.dist.xml
-/phpunit.xml
-###< symfony/phpunit-bridge ###
-
 ###> symfony/webpack-encore-bundle ###
 /node_modules/
 
 /public/build/
-/public/bundles/
 /public/server.crt
 
 npm-debug.log
 yarn-error.log
 ###< symfony/webpack-encore-bundle ###
-.idea
-.phpunit.result.cache
-.env*
-tests/var
-*.bak
 
 ###> phpunit/phpunit ###
 /phpunit.xml
 .phpunit.result.cache
 ###< phpunit/phpunit ###
-bin/.phpunit
+
+###> yarn 2 ###
+.yarn/*
+!.yarn/patches
+!.yarn/releases
+!.yarn/plugins
+!.yarn/sdks
+!.yarn/versions
+.pnp.*
+###> yarn 2 ###
