@@ -1,5 +1,6 @@
 {
     "license": "MIT",
+    "private": false,
     "scripts": {
         "dev-server": "encore dev-server",
         "dev": "encore dev",

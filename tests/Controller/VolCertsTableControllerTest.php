@@ -54,25 +54,26 @@ class VolCertsTableControllerTest extends WebTestCase
         $client->request('GET', '/id/97815888');
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('"AYSOID":97815888', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"FullName":"Frederick Roberts"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"CoachCertDate":"2018-08-29"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"CoachCertDesc":"Z-Online U-10 Coach"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"InstEvalCertDate":"2006-02-10"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"InstEvalCertDesc":"Referee Instructor Evaluator"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"InstCertDate":"2012-07-01"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"InstCertDesc":"National Referee Instructor"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"AssessorCertDate":"2004-04-09"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"AssessorCertDesc":"National Referee Assessor"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"RefCertDate":"2004-04-14"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"RefCertDesc":"National Referee"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"SCADate":"2020-06-17"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"CDCDate":"2018-11-29"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"SafeHavenDate":"2020-07-17"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"MY":"MY202', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"SAR":"1\/D\/0092"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"Type":"Adult"', $client->getResponse()->getContent());
-        $this->assertStringContainsString('"DataSource":"e3"', $client->getResponse()->getContent());
+        $html = str_replace("\u003Cbr\u003E", "",$client->getResponse()->getContent());
+        $this->assertStringContainsString('"AYSOID":97815888', $html);
+        $this->assertStringContainsString('"FullName":"Frederick Roberts"', $html);
+        $this->assertStringContainsString('"CoachCertDate":"2018-08-29', $html);
+        $this->assertStringContainsString('"CoachCertDesc":"Z-Online U-10 Coach', $html);
+        $this->assertStringContainsString('"InstEvalCertDate":"2006-02-10"', $html);
+        $this->assertStringContainsString('"InstEvalCertDesc":"Referee Instructor Evaluator"', $html);
+        $this->assertStringContainsString('"InstCertDate":"2012-07-01"', $html);
+        $this->assertStringContainsString('"InstCertDesc":"National Referee Instructor"', $html);
+        $this->assertStringContainsString('"AssessorCertDate":"2004-04-09"', $html);
+        $this->assertStringContainsString('"AssessorCertDesc":"National Referee Assessor"', $html);
+        $this->assertStringContainsString('"RefCertDate":"2004-04-14"', $html);
+        $this->assertStringContainsString('"RefCertDesc":"National Referee"', $html);
+        $this->assertStringContainsString('"SCADate":"2020-06-17"', $html);
+        $this->assertStringContainsString('"CDCDate":"2018-11-29"', $html);
+        $this->assertStringContainsString('"SafeHavenDate":"2020-07-17"', $html);
+        $this->assertStringContainsString('"MY":"MY202', $html);
+        $this->assertStringContainsString('"SAR":"1\/D\/0092"', $html);
+        $this->assertStringContainsString('"Type":"Adult"', $html);
+        $this->assertStringContainsString('"DataSource":"e3"', $html);
     }
 
     public function testIds()
