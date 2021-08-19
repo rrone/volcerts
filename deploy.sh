@@ -67,8 +67,9 @@ find "${prod}" -type f -name '.gitignore' -delete
 echo
 
 cd "${prod}"
-  yarn workspaces focus --production
   composer install --no-dev
+  yarn workspaces focus --production
+  yarn install
 
   rm -r ./assets
   rm -r ./migrations
