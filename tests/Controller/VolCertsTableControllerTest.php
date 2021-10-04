@@ -55,11 +55,10 @@ class VolCertsTableControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $html = str_replace("\u003Cbr\u003E", "",$client->getResponse()->getContent());
-        dd($html);
         $this->assertStringContainsString('"AYSOID":97815888', $html);
         $this->assertStringContainsString('"FullName":"Frederick Roberts"', $html);
-        $this->assertStringContainsString('"CoachCertDate":"2018-08-29', $html);
-        $this->assertStringContainsString('"CoachCertDesc":"Z-Online U-10 Coach', $html);
+        $this->assertStringContainsString('"CoachCertDate":"2021-07-26', $html);
+        $this->assertStringContainsString('"CoachCertDesc":"12U Coach', $html);
         $this->assertStringContainsString('"InstEvalCertDate":"2006-02-10"', $html);
         $this->assertStringContainsString('"InstEvalCertDesc":"Referee Instructor Evaluator"', $html);
         $this->assertStringContainsString('"InstCertDate":"2012-07-01"', $html);
@@ -71,7 +70,7 @@ class VolCertsTableControllerTest extends WebTestCase
         $this->assertStringContainsString('"SCADate":"2020-06-17"', $html);
         $this->assertStringContainsString('"CDCDate":"2018-11-29"', $html);
         $this->assertStringContainsString('"SafeHavenDate":"2020-07-17"', $html);
-        $this->assertStringContainsString('"MY":"MY202', $html);
+        $this->assertStringContainsString('"MY":"MY2020', $html);
         $this->assertStringContainsString('"SAR":"1\/D\/0092"', $html);
         $this->assertStringContainsString('"Type":"Adult"', $html);
         $this->assertStringContainsString('"DataSource":"e3"', $html);
