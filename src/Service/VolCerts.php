@@ -125,7 +125,7 @@ class VolCerts
      */
     private function parseNodeValue(int $id, string $nodeValue): ?array
     {
-        if (is_null($nodeValue)) {
+        if (empty($nodeValue)) {
             return null;
         }
 

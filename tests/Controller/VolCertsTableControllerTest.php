@@ -55,6 +55,7 @@ class VolCertsTableControllerTest extends WebTestCase
 
         $this->assertEquals(200, $client->getResponse()->getStatusCode());
         $html = str_replace("\u003Cbr\u003E", "",$client->getResponse()->getContent());
+        dd($html);
         $this->assertStringContainsString('"AYSOID":97815888', $html);
         $this->assertStringContainsString('"FullName":"Frederick Roberts"', $html);
         $this->assertStringContainsString('"CoachCertDate":"2018-08-29', $html);

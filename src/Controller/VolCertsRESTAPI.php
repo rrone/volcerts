@@ -22,7 +22,7 @@ class VolCertsRESTAPI extends AbstractController
     /**
      * @var null | Request $reqest
      */
-    private $request;
+    private ?Request $request;
 
     /**
      * VolCertsTableController constructor
@@ -41,10 +41,10 @@ class VolCertsRESTAPI extends AbstractController
 
     /**
      * @Route("/json/{names}", name="json")
-     * @return Response | JsonResponse
+     * @return JsonResponse
      * @throws Exception
      */
-    public function index()
+    public function index(): JsonResponse
     {
 
         $fileNames = explode(',', $this->request->get('names'));
@@ -52,7 +52,7 @@ class VolCertsRESTAPI extends AbstractController
         if(is_null($fileNames)) {
             return new JsonResponse(
                 '',
-                JsonResponse::HTTP_OK
+                Response::HTTP_OK
             );
         }
 
@@ -61,7 +61,7 @@ class VolCertsRESTAPI extends AbstractController
         if(!file_exists($file)) {
             return new JsonResponse(
                 $fileNames[0] . ' not found.',
-                JsonResponse::HTTP_OK
+                Response::HTTP_OK
             );
         }
 
@@ -72,7 +72,7 @@ class VolCertsRESTAPI extends AbstractController
 
         return new JsonResponse(
             $content,
-            JsonResponse::HTTP_OK
+            Response::HTTP_OK
         );
 
     }

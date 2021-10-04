@@ -94,7 +94,7 @@ class VolCertsTableController extends AbstractController
         if (!is_null($this->request->get('json'))){
             return new JsonResponse(
                 $content,
-                JsonResponse::HTTP_OK
+                Response::HTTP_OK
             );
         }
 
@@ -124,7 +124,7 @@ class VolCertsTableController extends AbstractController
 
         return new JsonResponse(
             $this->volCerts->retrieveVolsCertData($ids),
-            JsonResponse::HTTP_OK
+            Response::HTTP_OK
         );
     }
 

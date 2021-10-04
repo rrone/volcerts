@@ -35,7 +35,7 @@ class CurlWorker
         $active = null;
         do {
             curl_multi_exec($mh, $active);
-            usleep(100); // May needed to limit CPU load
+            usleep(100); // May need to limit CPU load
         } while ($active);
 
         $content = array();

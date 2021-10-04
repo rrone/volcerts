@@ -5,7 +5,6 @@ namespace App\Service;
 use DateTime;
 use Exception;
 use PhpOffice\PhpSpreadsheet;
-use function PHPUnit\Framework\isType;
 
 define("CERT_URL", "https://national.ayso.org/Volunteers/ViewCertification?UserName=");
 define("NATIONAL_CERT_URL", "https://national.ayso.org/Volunteers/SelectVolunteerDetails?AYSOID=");

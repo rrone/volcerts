@@ -8,9 +8,9 @@ use Symfony\Component\HttpFoundation\Request;
 class FileUploader
 {
     /**
-     * @var
+     * @var string
      */
-    private $projectDir;
+    private string $projectDir;
 
     /**
      * FileUploader constructor
