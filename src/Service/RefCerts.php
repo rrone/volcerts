@@ -15,6 +15,7 @@ class RefCerts extends AbstractVolCerts
      */
     private array $certMeta = [
         '',     //blank required to match first certification
+        'Z-Online 8U Official',
         'U-8 Official',
         'U8 Official',
         '8U Official',
