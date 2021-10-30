@@ -15,15 +15,15 @@ class RefCerts extends AbstractVolCerts
      */
     private array $certMeta = [
         '',     //blank required to match first certification
+        'Z-Online Regional Referee Without Safe Haven',
+        'Z-Online Regional Referee Course',
+        'Z-Online Regional Referee',
+        'Regional Referee Online Companion Course',
         'Z-Online 8U Official',
         'U-8 Official',
         'U8 Official',
         '8U Official',
         'Assistant Referee',
-        'z-Online Regional Referee without Safe Haven',
-        'Z-Online Regional Referee Course',
-        'Z-Online Regional Referee',
-        'Regional Referee Online Companion Course',
         'Regional Referee & Safe Haven Referee',
         'Regional Referee',
         'Intermediate Referee Course',
@@ -66,6 +66,32 @@ class RefCerts extends AbstractVolCerts
     protected function parseCerts(): object
     {
         $this->jsKey = $this->jsCert->VolunteerCertificationsReferee;
+
+        $onlineRegional = ['Z-Online Regional' => false, 'Online Companion' => false];
+        $rroc = null;
+        $cKey = [];
+
+        foreach ($this->jsKey as $key => $cls) {
+            $this->jsKey[$key]->CertificationDesc = ucwords($cls->CertificationDesc);
+            $cKey[] = $cls;
+            switch ($cls->CertificationDesc) {
+                case 'Z-Online Regional Referee Without Safe Haven':
+                case 'Z-Online Regional Referee Course':
+                case 'Z-Online Regional Referee':
+                    $onlineRegional['Z-Online Regional'] = true;
+                    break;
+                case 'Regional Referee Online Companion Course':
+                    $onlineRegional['Online Companion'] = true;
+                    $rroc = $cls;
+                    break;
+            }
+        }
+
+        if ($onlineRegional['Z-Online Regional'] and $onlineRegional['Online Companion']) {
+            $cKey[] = (object)['CertificationDesc' => 'Regional Referee', 'CertificationDate' => $rroc->CertificationDate];
+        }
+
+        $this->jsKey = $cKey;
         $this->meta = $this->certMeta;
 
         return parent::parseCerts();
