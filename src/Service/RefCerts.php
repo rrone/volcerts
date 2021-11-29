@@ -20,6 +20,7 @@ class RefCerts extends AbstractVolCerts
         'Z-Online Regional Referee',
         'Regional Referee Online Companion Course',
         'Z-Online 8U Official',
+        'U-8 Official & Safe Haven Referee',
         'U-8 Official',
         'U8 Official',
         '8U Official',
