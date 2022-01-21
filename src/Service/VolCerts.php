@@ -154,7 +154,7 @@ class VolCerts
         if ($nv->ReturnStatus == 0) {
             $certDetails = $nv->VolunteerCertificationDetails;
 
-            $certRef = (new RefCerts($certDetails))->getCertifications();
+            $certRef = (new RefereeCerts($certDetails))->getCertifications();
             $certList = array_merge($certList, $certRef);
 
             $certRef = (new AssessorCerts($certDetails))->getCertifications();

@@ -3,7 +3,7 @@
 namespace App\Service;
 
 
-class RefCerts extends AbstractVolCerts
+class RefereeCerts extends AbstractVolCerts
 {
     public function __construct($certDetails)
     {
@@ -24,6 +24,7 @@ class RefCerts extends AbstractVolCerts
         'U-8 Official',
         'U8 Official',
         '8U Official',
+        'Assistant Referee & Safe Haven Referee',
         'Assistant Referee',
         'Regional Referee & Safe Haven Referee',
         'Regional Referee',
@@ -48,6 +49,10 @@ class RefCerts extends AbstractVolCerts
 
         if ($this->certs->certDesc == 'Safe Haven Referee')
             return null;
+
+        $this->certs->certDesc = str_replace(' & Safe Haven Referee', '', $this->certs->certDesc);
+        $this->certs->certDesc = str_replace('U-8 Official', '8U Official', $this->certs->certDesc);
+        $this->certs->certDesc = str_replace('U8 Official', '8U Official', $this->certs->certDesc);
 
         $this->cert['RefCertDesc'] = $this->certs->certDesc;
         $this->cert['RefCertDate'] = $this->certs->certDate;
