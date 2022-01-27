@@ -4180,16 +4180,16 @@
         },
         {
             "name": "symfony/flex",
-            "version": "v1.18.1",
+            "version": "v1.18.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/symfony/flex.git",
-                "reference": "90ee9ddddaadee602dff23ae530310a59936bc8b"
+                "reference": "d40a6b176b70ea323af2b08507319d1c417520fd"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/symfony/flex/zipball/90ee9ddddaadee602dff23ae530310a59936bc8b",
-                "reference": "90ee9ddddaadee602dff23ae530310a59936bc8b",
+                "url": "https://api.github.com/repos/symfony/flex/zipball/d40a6b176b70ea323af2b08507319d1c417520fd",
+                "reference": "d40a6b176b70ea323af2b08507319d1c417520fd",
                 "shasum": ""
             },
             "require": {
@@ -4225,7 +4225,7 @@
             "description": "Composer plugin for Symfony",
             "support": {
                 "issues": "https://github.com/symfony/flex/issues",
-                "source": "https://github.com/symfony/flex/tree/v1.18.1"
+                "source": "https://github.com/symfony/flex/tree/v1.18.3"
             },
             "funding": [
                 {
@@ -4241,7 +4241,7 @@
                     "type": "tidelift"
                 }
             ],
-            "time": "2022-01-19T17:52:31+00:00"
+            "time": "2022-01-27T10:24:58+00:00"
         },
         {
             "name": "symfony/form",
@@ -7653,16 +7653,16 @@
     "packages-dev": [
         {
             "name": "dama/doctrine-test-bundle",
-            "version": "v6.7.3",
+            "version": "v6.7.4",
             "source": {
                 "type": "git",
                 "url": "https://github.com/dmaicher/doctrine-test-bundle.git",
-                "reference": "1f964d416cf89698064dd0d69b5fe3170d05558d"
+                "reference": "b1626f0e63a75a335aac49f6932d33018a6c5e2a"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/dmaicher/doctrine-test-bundle/zipball/1f964d416cf89698064dd0d69b5fe3170d05558d",
-                "reference": "1f964d416cf89698064dd0d69b5fe3170d05558d",
+                "url": "https://api.github.com/repos/dmaicher/doctrine-test-bundle/zipball/b1626f0e63a75a335aac49f6932d33018a6c5e2a",
+                "reference": "b1626f0e63a75a335aac49f6932d33018a6c5e2a",
                 "shasum": ""
             },
             "require": {
@@ -7713,9 +7713,9 @@
             ],
             "support": {
                 "issues": "https://github.com/dmaicher/doctrine-test-bundle/issues",
-                "source": "https://github.com/dmaicher/doctrine-test-bundle/tree/v6.7.3"
+                "source": "https://github.com/dmaicher/doctrine-test-bundle/tree/v6.7.4"
             },
-            "time": "2022-01-18T15:55:40+00:00"
+            "time": "2022-01-26T19:40:56+00:00"
         },
         {
             "name": "myclabs/deep-copy",
@@ -8326,16 +8326,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "9.5.11",
+            "version": "9.5.13",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "2406855036db1102126125537adb1406f7242fdd"
+                "reference": "597cb647654ede35e43b137926dfdfef0fb11743"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/2406855036db1102126125537adb1406f7242fdd",
-                "reference": "2406855036db1102126125537adb1406f7242fdd",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/597cb647654ede35e43b137926dfdfef0fb11743",
+                "reference": "597cb647654ede35e43b137926dfdfef0fb11743",
                 "shasum": ""
             },
             "require": {
@@ -8413,7 +8413,7 @@
             ],
             "support": {
                 "issues": "https://github.com/sebastianbergmann/phpunit/issues",
-                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.11"
+                "source": "https://github.com/sebastianbergmann/phpunit/tree/9.5.13"
             },
             "funding": [
                 {
@@ -8425,7 +8425,7 @@
                     "type": "github"
                 }
             ],
-            "time": "2021-12-25T07:07:57+00:00"
+            "time": "2022-01-24T07:33:35+00:00"
         },
         {
             "name": "sebastian/cli-parser",
