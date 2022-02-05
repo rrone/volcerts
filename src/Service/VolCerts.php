@@ -2,6 +2,8 @@
 
 namespace App\Service;
 
+use App\Repository\DataWarehouse;
+use Doctrine\DBAL\Exception;
 use Symfony\Component\DomCrawler\Crawler;
 
 class VolCerts
@@ -12,6 +14,7 @@ class VolCerts
      */
     private array $hdrs = [
         'AYSOID' => 'AYSOID',
+        'AdminID' => 'AdminID',
         'FullName' => 'Full Name',
         'Type' => 'Type',
         'SAR' => 'SAR',
@@ -31,6 +34,23 @@ class VolCerts
         'CoachCertDate' => 'Coach Cert Date',
         'DataSource' => 'Data Source',
     ];
+
+    /** @var DataWarehouse */
+    protected DataWarehouse $dw;
+
+    /** @var integer */
+    private int $no_id = 10000000;
+
+    /**
+     * @throws \Exception
+     */
+    public function __construct()
+    {
+        global $kernel;
+
+        $conn = $kernel->getContainer()->get('doctrine.dbal.default_connection');
+        $this->dw = new DataWarehouse($conn);
+    }
 
     /**
      * @return array
@@ -55,12 +75,19 @@ class VolCerts
      */
     public function retrieveVolsCertData(array $idList): ?array
     {
+        $ids = [];
+
         //strip out duplicates
         $idList = array_values(array_unique($idList, SORT_NUMERIC));
         foreach ($idList as $id) {
-            $id = intval($id);
-            if (10000000 < $id && $id < 999999999) {
-                $ids[] = $id;
+            try {
+                if(strpos($id, '-') ) {
+                    $ids[$id] = $this->dw->getAYSOIDByAdminID($id);
+                }
+                if($ids[$id] == 0){
+                    $ids[$id] = $this->no_id;
+                }
+            } catch (Exception $e) {
             }
         }
         if (empty($ids)) {
@@ -87,7 +114,7 @@ class VolCerts
         $certData = [];
         foreach ($certs as $id => $cert) {
             if (!empty($cert)) {
-                $certData[] = $this->parseCertData($idList[$id], $cert);
+                $certData[] = $this->parseCertData($id, $idList[$id], $cert);
             }
         }
 
@@ -96,11 +123,12 @@ class VolCerts
 
 
     /**
-     * @param int $id
+     * @param string $adminId
+     * @param int $aysoId
      * @param $certData
      * @return array|string
      */
-    private function parseCertData(int $id, $certData)
+    private function parseCertData(string $adminId, int $aysoId, $certData)
     {
         if (empty($certData)) {
             return '{}';
@@ -109,7 +137,7 @@ class VolCerts
         $crawler = new Crawler($certData);
         $nodeValue = $crawler->filter('body')->text();
         if (!is_null($nodeValue)) {
-            $nv = $this->parseNodeValue($id, $nodeValue);
+            $nv = $this->parseNodeValue($aysoId, $adminId, $nodeValue);
             $nv['DataSource'] = DATA_SOURCE;
 
             return $nv;
@@ -119,17 +147,19 @@ class VolCerts
     }
 
     /**
-     * @param int $id
+     * @param int|string $aysoId
+     * @param string $adminId
      * @param string $nodeValue
      * @return array
      */
-    private function parseNodeValue(int $id, string $nodeValue): ?array
+    private function parseNodeValue($aysoId, string $adminId, string $nodeValue): ?array
     {
         if (empty($nodeValue)) {
             return null;
         }
 
-        $cert['AYSOID'] = $id;
+        $cert['AYSOID'] = $aysoId == $this->no_id ? '' : $aysoId;
+        $cert['AdminID'] = $adminId;
         $cert['FullName'] = '*** Volunteer not found ***';
         $cert['Type'] =
         $cert['SAR'] =

@@ -38,8 +38,5 @@ yarn-error.log
 .pnp.*
 ###> yarn 2 ###
 
-###> symfony/phpunit-bridge ###
-.phpunit.result.cache
-/phpunit.xml
-###< symfony/phpunit-bridge ###
 phpunit.xml.dist
+/.editorconfig

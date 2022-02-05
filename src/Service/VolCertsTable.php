@@ -112,7 +112,10 @@ class VolCertsTable
                 array_shift($row);
                 $this->dataIn[$id] = $row;
             }
+        }
 
+        foreach ($this->dataIn[0] as &$h) {
+            $h = "_" . $h . "_";
         }
 
         return $arrIds;
@@ -179,7 +182,7 @@ EOD;
 <tr>
 EOD;
             foreach ($cert as $d) {
-                $d = trim((string) $d);
+                $d = trim((string)$d);
                 $html .= <<<EOD
 <td>$d</td>
 EOD;
@@ -193,9 +196,9 @@ EOD;
         $createDate = $this->getTimestamp() . ' Pacific Time';
         $html .= <<<EOD
 </tbody>
-</table> 
+</table>
 <br>
-<p class="createdOn">Created at $createDate </p>     
+<p class="createdOn">Created at $createDate </p>
 EOD;
 
         return $html;
@@ -238,13 +241,13 @@ EOD;
         $keys = $this->volCerts->getKeys();
         $hdrs = $this->volCerts->getHdrs();
 
-        foreach ($this->volCertData as $id => $certs) {
-            $this->dataOut[$id] = array_combine($hdrs, array_values(array_merge(array_flip($keys), $certs)));
+        foreach ($this->volCertData as $certs) {
+            $this->dataOut[$certs['AdminID']] = array_combine($hdrs, array_values(array_merge(array_flip($keys), $certs)));
             if ($merge) {
                 foreach ($this->dataIn as $k => $row) {
                     if ($k > 0) {
                         foreach ($this->dataIn[0] as $c => $hdr) {
-                            $this->dataOut[$id][$hdr] = $this->dataIn[$id][$c];
+                            $this->dataOut[$k][$hdr] = $this->dataIn[$k][$c];
                         }
                     }
                 }

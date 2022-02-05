@@ -26,7 +26,7 @@
         "symfony/dotenv": "^5.4",
         "symfony/error-handler": "^5.4",
         "symfony/expression-language": "^5.4",
-        "symfony/flex": "^1.13",
+        "symfony/flex": "^1.17",
         "symfony/form": "^5.4",
         "symfony/framework-bundle": "^5.4",
         "symfony/intl": "^5.4",
@@ -49,7 +49,7 @@
         "symfony/browser-kit": "^5.4",
         "symfony/debug-bundle": "^5.4",
         "symfony/http-client": "^5.4",
-        "symfony/maker-bundle": "^1.31",
+        "symfony/maker-bundle": "^1.36",
         "symfony/phpunit-bridge": "^5.4",
         "symfony/stopwatch": "^5.4",
         "symfony/web-profiler-bundle": "^5.4"

@@ -4,7 +4,7 @@
 # Put parameters here that don't need to change on each machine where the app is deployed
 # https://symfony.com/doc/current/best_practices/configuration.html#application-related-configuration
 parameters:
-    app.version: '2022.01.28.00'
+    app.version: '2022.02.04.00'
 
     sra:
         name: 'Rick Roberts'
@@ -14,6 +14,7 @@ parameters:
     issueTracker: 'https://github.com/rrone/volcerts/issues'
 
     settings.test: false
+
 services:
     # default configuration for services in *this* file
     _defaults:
