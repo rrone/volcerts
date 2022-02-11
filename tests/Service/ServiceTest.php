@@ -1,12 +1,12 @@
 <?php
 
-namespace App\Tests\Service;
+namespace Tests\Service;
 
 use App\Service\FileUploader;
 use App\Service\VolCerts;
 use App\Service\VolCertsTable;
 use Exception;
-use PHPUnit\Framework\TestCase;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -16,9 +16,28 @@ define('ROOT_DIR', realpath(__DIR__ . "/../../"));
  * @method assertNotNull(FileUploader $fileUploader)
  * @method assertFileExists(string $fileName)
  */
-class ServiceTest extends TestCase
+class ServiceTest extends WebTestCase
 {
-    private $appVersion;
+    public function setUp(): void
+    {
+        global $kernel;
+
+        parent::setUp();
+
+        $this->client = static::createClient(
+            [
+                'environment' => 'test',
+                'debug' => true,
+            ]
+        );
+
+        $this->client->catchExceptions(false);
+
+        $kernel = $this->client->getKernel();
+
+        $this->c = self::getContainer();
+    }
+
 
     public function testServices()
     {
@@ -127,7 +146,6 @@ class ServiceTest extends TestCase
         if (file_exists($file->fileName)) {
             unlink($file->fileName);
         }
-
 
     }
 

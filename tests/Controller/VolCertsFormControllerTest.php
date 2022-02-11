@@ -1,18 +1,19 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use Tests\Abstracts\WebTestCasePlus;
 
-class VolCertsFormControllerTest extends WebTestCase
+class VolCertsFormControllerTest extends WebTestCasePlus
 {
+    /**
+     * @return void
+     */
     public function testRoute()
     {
-        $client = self::createClient();
+        $this->client->request('GET', '/ch');
 
-        $client->request('GET', '/ch');
-
-        $this->assertEquals(302, $client->getResponse()->getStatusCode());
+        $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
 
     }
 

@@ -81,10 +81,13 @@ class VolCerts
         $idList = array_values(array_unique($idList, SORT_NUMERIC));
         foreach ($idList as $id) {
             try {
-                if(strpos($id, '-') ) {
+                if (strpos($id, '-')) {
                     $ids[$id] = $this->dw->getAYSOIDByAdminID($id);
+                } else {
+                    $ids[$id] = intval($id);
                 }
-                if($ids[$id] == 0){
+
+                if ($ids[$id] == 0) {
                     $ids[$id] = $this->no_id;
                 }
             } catch (Exception $e) {
@@ -103,11 +106,20 @@ class VolCerts
             $certsGroup[] = array_slice($idList, $k, $groupSize);
         }
 
+        foreach ($certsGroup as &$g) {
+            foreach($g as $k => $v) {
+                if (gettype($k) == 'integer' && $k < 10000000) {
+                    unset($g[$k]);
+                    $g[strval($v)] = $v;
+                }
+            }
+        }
+
         $certs = [];
         foreach ($certsGroup as $group) {
             $c_get = (new CurlWorker)->curl_multi_get(VIEW_CERT_URL, $group);
             if (!empty($c_get)) {
-                $certs = array_merge($certs, $c_get);
+                $certs = $certs + $c_get;
             }
         }
 
@@ -158,7 +170,7 @@ class VolCerts
             return null;
         }
 
-        $cert['AYSOID'] = $aysoId == $this->no_id ? '' : $aysoId;
+        $cert['AYSOID'] = $aysoId == $this->no_id ? 'N/A' : $aysoId;
         $cert['AdminID'] = $adminId;
         $cert['FullName'] = '*** Volunteer not found ***';
         $cert['Type'] =

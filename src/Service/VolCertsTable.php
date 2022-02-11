@@ -129,9 +129,13 @@ class VolCertsTable
     {
         if (!empty($vCerts)) {
             foreach ($vCerts as $aysoID => &$vCert) {
-                $url = CERT_URL . $aysoID;
-                $hrefAysoID = "<a href=\"$url\" target=\"_blank\">$aysoID</a>";
-                $vCert['AYSOID'] = $hrefAysoID;
+                if (is_int($aysoID)) {
+                    $url = CERT_URL . $aysoID;
+                    $hrefAysoID = "<a href=\"$url\" target=\"_blank\">$aysoID</a>";
+                    $vCert['AYSOID'] = $hrefAysoID;
+                } else {
+                    $vCert['AYSOID'] = $aysoID;
+                }
             }
         }
 

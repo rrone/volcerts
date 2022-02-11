@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Tests\Abstracts\WebTestCasePlus;
 
-class VolCertsRESTAPITest extends WebTestCase
+class VolCertsRESTAPITest extends WebTestCasePlus
 {
     const VHX = '/var/www/volcerts.vhx.cloud/tests/var';
     const LCL = '/Users/rick/Sites/AYSO/_dev/volcerts/tests/var';

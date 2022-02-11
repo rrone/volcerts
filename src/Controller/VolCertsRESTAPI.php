@@ -42,7 +42,6 @@ class VolCertsRESTAPI extends AbstractController
     /**
      * @Route("/json/{names}", name="json")
      * @return JsonResponse
-     * @throws Exception
      */
     public function index(): JsonResponse
     {

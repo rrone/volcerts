@@ -1,11 +1,11 @@
 <?php
 
-namespace App\Tests\Controller;
+namespace Tests\Controller;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
+use Tests\Abstracts\WebTestCasePlus;
 
-class VolCertsTableControllerTest extends WebTestCase
+class VolCertsTableControllerTest extends WebTestCasePlus
 {
     const VHX = '/var/www/volcerts.vhx.cloud/tests/var';
     const LCL = '/Users/rick/Sites/AYSO/_dev/volcerts/tests/var';
@@ -30,31 +30,25 @@ class VolCertsTableControllerTest extends WebTestCase
 
     public function testRoot()
     {
-        $client = static::createClient();
+        $this->client->followRedirects();
+        $this->client->request('GET', '/response');
 
-        $client->followRedirects();
-        $client->request('GET', '/response');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testEmptyId()
     {
-        $client = static::createClient();
+        $this->client->request('GET', '/id/');
 
-        $client->request('GET', '/id/');
-
-        $this->assertEquals(301, $client->getResponse()->getStatusCode());
+        $this->assertEquals(301, $this->client->getResponse()->getStatusCode());
     }
 
     public function testId()
     {
-        $client = static::createClient();
+        $this->client->request('GET', '/id/97815888');
 
-        $client->request('GET', '/id/97815888');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $html = str_replace("\u003Cbr\u003E", "",$client->getResponse()->getContent());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $html = str_replace("\u003Cbr\u003E", "",$this->client->getResponse()->getContent());
         $this->assertStringContainsString('"AYSOID":97815888', $html);
         $this->assertStringContainsString('"FullName":"Frederick Roberts"', $html);
         $this->assertStringContainsString('"CoachCertDate":"2021-07-26', $html);
@@ -78,17 +72,13 @@ class VolCertsTableControllerTest extends WebTestCase
 
     public function testIds()
     {
-        $client = static::createClient();
+        $this->client->request('GET', '/id/97815888,96383440');
 
-        $client->request('GET', '/id/97815888,96383440');
-
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
     }
 
     public function testCSVUpload()
     {
-        $client = static::createClient();
-
         copy($this->var . '/files/Book.3.csv', $this->var . '/uploads/Book.3.csv');
         $file = new UploadedFile(
             $this->var .'/uploads/Book.3.csv',
@@ -97,21 +87,19 @@ class VolCertsTableControllerTest extends WebTestCase
             null
         );
 
-        $client->request(
+        $this->client->request(
             'POST',
             '/ch',
             [],
             ['uploadFilename' => $file]
         );
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('Upload another file', $client->getResponse()->getContent());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Upload another file', $this->client->getResponse()->getContent());
     }
 
     public function testBadUpload()
     {
-        $client = static::createClient();
-
         copy($this->var . '/files/Book.3.bad.csv', $this->var . '/uploads/Book.3.bad.csv');
         $file = new UploadedFile(
             $this->var .'/uploads/Book.3.bad.csv',
@@ -120,21 +108,19 @@ class VolCertsTableControllerTest extends WebTestCase
             null
         );
 
-        $client->request(
+        $this->client->request(
             'POST',
             '/ch',
             [],
             ['uploadFilename' => $file]
         );
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('Upload another file', $client->getResponse()->getContent());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Upload another file', $this->client->getResponse()->getContent());
     }
 
     public function testXLSUpload()
     {
-        $client = static::createClient();
-
         copy($this->var . '/files/Book.3.xls', $this->var . '/uploads/Book.3.xls');
         $file = new UploadedFile(
             $this->var .'/uploads/Book.3.xls',
@@ -143,21 +129,19 @@ class VolCertsTableControllerTest extends WebTestCase
             null
         );
 
-        $client->request(
+        $this->client->request(
             'POST',
             '/ch',
             [],
             ['uploadFilename' => $file]
         );
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('Upload another file', $client->getResponse()->getContent());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Upload another file', $this->client->getResponse()->getContent());
     }
 
     public function testXLSXUpload()
     {
-        $client = static::createClient();
-
         copy($this->var . '/files/Book.3.xlsx', $this->var . '/uploads/Book.3.xlsx');
         $file = new UploadedFile(
             $this->var .'/uploads/Book.3.xlsx',
@@ -166,15 +150,15 @@ class VolCertsTableControllerTest extends WebTestCase
             null
         );
 
-        $client->request(
+        $this->client->request(
             'POST',
             '/ch',
             [],
             ['uploadFilename' => $file]
         );
 
-        $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        $this->assertStringContainsString('Upload another file', $client->getResponse()->getContent());
+        $this->assertEquals(200, $this->client->getResponse()->getStatusCode());
+        $this->assertStringContainsString('Upload another file', $this->client->getResponse()->getContent());
     }
 
 
