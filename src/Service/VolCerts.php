@@ -70,8 +70,19 @@ class VolCerts
 
 
     /**
+     * @param $aysoID
+     * @return string|null
+     * @throws Exception
+     */
+    public function getAdminID($aysoID): ?string
+    {
+        return $this->dw->getAYSOIDByAdminID($aysoID);
+    }
+
+    /**
      * @param array $idList
      * @return array
+     * @throws Exception
      */
     public function retrieveVolsCertData(array $idList): ?array
     {
@@ -139,6 +150,7 @@ class VolCerts
      * @param int $aysoId
      * @param $certData
      * @return array|string
+     * @throws Exception
      */
     private function parseCertData(string $adminId, int $aysoId, $certData)
     {
@@ -163,6 +175,7 @@ class VolCerts
      * @param string $adminId
      * @param string $nodeValue
      * @return array
+     * @throws Exception
      */
     private function parseNodeValue($aysoId, string $adminId, string $nodeValue): ?array
     {
@@ -170,9 +183,9 @@ class VolCerts
             return null;
         }
 
-        $cert['AYSOID'] = $aysoId == $this->no_id ? 'N/A' : $aysoId;
-        $cert['AdminID'] = $adminId;
-        $cert['FullName'] = '*** Volunteer not found ***';
+        $cert['AYSOID'] = $aysoId == $this->no_id ? '***<br>AYSOID not found<br>***' : $aysoId;
+        $cert['AdminID'] = strpos($adminId, '-') ? $adminId : $this->dw->getAdminIDByAYSOID($aysoId);
+        $cert['FullName'] = '***<br>Volunteer not found<br>***';
         $cert['Type'] =
         $cert['SAR'] =
         $cert['MY'] =

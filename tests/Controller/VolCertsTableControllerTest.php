@@ -89,7 +89,7 @@ class VolCertsTableControllerTest extends WebTestCasePlus
 
         $this->client->request(
             'POST',
-            '/ch',
+            '/e3',
             [],
             ['uploadFilename' => $file]
         );
@@ -110,7 +110,7 @@ class VolCertsTableControllerTest extends WebTestCasePlus
 
         $this->client->request(
             'POST',
-            '/ch',
+            '/e3',
             [],
             ['uploadFilename' => $file]
         );
@@ -131,7 +131,7 @@ class VolCertsTableControllerTest extends WebTestCasePlus
 
         $this->client->request(
             'POST',
-            '/ch',
+            '/e3',
             [],
             ['uploadFilename' => $file]
         );
@@ -152,7 +152,7 @@ class VolCertsTableControllerTest extends WebTestCasePlus
 
         $this->client->request(
             'POST',
-            '/ch',
+            '/e3',
             [],
             ['uploadFilename' => $file]
         );

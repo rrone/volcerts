@@ -48,4 +48,21 @@ class DataWarehouse
 
         return intval($aysoId);
     }
+
+    /**
+     * @param $aysoId
+     * @return string|null
+     * @throws Doctrine\DBAL\Exception
+     */
+    public function getAdminIDByAYSOID($aysoId): ?string
+    {
+        if (empty($aysoId)) {
+            return null;
+        }
+
+        $adminId = $this->conn->fetchOne("SELECT `AdminID` FROM `all.AdminIDAYSOID` WHERE `AYSOID` = '$aysoId' LIMIT 1");
+
+        return $adminId;
+    }
+
 }

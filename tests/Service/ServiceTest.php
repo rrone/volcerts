@@ -53,7 +53,7 @@ class ServiceTest extends WebTestCase
         $vcTable = new VolCertsTable(new VolCerts());
 
         $request = Request::create(
-            '/ch',
+            '/e3',
             'POST'
         );
 

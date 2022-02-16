@@ -145,6 +145,7 @@ class VolCertsTable
     /**
      * @param $fileName
      * @param bool $addLink
+     * @throws \Doctrine\DBAL\Exception
      */
     public function retrieveVolCertData($fileName, bool $addLink = false)
     {
@@ -239,6 +240,7 @@ EOD;
     /**
      * @param bool $merge
      * @return array
+     * @throws \Doctrine\DBAL\Exception
      */
     public function getDataOut(bool $merge = false): array
     {
@@ -246,12 +248,24 @@ EOD;
         $hdrs = $this->volCerts->getHdrs();
 
         foreach ($this->volCertData as $certs) {
-            $this->dataOut[$certs['AdminID']] = array_combine($hdrs, array_values(array_merge(array_flip($keys), $certs)));
-            if ($merge) {
-                foreach ($this->dataIn as $k => $row) {
-                    if ($k > 0) {
+            if (strpos($certs['AdminID'], '-')) {
+                $this->dataOut[$certs['AdminID']] = array_combine($hdrs, array_values(array_merge(array_flip($keys), $certs)));
+            }
+        }
+
+        if ($merge) {
+            foreach ($this->dataOut as $k => $vals) {
+                if ($k > 0) {
+                    if (isset($this->dataIn[$k])) {
                         foreach ($this->dataIn[0] as $c => $hdr) {
                             $this->dataOut[$k][$hdr] = $this->dataIn[$k][$c];
+                        }
+                    }
+
+                    $ki = intval( substr($vals['AYSOID'], strpos($vals['AYSOID'],'>')+1));
+                    if ($ki > 0 && isset($this->dataIn[$ki])) {
+                        foreach ($this->dataIn[0] as $c => $hdr) {
+                            $this->dataOut[$k][$hdr] = $this->dataIn[$ki][$c];
                         }
                     }
                 }

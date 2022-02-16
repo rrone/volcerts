@@ -11,7 +11,7 @@ class VolCertsFormControllerTest extends WebTestCasePlus
      */
     public function testRoute()
     {
-        $this->client->request('GET', '/ch');
+        $this->client->request('GET', '/e3');
 
         $this->assertEquals(302, $this->client->getResponse()->getStatusCode());
 
