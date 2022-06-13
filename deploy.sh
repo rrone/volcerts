@@ -9,7 +9,7 @@ config="${dev}"/config
 
 prod="$HOME"/Sites/AYSO/_services/vc.ayso1ref.com/vc
 
-PHP=/usr/local/etc/php/8.0/conf.d
+PHP=/usr/local/etc/php/8.1/conf.d
 
 ## clear the screen
 printf "\033c"
@@ -78,9 +78,9 @@ cd "${prod}"
   rm -rf .yarnrc.yml
 
   bin/console cache:clear
-  
+
   ln -s public ../public_html
-  
+
 cd "${dev}"
 
 echo ">>> Re-enable xdebug..."
