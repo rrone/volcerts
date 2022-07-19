@@ -17,7 +17,7 @@
         "laminas/laminas-code": "^4.5",
         "laminas/laminas-eventmanager": "^3.5",
         "phpdocumentor/reflection-docblock": "^5.3",
-        "phpoffice/phpspreadsheet": "^1.23",
+        "phpoffice/phpspreadsheet": "^1.24",
         "sensio/framework-extra-bundle": "^6.2",
         "symfony/asset": "^5.4",
         "symfony/console": "^5.4",
@@ -40,7 +40,7 @@
         "symfony/twig-bundle": "^5.4",
         "symfony/validator": "^5.4",
         "symfony/web-link": "^5.4",
-        "symfony/webpack-encore-bundle": "^1.14",
+        "symfony/webpack-encore-bundle": "^1.15",
         "symfony/yaml": "^5.4"
     },
     "require-dev": {
