@@ -18,7 +18,6 @@
         "laminas/laminas-eventmanager": "^3.5",
         "phpdocumentor/reflection-docblock": "^5.3",
         "phpoffice/phpspreadsheet": "^1.24",
-        "sensio/framework-extra-bundle": "^6.2",
         "symfony/asset": "^5.4",
         "symfony/console": "^5.4",
         "symfony/css-selector": "^5.4",
