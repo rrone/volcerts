@@ -4525,6 +4525,7 @@
         },
         {
             "name": "symfony/http-foundation",
+<<<<<<< HEAD
             "version": "v5.4.32",
             "source": {
                 "type": "git",
@@ -4535,6 +4536,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/http-foundation/zipball/cbcd80a4c36f59772d62860fdb0cb6a38da63fd2",
                 "reference": "cbcd80a4c36f59772d62860fdb0cb6a38da63fd2",
+=======
+            "version": "v5.4.31",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-foundation.git",
+                "reference": "f84fd4fd8311a541ceb2ae3f257841d002450a90"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/http-foundation/zipball/f84fd4fd8311a541ceb2ae3f257841d002450a90",
+                "reference": "f84fd4fd8311a541ceb2ae3f257841d002450a90",
+>>>>>>> aae320b5da9be0919ae6d6419267585f97e74a9a
                 "shasum": ""
             },
             "require": {
@@ -4581,7 +4594,11 @@
             "description": "Defines an object-oriented layer for the HTTP specification",
             "homepage": "https://symfony.com",
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/http-foundation/tree/v5.4.32"
+=======
+                "source": "https://github.com/symfony/http-foundation/tree/v5.4.31"
+>>>>>>> aae320b5da9be0919ae6d6419267585f97e74a9a
             },
             "funding": [
                 {
@@ -4597,6 +4614,7 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2023-11-20T15:40:25+00:00"
         },
         {
@@ -4611,6 +4629,22 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/http-kernel/zipball/442472752e3adc9810a7e425824497dc22f75acf",
                 "reference": "442472752e3adc9810a7e425824497dc22f75acf",
+=======
+            "time": "2023-11-06T22:05:57+00:00"
+        },
+        {
+            "name": "symfony/http-kernel",
+            "version": "v5.4.31",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/http-kernel.git",
+                "reference": "d2fad58d32a7b4864d205a7289602a27ce75018c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/http-kernel/zipball/d2fad58d32a7b4864d205a7289602a27ce75018c",
+                "reference": "d2fad58d32a7b4864d205a7289602a27ce75018c",
+>>>>>>> aae320b5da9be0919ae6d6419267585f97e74a9a
                 "shasum": ""
             },
             "require": {
@@ -4693,7 +4727,11 @@
             "description": "Provides a structured process for converting a Request into a Response",
             "homepage": "https://symfony.com",
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/http-kernel/tree/v5.4.32"
+=======
+                "source": "https://github.com/symfony/http-kernel/tree/v5.4.31"
+>>>>>>> aae320b5da9be0919ae6d6419267585f97e74a9a
             },
             "funding": [
                 {
@@ -4709,7 +4747,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2023-11-29T10:12:28+00:00"
+=======
+            "time": "2023-11-10T13:39:09+00:00"
+>>>>>>> aae320b5da9be0919ae6d6419267585f97e74a9a
         },
         {
             "name": "symfony/intl",
@@ -6669,6 +6711,7 @@
         },
         {
             "name": "symfony/string",
+<<<<<<< HEAD
             "version": "v5.4.32",
             "source": {
                 "type": "git",
@@ -6679,6 +6722,18 @@
                 "type": "zip",
                 "url": "https://api.github.com/repos/symfony/string/zipball/91bf4453d65d8231688a04376c3a40efe0770f04",
                 "reference": "91bf4453d65d8231688a04376c3a40efe0770f04",
+=======
+            "version": "v5.4.31",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/symfony/string.git",
+                "reference": "2765096c03f39ddf54f6af532166e42aaa05b24b"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/symfony/string/zipball/2765096c03f39ddf54f6af532166e42aaa05b24b",
+                "reference": "2765096c03f39ddf54f6af532166e42aaa05b24b",
+>>>>>>> aae320b5da9be0919ae6d6419267585f97e74a9a
                 "shasum": ""
             },
             "require": {
@@ -6735,7 +6790,11 @@
                 "utf8"
             ],
             "support": {
+<<<<<<< HEAD
                 "source": "https://github.com/symfony/string/tree/v5.4.32"
+=======
+                "source": "https://github.com/symfony/string/tree/v5.4.31"
+>>>>>>> aae320b5da9be0919ae6d6419267585f97e74a9a
             },
             "funding": [
                 {
@@ -6751,7 +6810,11 @@
                     "type": "tidelift"
                 }
             ],
+<<<<<<< HEAD
             "time": "2023-11-26T13:43:46+00:00"
+=======
+            "time": "2023-11-09T08:19:44+00:00"
+>>>>>>> aae320b5da9be0919ae6d6419267585f97e74a9a
         },
         {
             "name": "symfony/translation-contracts",
