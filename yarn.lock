@@ -3620,6 +3620,7 @@ __metadata:
   dependencies:
     to-regex-range: "npm:^5.0.1"
   checksum: 8/cc283f4e65b504259e64fd969bcf4def4eb08d85565e906b7d36516e87819db52029a76b6363d0f02d0d532f0033c9603b9e2d943d56ee3b0d4f7ad3328ff917
+<<<<<<< HEAD
   languageName: node
   linkType: hard
 
@@ -3629,6 +3630,8 @@ __metadata:
   dependencies:
     to-regex-range: "npm:^5.0.1"
   checksum: 10c0/b75b691bbe065472f38824f694c2f7449d7f5004aa950426a2c28f0306c60db9b880c0b0e4ed819997ffb882d1da02cfcfc819bddc94d71627f5269682edf018
+=======
+>>>>>>> a6f0c3390382dc69045b1e7425f7e4b94ad673c5
   languageName: node
   linkType: hard
 
@@ -4018,8 +4021,8 @@ __metadata:
   linkType: hard
 
 "http-proxy-middleware@npm:^2.0.3":
-  version: 2.0.6
-  resolution: "http-proxy-middleware@npm:2.0.6"
+  version: 2.0.7
+  resolution: "http-proxy-middleware@npm:2.0.7"
   dependencies:
     "@types/http-proxy": "npm:^1.17.8"
     http-proxy: "npm:^1.18.1"
@@ -4031,7 +4034,11 @@ __metadata:
   peerDependenciesMeta:
     "@types/express":
       optional: true
+<<<<<<< HEAD
   checksum: 8/2ee85bc878afa6cbf34491e972ece0f5be0a3e5c98a60850cf40d2a9a5356e1fc57aab6cff33c1fc37691b0121c3a42602d2b1956c52577e87a5b77b62ae1c3a
+=======
+  checksum: 10c0/8d00a61eb215b83826460b07489d8bb095368ec16e02a9d63e228dcf7524e7c20d61561e5476de1391aecd4ec32ea093279cdc972115b311f8e0a95a24c9e47e
+>>>>>>> a6f0c3390382dc69045b1e7425f7e4b94ad673c5
   languageName: node
   linkType: hard
 
@@ -4617,9 +4624,15 @@ __metadata:
   version: 4.0.8
   resolution: "micromatch@npm:4.0.8"
   dependencies:
+<<<<<<< HEAD
     braces: "npm:^3.0.3"
     picomatch: "npm:^2.3.1"
   checksum: 10c0/166fa6eb926b9553f32ef81f5f531d27b4ce7da60e5baf8c021d043b27a388fb95e46a8038d5045877881e673f8134122b59624d5cecbd16eb50a42e7a6b5ca8
+=======
+    braces: "npm:^3.0.2"
+    picomatch: "npm:^2.3.1"
+  checksum: 8/02a17b671c06e8fefeeb6ef996119c1e597c942e632a21ef589154f23898c9c6a9858526246abb14f8bca6e77734aa9dcf65476fca47cedfb80d9577d52843fc
+>>>>>>> a6f0c3390382dc69045b1e7425f7e4b94ad673c5
   languageName: node
   linkType: hard
 
